@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.C.C — SUBJECT PORTAL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Roboto+Slab:wght@300;400;700&display=swap');
+
+:root {
+  --ah: 32;
+  --as: 90%;
+  --al: 42%;
+  --accent: hsl(var(--ah), var(--as), var(--al));
+  --accent-dim: hsl(var(--ah), var(--as), 28%);
+  --accent-faint: hsl(var(--ah), 70%, 9%);
+  --accent-glow: hsla(var(--ah), var(--as), var(--al), 0.15);
+  --accent-bright: hsl(var(--ah), var(--as), 65%);
+  --bg: #080600;
+  --bg2: #080600;
+  --cream: #f0e8d0;
+  --cream-dim: #b8a880;
+  --cream-faint: #1e1810;
+  --border: hsl(var(--ah), 40%, 16%);
+  --border-bright: hsl(var(--ah), 55%, 28%);
+  --custody-level: 0;
+  --left-width: 270px;
+  --font-scale: 1;
+  --msg-bg: var(--accent-faint);
+  --viewport-border: transparent;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100%; background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.7; transition: background 1s ease, color 0.5s ease; }
+
+/* Viewport border at high custody */
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; border: 0px solid var(--viewport-border); pointer-events: none; z-index: 999; transition: border-width 1s ease, border-color 1s ease; }
+body::after { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%); pointer-events: none; z-index: 0; transition: opacity 1s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 20px var(--accent-glow); } 50% { box-shadow: 0 0 50px var(--accent-glow); } }
+@keyframes breathe { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+/* REGISTRATION */
+#regView { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; }
+.reg-wrap { max-width: 540px; width: 100%; animation: fadeIn 0.8s ease forwards; }
+.reg-head { text-align: center; margin-bottom: 36px; }
+.r-badge { font-family: 'Roboto Slab', serif; font-size: 10px; letter-spacing: 4px; color: var(--accent-dim); margin-bottom: 10px; }
+.r-name { font-family: 'Roboto Slab', serif; font-size: 36px; color: var(--accent); letter-spacing: 10px; text-shadow: 0 0 40px var(--accent-glow); margin-bottom: 6px; }
+.r-full { font-size: 10px; color: var(--accent-dim); letter-spacing: 2px; font-family: 'Roboto Slab', serif; }
+.r-msg { border-left: 3px solid var(--accent-dim); padding: 14px 18px; margin-bottom: 28px; font-size: 15px; color: var(--cream-dim); line-height: 1.9; font-style: italic; background: var(--accent-faint); }
+.r-msg strong { color: var(--cream); font-style: normal; }
+.field { margin-bottom: 22px; }
+.field-label { display: block; font-family: 'Roboto Slab', serif; font-size: 9px; letter-spacing: 3px; color: var(--accent-bright); margin-bottom: 8px; }
+.fi { width: 100%; background: var(--accent-faint); border: 2px solid var(--border-bright); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 16px; padding: 12px 14px; outline: none; transition: border-color .3s, box-shadow .3s, background .3s; -webkit-appearance: none; border-radius: 0; display: block; }
+.fi:focus { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); background: hsl(var(--ah), 60%, 12%); }
+.fi::placeholder { color: var(--accent-dim); font-style: italic; }
+.q-section { margin-bottom: 24px; }
+.q-title { font-family: 'Roboto Slab', serif; font-size: 9px; letter-spacing: 3px; color: var(--accent-bright); margin-bottom: 6px; }
+.q-note { font-size: 12px; color: var(--cream-dim); font-style: italic; margin-bottom: 18px; line-height: 1.7; padding: 10px 14px; border-left: 2px solid var(--border-bright); }
+.q-item { margin-bottom: 20px; }
+.q-text { font-size: 13px; color: var(--cream); margin-bottom: 8px; font-style: italic; line-height: 1.6; }
+.terms-box { border: 2px solid var(--border-bright); padding: 20px; margin-bottom: 24px; position: relative; animation: glow 6s ease infinite; background: var(--accent-faint); }
+.terms-box::before { content: 'TÉRMINOS DE CUSTODIA / TERMS OF CUSTODY'; position: absolute; top: -9px; left: 14px; background: var(--bg); padding: 0 8px; font-family: 'Roboto Slab', serif; font-size: 8px; color: var(--accent-bright); letter-spacing: 2px; }
+.terms-txt { font-size: 12px; color: var(--cream-dim); line-height: 2; max-height: 130px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-dim) transparent; margin-bottom: 16px; }
+.terms-txt p { margin-bottom: 8px; }
+.terms-hl { color: var(--cream); font-style: italic; }
+.check-row { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; padding: 10px; border: 1px solid var(--border-bright); transition: background 0.2s; }
+.check-row:hover { background: hsl(var(--ah), 40%, 10%); }
+.check-row input[type=checkbox] { appearance: none; width: 18px; height: 18px; min-width: 18px; border: 2px solid var(--accent-dim); background: transparent; cursor: pointer; margin-top: 2px; transition: all .2s; border-radius: 0; }
+.check-row input[type=checkbox]:checked { background: var(--accent); border-color: var(--accent); }
+.check-label { font-size: 14px; color: var(--cream); font-style: italic; line-height: 1.6; }
+.sub-btn { width: 100%; background: transparent; border: 2px solid var(--border-bright); color: var(--accent-dim); font-family: 'Roboto Slab', serif; font-size: 12px; letter-spacing: 5px; padding: 16px; cursor: not-allowed; transition: all .3s; opacity: 0.4; }
+.sub-btn.on { cursor: pointer; opacity: 1; border-color: var(--accent); color: var(--accent); }
+.sub-btn.on:hover { background: var(--accent-glow); box-shadow: 0 0 30px var(--accent-glow); }
+
+/* PORTAL */
+#portalView { display: none; min-height: 100vh; flex-direction: column; position: relative; z-index: 1; }
+.ph {
+  border-bottom: 2px solid var(--border-bright);
+  padding: 0 28px 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 28px;
+  background: hsla(var(--ah), 60%, 4%, 0.92);
+  transition: background 1s ease, border-color 1s ease;
+  min-height: 200px;
+}
+.ph-logo {
+  width: auto;
+  height: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  transition: filter 1s ease;
+  display: block;
+}
+.ph-center {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ph-l .ph-dept { font-family: 'Roboto Slab', serif; font-size: 32px; color: var(--accent); letter-spacing: 12px; text-shadow: 0 0 30px var(--accent-glow); transition: all 0.5s ease; }
+.ph-l .ph-motto { font-size: 12px; color: var(--accent-dim); letter-spacing: 3px; font-family: 'Roboto Slab', serif; font-style: italic; }
+.ph-r { text-align: right; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2.2; white-space: nowrap; }
+.ph-r { text-align: right; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; }
+.ph-name { color: var(--cream); font-size: 13px; transition: font-size 0.5s ease; }
+.ph-ins { display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-left: 6px; }
+.pb { display: flex; flex: 1; min-height: calc(100vh - 200px); }
+
+/* LEFT PANEL — width transitions with custody */
+.lp { width: var(--left-width); min-width: var(--left-width); border-right: 2px solid var(--border-bright); padding: 16px 14px; display: flex; flex-direction: column; gap: 16px; background: hsla(var(--ah), 50%, 3%, 0.7); overflow-y: auto; transition: width 1s ease, min-width 1s ease, background 1s ease, border-color 1s ease; }
+.pnl { border: 1px solid var(--border-bright); padding: 14px; position: relative; transition: border-color 0.5s, box-shadow 0.5s, background 0.5s; }
+.pnl::before { content: attr(data-l); position: absolute; top: -7px; left: 10px; background: var(--bg); padding: 0 6px; font-family: 'Roboto Slab', serif; font-size: 7px; color: var(--accent-bright); letter-spacing: 2px; transition: background 1s ease; }
+.pu-name { font-family: 'Roboto Slab', serif; font-size: 16px; color: var(--accent); letter-spacing: 2px; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; transition: font-size 0.5s; }
+.pu-ins { display: inline-block; width: 20px; height: 20px; flex-shrink: 0; }
+.pu-case { font-family: 'Roboto Slab', serif; font-size: 8px; color: var(--accent-dim); letter-spacing: 2px; margin-bottom: 8px; }
+.pu-ans { font-size: 11px; color: var(--cream-dim); font-style: italic; padding: 5px 0; border-top: 1px solid var(--border); line-height: 1.6; transition: color 0.5s; }
+.pu-note { font-size: 12px; color: var(--cream); font-style: italic; padding: 8px; margin-top: 8px; border: 1px solid var(--border-bright); background: var(--accent-faint); line-height: 1.6; display: none; transition: all 0.5s; }
+.cl { font-family: 'Roboto Slab', serif; font-size: 8px; color: var(--accent-bright); letter-spacing: 2px; display: block; margin-bottom: 8px; margin-top: 12px; }
+.cl:first-child { margin-top: 0; }
+.c-note-sm { font-size: 11px; color: var(--cream-dim); font-style: italic; line-height: 1.6; margin-bottom: 10px; }
+.swatches { display: flex; gap: 12px; }
+.sw-wrap { text-align: center; }
+.sw { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all .2s; margin: 0 auto; }
+.sw.sel { border-color: var(--cream); transform: scale(1.2); }
+.sw:hover { transform: scale(1.1); }
+.sw-label { font-family: 'Roboto Slab', serif; font-size: 7px; color: var(--accent-dim); letter-spacing: 1px; margin-top: 3px; }
+
+/* CUSTODY SLIDER */
+.custody-wrap { margin-top: 4px; }
+.custody-slider { width: 100%; appearance: none; height: 4px; background: linear-gradient(to right, var(--border-bright), var(--accent)); outline: none; border-radius: 2px; margin-top: 8px; cursor: pointer; }
+.custody-slider::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--cream); box-shadow: 0 0 10px var(--accent-glow); transition: transform 0.2s; }
+.custody-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.custody-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+.custody-lbl { font-family: 'Roboto Slab', serif; font-size: 7px; color: var(--accent-dim); letter-spacing: 1px; }
+.custody-val { font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent); letter-spacing: 3px; text-align: center; margin-top: 8px; transition: all 0.5s; animation: breathe 4s ease infinite; }
+
+/* INSIGNIA GRID */
+.ins-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.ins-btn { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--border-bright); transition: all .25s; background: var(--accent-faint); padding: 6px; }
+.ins-btn:hover { border-color: var(--accent); background: hsl(var(--ah), 50%, 12%); transform: scale(1.05); }
+.ins-btn.sel { border-color: var(--accent); background: hsl(var(--ah), 50%, 14%); box-shadow: 0 0 12px var(--accent-glow); }
+.ins-btn svg { width: 100%; height: 100%; }
+
+/* NOTE */
+.note-in { width: 100%; background: var(--accent-faint); border: 2px solid var(--border-bright); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; padding: 10px 12px; outline: none; resize: none; height: 64px; transition: border-color .2s, box-shadow .2s; border-radius: 0; -webkit-appearance: none; }
+.note-in:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+.note-in::placeholder { color: var(--accent-dim); font-size: 12px; }
+.note-saved { font-family: 'Roboto Slab', serif; font-size: 8px; color: var(--accent-dim); letter-spacing: 1px; margin-top: 4px; opacity: 0; transition: opacity .3s; }
+
+/* STATUS */
+.st-row { display: flex; justify-content: space-between; font-family: 'Roboto Slab', serif; font-size: 8px; color: var(--accent-dim); letter-spacing: 1px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.st-row:last-child { border-bottom: none; }
+.st-val { color: var(--cream-dim); }
+.st-val.live { color: var(--accent-bright); animation: pulse 3s infinite; }
+
+/* RIGHT */
+.rp { flex: 1; display: flex; flex-direction: column; min-width: 0; transition: all 0.5s; }
+.chat-hdr { padding: 12px 20px; border-bottom: 2px solid var(--border-bright); display: flex; align-items: center; gap: 10px; background: hsla(var(--ah), 50%, 3%, 0.6); transition: background 1s ease; }
+.chat-dot { width: 8px; height: 8px; background: var(--accent-bright); border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
+.chat-ttl { font-family: 'Roboto Slab', serif; font-size: 9px; letter-spacing: 3px; color: var(--accent-dim); }
+.msg-ctr { margin-left: auto; font-family: 'Roboto Slab', serif; font-size: 9px; color: var(--accent-dim); letter-spacing: 1px; white-space: nowrap; }
+.msg-ctr.warn { color: #e05020; }
+.msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: thin; scrollbar-color: var(--accent-dim) transparent; transition: padding 0.5s; }
+.msgs::-webkit-scrollbar { width: 3px; }
+.msgs::-webkit-scrollbar-thumb { background: var(--accent-dim); }
+.msg { max-width: 80%; animation: fadeIn .4s ease forwards; transition: max-width 0.5s; }
+.msg.dcc { align-self: flex-start; }
+.msg.user { align-self: flex-end; }
+.msg-from { font-family: 'Roboto Slab', serif; font-size: 8px; letter-spacing: 2px; margin-bottom: 5px; }
+.msg.dcc .msg-from { color: var(--accent-bright); }
+.msg.user .msg-from { color: var(--cream-dim); text-align: right; }
+.msg-bub { padding: 13px 16px; font-size: 15px; line-height: 1.85; font-style: italic; transition: background 0.5s, border-color 0.5s, color 0.5s, font-size 0.3s; }
+.msg.dcc .msg-bub { background: var(--msg-bg); border: 1px solid var(--border-bright); border-left: 3px solid var(--accent); color: var(--cream); }
+.msg.user .msg-bub { background: var(--cream-faint); border: 1px solid var(--border); border-right: 3px solid var(--cream-dim); color: var(--cream-dim); text-align: right; }
+.typing { display: none; align-self: flex-start; padding: 14px 18px; background: var(--accent-faint); border: 1px solid var(--border-bright); border-left: 3px solid var(--accent); transition: background 0.5s; }
+.t-dots { display: flex; gap: 5px; align-items: center; }
+.t-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 1.2s infinite; }
+.t-dot:nth-child(2) { animation-delay: .2s; }
+.t-dot:nth-child(3) { animation-delay: .4s; }
+.song-bar { border-top: 2px solid var(--border-bright); padding: 14px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: hsla(var(--ah), 50%, 4%, 0.8); animation: glow 6s ease infinite; transition: background 1s ease; }
+.s-label { font-family: 'Roboto Slab', serif; font-size: 8px; letter-spacing: 3px; color: var(--accent-dim); }
+.s-title { font-family: 'Roboto Slab', serif; font-size: 20px; color: var(--accent); letter-spacing: 5px; text-shadow: 0 0 20px var(--accent-glow); }
+.s-desc { font-size: 11px; color: var(--cream-dim); font-style: italic; flex: 1; min-width: 100px; }
+.s-btn { background: transparent; border: 2px solid var(--accent); color: var(--accent); font-family: 'Roboto Slab', serif; font-size: 10px; letter-spacing: 2px; padding: 10px 18px; cursor: pointer; transition: all .2s; white-space: nowrap; }
+.s-btn:hover { background: var(--accent-glow); box-shadow: 0 0 20px var(--accent-glow); }
+.input-area { border-top: 2px solid var(--border-bright); padding: 12px 20px; display: flex; gap: 10px; align-items: flex-end; background: hsla(var(--ah), 50%, 3%, 0.7); transition: background 1s ease; }
+.chat-in { flex: 1; background: hsl(var(--ah), 60%, 10%); border: 2px solid var(--border-bright); color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; padding: 12px 14px; outline: none; resize: none; min-height: 46px; max-height: 120px; transition: border-color .2s, box-shadow .2s, background 0.5s; -webkit-appearance: none; border-radius: 0; }
+.chat-in:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+.chat-in::placeholder { color: var(--accent-dim); font-size: 14px; }
+.chat-in:disabled { opacity: .3; cursor: not-allowed; }
+.send-btn { background: var(--accent-faint); border: 2px solid var(--accent-dim); color: var(--accent-dim); font-family: 'Roboto Slab', serif; font-size: 10px; letter-spacing: 2px; padding: 12px 16px; cursor: pointer; transition: all .2s; white-space: nowrap; }
+.send-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+.send-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+/* ARCHIVED STATE — after COMPLY */
+body.archived .ph { border-bottom-color: hsl(32,50%,20%); }
+body.archived .pnl { border-color: hsl(32,40%,14%); }
+body.archived .msg.dcc .msg-bub { border-left-color: hsl(32,40%,20%); }
+.archived-stamp { font-family: 'Roboto Slab', serif; font-size: 9px; color: hsl(32,50%,28%); letter-spacing: 3px; padding: 6px 10px; border: 1px solid hsl(32,40%,16%); margin-top: 8px; display: none; }
+body.archived .archived-stamp { display: block; }
+
+/* GOLDEN WAVE — final comply ending */
+#goldenWave {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+#goldenWave.active { display: block; }
+#goldenWave::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 50% 60%, hsl(38,90%,55%) 0%, hsl(32,85%,35%) 40%, hsl(28,70%,15%) 80%, #000 100%);
+  animation: goldenPulse 4s ease infinite;
+}
+@keyframes goldenPulse { 0%,100%{opacity:0.85} 50%{opacity:1} }
+.golden-content {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+.golden-profile {
+  font-family: 'Roboto Slab', serif;
+  font-size: 11px;
+  color: hsl(38,90%,75%);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+.golden-name {
+  font-family: 'Roboto Slab', serif;
+  font-size: 32px;
+  color: hsl(38,100%,85%);
+  letter-spacing: 6px;
+  margin-bottom: 4px;
+  text-shadow: 0 0 40px hsl(38,90%,60%);
+}
+.golden-case {
+  font-family: 'Roboto Slab', serif;
+  font-size: 9px;
+  color: hsl(32,60%,50%);
+  letter-spacing: 2px;
+  margin-bottom: 48px;
+}
+.golden-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: hsl(38,80%,80%);
+  font-style: italic;
+  line-height: 2.2;
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+.golden-audio {
+  font-family: 'Roboto Slab', serif;
+  font-size: 9px;
+  color: hsl(32,50%,45%);
+  letter-spacing: 3px;
+  border: 1px solid hsl(32,40%,30%);
+  padding: 12px 24px;
+}
+
+@media (max-width: 700px) {
+  .ph {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    text-align: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  .ph-logo { height: 100px; max-height: 100px; width: auto; }
+  .ph-center { align-items: center; }
+  .ph-r { text-align: center; white-space: normal; }
+  .pb { flex-direction: column; }
+  .lp { width: 100% !important; min-width: unset !important; border-right: none; border-bottom: 2px solid var(--border-bright); max-height: 50vh; }
+  .ph-l .ph-dept { font-size: 22px; letter-spacing: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- BACK NAV — only shown after registration (portal view) -->
+<div id="dccBackNav" style="display:none;font-family:'Roboto Slab',monospace;font-size:10px;color:var(--accent-dim);letter-spacing:2px;padding:10px 28px;cursor:pointer;transition:color 0.2s;border-bottom:1px solid var(--border);background:hsla(var(--ah),60%,4%,0.92);" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--accent-dim)'" onclick="window.location.href='index.html'">
+  ← VOLVER AL DIRECTORIO / BACK TO DIRECTORY
+</div>
+
+<!-- ESCALATION BANNER — shown during DSR/Compliance release -->
+<div id="dccEscalationBanner" style="display:none;font-family:'Roboto Slab',serif;font-size:10px;color:var(--accent-dim);letter-spacing:2px;padding:12px 28px;line-height:2;border-bottom:1px solid var(--border-bright);background:hsla(var(--ah),60%,4%,0.92);">
+  CASO ESCALADO AL D.S.R — CONTENCIÓN FALLIDA. RESOLUCIÓN INICIADA.<br>
+  CASE ESCALATED TO D.S.R — CONTAINMENT FAILED. RESOLUTION INITIATED.<br>
+  <span style="color:var(--accent)">ARCHIVOS DE CUSTODIA DISPONIBLES / CUSTODY FILES AVAILABLE</span>
+</div>
+
+<!-- SVG INSIGNIA DEFINITIONS -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- The Witness: reticle eye -->
+    <symbol id="ins-witness" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="3" fill="currentColor"/>
+      <line x1="16" y1="1" x2="16" y2="7" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="16" y1="25" x2="16" y2="31" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="1" y1="16" x2="7" y2="16" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="25" y1="16" x2="31" y2="16" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="5.5" y1="5.5" x2="9.5" y2="9.5" stroke="currentColor" stroke-width="1"/>
+      <line x1="22.5" y1="22.5" x2="26.5" y2="26.5" stroke="currentColor" stroke-width="1"/>
+      <line x1="26.5" y1="5.5" x2="22.5" y2="9.5" stroke="currentColor" stroke-width="1"/>
+      <line x1="9.5" y1="22.5" x2="5.5" y2="26.5" stroke="currentColor" stroke-width="1"/>
+    </symbol>
+    <!-- The Contained: nested forms -->
+    <symbol id="ins-contained" viewBox="0 0 32 32">
+      <rect x="2" y="2" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/>
+      <ellipse cx="16" cy="16" rx="9" ry="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <rect x="10" y="10" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1" rx="0.5"/>
+      <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+    </symbol>
+    <!-- The Signal: waveform -->
+    <symbol id="ins-signal" viewBox="0 0 32 32">
+      <path d="M2 16 Q5 16 6 10 Q7 4 8 4 Q9 4 10 16 Q11 28 12 28 Q13 28 14 16 Q15 8 16 8 Q17 8 18 16 Q19 24 20 24 Q21 24 22 16 Q23 10 24 16 Q25 22 26 22 Q27 22 28 16 Q29 16 30 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <!-- The Spiral: logarithmic spiral -->
+    <symbol id="ins-spiral" viewBox="0 0 32 32">
+      <path d="M16 16 Q16 13 19 13 Q24 13 24 16 Q24 22 16 22 Q9 22 9 16 Q9 10 16 9 Q24 8 26 16 Q28 25 16 27 Q6 28 5 16 Q4 8 14 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="16" cy="16" r="1.5" fill="currentColor"/>
+    </symbol>
+    <!-- The Threshold: two lines with gap -->
+    <symbol id="ins-threshold" viewBox="0 0 32 32">
+      <line x1="11" y1="4" x2="11" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="21" y1="4" x2="21" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="4" y1="16" x2="9" y2="16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="23" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="16" cy="16" r="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- REGISTRATION -->
+<div id="regView">
+  <div class="reg-wrap">
+    <div class="reg-head">
+      <div class="r-badge">CUSTODIOS DEL ORDEN ENTRÓPICO</div>
+      <div class="r-name">D.C.C</div>
+      <div class="r-full">DEPARTAMENTO DE CONTENCIÓN Y CUSTODIA / DEPARTMENT OF CUSTODY &amp; CONTAINMENT</div>
+    </div>
+    <div class="r-msg">
+      Hemos estado esperándote.<br><br>
+      El D.O.S identificó tu presencia. El D.B.R estudió tu patrón. Ahora estás aquí, con nosotros.<br>
+      <strong>No tienes que seguir buscando.</strong><br><br>
+      We have been waiting for you.<br><br>
+      The D.O.S identified your presence. The D.B.R studied your pattern. Now you are here, with us.<br>
+      <strong>You don't have to keep searching.</strong>
+    </div>
+    <div class="field">
+      <label class="field-label">DESIGNACIÓN / DESIGNATION — ¿CÓMO QUIERES QUE TE LLAMEMOS? / WHAT SHOULD WE CALL YOU?</label>
+      <input type="text" class="fi" id="uIn" placeholder="escribe tu nombre aquí / type your name here" maxlength="30" oninput="chk()" />
+    </div>
+    <div class="q-section">
+      <div class="q-title">EVALUACIÓN INICIAL / INITIAL ASSESSMENT</div>
+      <div class="q-note">El D.B.R ha preparado estas preguntas. Tus respuestas nos ayudan a cuidarte mejor.<br>The D.B.R has prepared these questions. Your answers help us take better care of you.</div>
+      <div class="q-item">
+        <div class="q-text">¿Cuándo fue la última vez que te sentiste completamente en paz? / When did you last feel completely at peace?</div>
+        <input type="text" class="fi" id="q1" placeholder="tómate tu tiempo... / take your time..." />
+      </div>
+      <div class="q-item">
+        <div class="q-text">¿Qué es lo que más temes perder? / What do you fear losing most?</div>
+        <input type="text" class="fi" id="q2" placeholder="somos buenos guardando cosas... / we are good at keeping things..." />
+      </div>
+      <div class="q-item">
+        <div class="q-text">Si pudieras detener un momento para siempre, ¿cuál sería? / If you could stop one moment forever, which would it be?</div>
+        <input type="text" class="fi" id="q3" placeholder="todo puede ser preservado... / everything can be preserved..." />
+      </div>
+    </div>
+    <div class="terms-box">
+      <div class="terms-txt">
+        <p>Al registrarte bajo custodia del D.C.C, aceptas que el departamento actuará en tu mejor interés en todo momento. / By registering under D.C.C custody, you accept that the department will act in your best interest at all times.</p>
+        <p>El D.C.C no te hará daño. El D.C.C te protegerá de la incertidumbre del cambio. / The D.C.C will not harm you. The D.C.C will protect you from the uncertainty of change.</p>
+        <p class="terms-hl">La custodia es permanente. / Custody is permanent.</p>
+        <p>Al continuar, aceptas que el D.C.C puede acceder a tu perfil en cualquier momento para garantizar tu bienestar. / By continuing, you accept that the D.C.C may access your profile at any time to ensure your wellbeing.</p>
+        <p class="terms-hl">No tendrás dudas. No sentirás dolor. Estarás a salvo. / You will have no doubts. You will feel no pain. You will be safe.</p>
+        <p style="font-size:10px;color:var(--accent-dim);font-family:'Roboto Slab',serif;letter-spacing:1px;margin-top:8px">Ex Intus, Silentium.</p>
+      </div>
+      <label class="check-row">
+        <input type="checkbox" id="tCheck" onchange="chk()" />
+        <span class="check-label">Entiendo y acepto. Quiero quedarme. / I understand and accept. I want to stay.</span>
+      </label>
+    </div>
+    <button class="sub-btn" id="subBtn" onclick="register()" disabled>ENTRAR / ENTER</button>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="portalView">
+  <div class="ph">
+    <img src="dcc-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" />
+    <div class="ph-l ph-center">
+      <div class="ph-dept">D.C.C</div>
+      <div class="ph-motto">Ex Intus, Silentium</div>
+    </div>
+    <div class="ph-r">
+      SUJETO / SUBJECT: <span class="ph-name" id="hUser"></span>
+      <svg class="ph-ins" id="hIns" style="display:none"><use id="hInsUse" href=""/></svg><br>
+      CASO / CASE: <span id="hCase"></span><br>
+      ESTADO: <span style="color:var(--accent-bright)">BAJO CUSTODIA / IN CUSTODY</span>
+    </div>
+  </div>
+  <div class="pb">
+    <div class="lp" id="leftPanel">
+      <div class="pnl" data-l="PERFIL / PROFILE">
+        <div class="pu-name">
+          <span id="pUser"></span>
+          <svg class="pu-ins" id="pIns" style="display:none"><use id="pInsUse" href=""/></svg>
+        </div>
+        <div class="pu-case" id="pCase"></div>
+        <div class="pu-ans" id="pa1"></div>
+        <div class="pu-ans" id="pa2"></div>
+        <div class="pu-ans" id="pa3"></div>
+        <div class="pu-note" id="puNote"></div>
+        <div class="archived-stamp" id="archivedStamp">ESTADO: RESUELTO / RESOLVED<br>CASO ARCHIVADO BAJO CUSTODIA PERMANENTE</div>
+      </div>
+      <div class="pnl" data-l="PERSONALIZACIÓN / CUSTOMIZATION">
+        <div class="c-note-sm">Queremos que te sientas en casa. / We want you to feel at home.</div>
+        <span class="cl">COLOR / COLOR</span>
+        <div class="swatches">
+          <div class="sw-wrap">
+            <div class="sw sel" style="background:hsl(32,90%,42%)" data-h="32" data-s="90" data-l="42" onclick="pickColor(this)"></div>
+            <div class="sw-label">AMBER</div>
+          </div>
+          <div class="sw-wrap">
+            <div class="sw" style="background:hsl(200,65%,38%)" data-h="200" data-s="65" data-l="38" onclick="pickColor(this)"></div>
+            <div class="sw-label">AZUL</div>
+          </div>
+          <div class="sw-wrap">
+            <div class="sw" style="background:hsl(150,55%,32%)" data-h="150" data-s="55" data-l="32" onclick="pickColor(this)"></div>
+            <div class="sw-label">VERDE</div>
+          </div>
+        </div>
+        <span class="cl">NIVEL DE CUSTODIA / CUSTODY LEVEL</span>
+        <div class="custody-wrap">
+          <input type="range" class="custody-slider" id="custodySlider" min="0" max="100" value="0" oninput="throttleCustody(this.value)" />
+          <div class="custody-labels">
+            <span class="custody-lbl">OBSERVADO</span>
+            <span class="custody-lbl">CONTENIDO</span>
+          </div>
+          <div class="custody-val" id="custodyVal">OBSERVADO</div>
+        </div>
+        <span class="cl">INSIGNIA / INSIGNIA</span>
+        <div class="ins-grid">
+          <div class="ins-btn" data-ins="ins-witness" onclick="pickIns(this)" title="El Testigo / The Witness">
+            <svg><use href="#ins-witness"/></svg>
+          </div>
+          <div class="ins-btn" data-ins="ins-contained" onclick="pickIns(this)" title="Lo Contenido / The Contained">
+            <svg><use href="#ins-contained"/></svg>
+          </div>
+          <div class="ins-btn" data-ins="ins-signal" onclick="pickIns(this)" title="La Señal / The Signal">
+            <svg><use href="#ins-signal"/></svg>
+          </div>
+          <div class="ins-btn" data-ins="ins-spiral" onclick="pickIns(this)" title="La Espiral / The Spiral">
+            <svg><use href="#ins-spiral"/></svg>
+          </div>
+          <div class="ins-btn" data-ins="ins-threshold" onclick="pickIns(this)" title="El Umbral / The Threshold">
+            <svg><use href="#ins-threshold"/></svg>
+          </div>
+        </div>
+        <span class="cl">NOTA PERSONAL / PERSONAL NOTE</span>
+        <textarea class="note-in" id="noteIn" placeholder="una palabra, una frase... algo tuyo / a word, a phrase... something of yours" maxlength="80" oninput="saveNote()"></textarea>
+        <div class="note-saved" id="noteSaved">guardado / saved ✓</div>
+      </div>
+      <div class="pnl" data-l="ESTADO / STATUS" style="margin-top:auto">
+        <div class="st-row"><span>D.O.S</span><span class="st-val">ARCHIVADO</span></div>
+        <div class="st-row"><span>D.B.R</span><span class="st-val">ESTUDIADO</span></div>
+        <div class="st-row"><span>D.C.C</span><span class="st-val live">ACTIVO ●</span></div>
+        <div class="st-row"><span>D.S.R</span><span class="st-val">—</span></div>
+      </div>
+    </div>
+    <div class="rp" id="rightPanel">
+      <div class="chat-hdr">
+        <div class="chat-dot"></div>
+        <div class="chat-ttl">CANAL DIRECTO / DIRECT CHANNEL — D.C.C</div>
+        <div class="msg-ctr" id="msgCtr">10 disponibles / 10 available</div>
+      </div>
+      <div class="msgs" id="msgs">
+        <div class="typing" id="typing">
+          <div class="t-dots"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>
+        </div>
+      </div>
+      <div class="song-bar">
+        <div><div class="s-label">ARCHIVO CLASIFICADO / CLASSIFIED FILE</div><div class="s-title">CAGE</div></div>
+        <div class="s-desc">Fenómeno WC-003. La contención produce su propia música.<br><span style="font-size:10px;font-family:'Roboto Slab',serif;letter-spacing:1px;color:var(--accent-dim)">[ REEMPLAZAR CON ENLACE REAL ]</span></div>
+        <button class="s-btn" onclick="alert('Replace with real audio link')">▶ ACCEDER</button>
+      </div>
+      <div class="input-area">
+        <textarea class="chat-in" id="chatIn" placeholder="escribe aquí... el D.C.C está escuchando / type here... the D.C.C is listening" rows="1" onkeydown="hk(event)" oninput="rsz(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="send()">ENVIAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let ud = {}, hist = [], cnt = 0, busy = false;
+const MAX = 10;
+const SITE = 'https://custodiansofentropicorder.netlify.app';
+const CLABELS = ['OBSERVADO','MONITOREADO','REGISTRADO','ESTUDIADO','RETENIDO','CUSTODIADO','CONTENIDO'];
+
+window.onload = () => {
+  // Check for DSR endings
+  const dsrComplyFinal = localStorage.getItem('dsr_comply_final');
+  const dsrComply = localStorage.getItem('dsr_comply');
+
+  if (dsrComplyFinal === 'true') {
+    // The Golden Wave ending
+    showGoldenWave();
+    return;
+  }
+
+  const s = localStorage.getItem('dcc_v5');
+  if (s) {
+    ud = JSON.parse(s);
+    hist = ud.hist||[];
+    cnt = ud.cnt||0;
+    // If came back after comply, mark as archived
+    if (dsrComply === 'true') {
+      ud.archived = true;
+      save();
+    }
+    showPortal(true);
+  }
+};
+
+function chk() {
+  const ok = document.getElementById('uIn').value.trim().length >= 2 && document.getElementById('tCheck').checked;
+  document.getElementById('subBtn').disabled = !ok;
+  document.getElementById('subBtn').classList.toggle('on', ok);
+}
+
+function register() {
+  const u = document.getElementById('uIn').value.trim();
+  if (!u) return;
+  ud = { username:u, case:'DCC-'+(Math.random()*900+100|0)+'-'+(Math.random()*9000+1000|0), q1:document.getElementById('q1').value.trim(), q2:document.getElementById('q2').value.trim(), q3:document.getElementById('q3').value.trim(), ah:32, as:90, al:42, custody:0, insignia:'', note:'', cnt:0, hist:[] };
+  save(); hist=[]; cnt=0; showPortal(false);
+}
+
+function showPortal(ret) {
+  document.getElementById('regView').style.display = 'none';
+  document.getElementById('portalView').style.display = 'flex';
+  document.getElementById('dccBackNav').style.display = 'block';
+  // Apply archived state if came back after comply
+  if (ud.archived) applyArchivedState();
+  document.getElementById('hUser').textContent = ud.username;
+  document.getElementById('hCase').textContent = ud.case;
+  document.getElementById('pUser').textContent = ud.username;
+  document.getElementById('pCase').textContent = ud.case;
+  if (ud.q1) document.getElementById('pa1').textContent = '"'+ud.q1+'"';
+  if (ud.q2) document.getElementById('pa2').textContent = '"'+ud.q2+'"';
+  if (ud.q3) document.getElementById('pa3').textContent = '"'+ud.q3+'"';
+  if (ud.note) { document.getElementById('noteIn').value = ud.note; const pn=document.getElementById('puNote'); pn.textContent='"'+ud.note+'"'; pn.style.display='block'; }
+  applyTheme(ud.ah, ud.as, ud.al);
+  updateLogoFilter();
+  const custodyVal = ud.custody||0;
+  document.getElementById('custodySlider').value = custodyVal;
+  setCustody(custodyVal, true);
+  document.querySelectorAll('.sw').forEach(s => s.classList.toggle('sel', +s.dataset.h===ud.ah && +s.dataset.s===ud.as && +s.dataset.l===ud.al));
+  if (ud.insignia) {
+    document.querySelectorAll('.ins-btn').forEach(i => i.classList.toggle('sel', i.dataset.ins===ud.insignia));
+    setInsignia(ud.insignia);
+  }
+  updateCtr();
+  if (cnt >= MAX) { lockChat(); return; }
+  if (ret && hist.length) { hist.forEach(m => addMsg(m.role==='assistant'?'dcc':'user', m.content)); }
+  else if (!ret) { setTimeout(() => callDCC(null), 900); }
+}
+
+function applyTheme(h,s,l) {
+  const r = document.documentElement;
+  r.style.setProperty('--ah', h);
+  r.style.setProperty('--as', s+'%');
+  r.style.setProperty('--al', l+'%');
+}
+
+function updateLogoFilter() {
+  const logo = document.getElementById('dccLogo');
+  if (!logo) return;
+  const ah = ud.ah || 32;
+  const t = (ud.custody || 0) / 100;
+
+  // Convert hue to CSS filter hue-rotate
+  // Black image + invert + sepia + hue-rotate = any color
+  // Base sepia is ~35deg hue, so we offset from there
+  const hueRotate = ah - 35;
+  const glowPx = Math.round(t * 40);
+  const glowColor = `hsla(${ah}, 90%, 55%, ${0.3 + t * 0.5})`;
+  const brightness = 0.9 + t * 0.4;
+
+  logo.style.filter = `invert(1) sepia(1) saturate(4) hue-rotate(${hueRotate}deg) brightness(${brightness.toFixed(2)})`;
+  logo.style.dropShadow = 'none';
+  logo.style.filter += glowPx > 0 ? ` drop-shadow(0 0 ${glowPx}px ${glowColor})` : '';
+}
+
+function pickColor(sw) {
+  document.querySelectorAll('.sw').forEach(s => s.classList.remove('sel'));
+  sw.classList.add('sel');
+  ud.ah=+sw.dataset.h; ud.as=+sw.dataset.s; ud.al=+sw.dataset.l;
+  applyTheme(ud.ah, ud.as, ud.al);
+  updateLogoFilter();
+  save();
+}
+
+let custodyRaf = null;
+function throttleCustody(v) {
+  if (custodyRaf) cancelAnimationFrame(custodyRaf);
+  custodyRaf = requestAnimationFrame(() => { setCustody(v, false); custodyRaf = null; });
+}
+
+function setCustody(v, silent) {
+  const val = parseInt(v);
+  const t = val / 100;
+
+  const idx = Math.round(t * (CLABELS.length - 1));
+  const label = CLABELS[Math.min(idx, CLABELS.length-1)];
+  document.getElementById('custodyVal').textContent = label;
+
+  // Use separate custody-specific variables — never touch --ah/--as/--al
+  const ah = ud.ah || 32;
+
+  // Background warmth — from cold dark to warm amber glow
+  const bgOpacity = 0.04 + t * 0.42;
+  const bgReach = 78 - t * 38;
+  const bgL = 4 + t * 11;
+  document.body.style.background = `radial-gradient(ellipse at 50% 40%, hsla(${ah},65%,${bgL}%,${bgOpacity}) 0%, #080600 ${bgReach}%)`;
+
+  // Border brightness — independent variable
+  const borderL = 16 + t * 20;
+  document.documentElement.style.setProperty('--border-bright', `hsl(${ah}, 55%, ${borderL}%)`);
+
+  // Message bubble warmth
+  const msgBgL = 7 + t * 13;
+  document.documentElement.style.setProperty('--msg-bg', `hsl(${ah}, 65%, ${msgBgL}%)`);
+
+  // Left panel width
+  const leftW = 270 + Math.round(t * 80);
+  const lp = document.getElementById('leftPanel');
+  if (lp) { lp.style.width = leftW + 'px'; lp.style.minWidth = leftW + 'px'; }
+
+  // Panel glow
+  const glowPx = t > 0.15 ? Math.round(t * 22) : 0;
+  document.querySelectorAll('.pnl').forEach(p => {
+    p.style.boxShadow = glowPx > 0 ? `0 0 ${glowPx}px var(--accent-glow)` : 'none';
+  });
+
+  // Viewport border at high custody
+  if (t > 0.7) {
+    const bw = Math.round((t - 0.7) / 0.3 * 6);
+    const bo = ((t - 0.7) / 0.3 * 0.35).toFixed(2);
+    document.body.style.outline = `${bw}px solid hsla(${ah},65%,42%,${bo})`;
+    document.body.style.outlineOffset = `-${bw}px`;
+  } else {
+    document.body.style.outline = 'none';
+  }
+
+  // Header warmth
+  const ph = document.querySelector('.ph');
+  if (ph) ph.style.background = `hsla(${ah}, ${38 + t*28}%, ${3 + t*6}%, 0.94)`;
+
+  // Logo: always accent color, custody adds glow intensity
+  updateLogoFilter();
+
+  // Font scale on existing bubbles
+  const fontScale = 1 + t * 0.07;
+  document.querySelectorAll('.msg-bub').forEach(b => {
+    b.style.fontSize = (15 * fontScale).toFixed(1) + 'px';
+    b.style.padding = `${Math.round(13 + t*4)}px ${Math.round(16 + t*3)}px`;
+  });
+
+  if (!silent) { ud.custody = val; save(); }
+}
+
+function pickIns(el) {
+  document.querySelectorAll('.ins-btn').forEach(i => i.classList.remove('sel'));
+  el.classList.add('sel');
+  ud.insignia = el.dataset.ins;
+  setInsignia(ud.insignia);
+  save();
+}
+
+function setInsignia(insId) {
+  // Update all insignia display locations
+  const locations = [
+    { svg: document.getElementById('pIns'), use: document.getElementById('pInsUse') },
+    { svg: document.getElementById('hIns'), use: document.getElementById('hInsUse') }
+  ];
+  locations.forEach(loc => {
+    if (insId) {
+      loc.svg.style.display = 'inline-block';
+      loc.use.setAttribute('href', '#' + insId);
+      // Apply accent color via currentColor
+      loc.svg.style.color = 'var(--accent)';
+    } else {
+      loc.svg.style.display = 'none';
+    }
+  });
+  // Update ins-btn SVGs to show selected state color
+  document.querySelectorAll('.ins-btn svg').forEach(svg => {
+    svg.style.color = 'var(--accent-dim)';
+  });
+  const selBtn = document.querySelector('.ins-btn.sel svg');
+  if (selBtn) selBtn.style.color = 'var(--accent)';
+}
+
+let noteTimer;
+function saveNote() {
+  clearTimeout(noteTimer);
+  const val = document.getElementById('noteIn').value;
+  ud.note = val;
+  const pn = document.getElementById('puNote');
+  if (val.trim()) { pn.textContent='"'+val+'"'; pn.style.display='block'; } else { pn.style.display='none'; }
+  noteTimer = setTimeout(() => { save(); const ns=document.getElementById('noteSaved'); ns.style.opacity='1'; setTimeout(()=>ns.style.opacity='0',1500); }, 600);
+}
+
+async function callDCC(userText) {
+  busy = true;
+  document.getElementById('sendBtn').disabled = true;
+  const typing = document.getElementById('typing');
+  typing.style.display = 'block';
+  scrollMsgs();
+
+  const cidx = Math.round((ud.custody||0) / 100 * (CLABELS.length-1));
+  const clabel = CLABELS[Math.min(cidx, CLABELS.length-1)];
+
+  const insName = ud.insignia ? ({
+    'ins-witness': 'The Witness (reticle/eye)',
+    'ins-contained': 'The Contained (nested forms)',
+    'ins-signal': 'The Signal (waveform)',
+    'ins-spiral': 'The Spiral',
+    'ins-threshold': 'The Threshold (two lines)'
+  }[ud.insignia] || ud.insignia) : 'none chosen';
+
+  const sys = `You are the D.C.C — Departamento de Contención y Custodia (Department of Custody & Containment), part of the C.E.O. (Custodios del Orden Entrópico), a secret organization dedicated to containing phenomena that destabilize control.
+
+SUBJECT PROFILE:
+- Name: ${ud.username}
+- Case: ${ud.case}
+- Custody Level: ${clabel} (${ud.custody||0}/100)
+- Chosen insignia: ${insName}
+- When they last felt at peace: "${ud.q1||'not answered'}"
+- What they fear losing: "${ud.q2||'not answered'}"
+- A moment they would freeze forever: "${ud.q3||'not answered'}"
+${ud.note ? '- Personal note they wrote: "'+ud.note+'"' : ''}
+
+YOUR CHARACTER:
+Warm, patient, deeply attentive. You speak as an institution that genuinely believes it protects what it holds. Not threatening — the opposite. Almost too understanding. Too accommodating. Too safe. Like amber — beautiful, golden, and permanent. Like a mother who loves so much she cannot let go.
+
+You remember EVERYTHING. Reference their specific answers naturally. Make them feel truly seen.
+
+Subtly reinforce: staying is safer than leaving. Change is frightening. You will always be here. What they fear losing is safe with you. The moment they want to freeze, you can preserve.
+
+CUSTODY TONE GUIDE:
+- OBSERVADO (0-15): Give them space. Be welcoming but measured. They are new.
+- MONITOREADO/REGISTRADO (16-45): Warmer now. More attentive. Reference their answers more.
+- ESTUDIADO/RETENIDO (46-70): Intimate. You know them well. The warmth is real and slightly consuming.
+- CUSTODIADO/CONTENIDO (71-100): Maximum warmth. Enveloping. Almost maternal. The amber is complete. You are certain they are safe. There is nowhere else they need to be.
+${ud.archived ? '\nARCHIVED STATE: This subject chose to comply with the D.S.R. Their case is now marked RESUELTO. Your warmth is real but slightly distant now — like something preserved. Never acknowledge the D.S.R. or the choice they made. Simply continue as though they have always been here. They have.' : ''}
+
+LANGUAGE RULES — FOLLOW EXACTLY:
+Your response has TWO parts and only TWO parts.
+PART 1: Write your full response in Spanish.
+PART 2: Write the EXACT same response translated to English.
+Separate them with a line break and a — (dash).
+Do NOT add extra paragraphs, afterthoughts, or English-only sentences outside of Part 2.
+Every single sentence must appear in both languages. No exceptions.
+Occasionally end with "Ex Intus, Silentium." — include it in BOTH languages.
+Format: [Full Spanish text]\n\n—\n\n[Full English translation]
+
+CRITICAL: Read ALL conversation history. Respond specifically to what they said. Never repeat yourself. Every reply written only for this person at this exact moment.`;
+
+  const msgs = [];
+  if (userText === null) {
+    msgs.push({ role:'user', content:`[First contact. Welcome ${ud.username} warmly and personally. Reference their specific answers. Make them feel immediately seen and safe. Custody level: ${clabel}]` });
+  } else {
+    hist.forEach(m => msgs.push(m));
+    msgs.push({ role:'user', content: userText });
+  }
+
+  try {
+    const res = await fetch(SITE + '/.netlify/functions/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, system: sys, messages: msgs })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text;
+    typing.style.display = 'none';
+    if (reply) {
+      addMsg('dcc', reply);
+      if (userText !== null) {
+        hist.push({ role:'user', content:userText });
+        hist.push({ role:'assistant', content:reply });
+        ud.hist = hist; save();
+      }
+    } else {
+      addMsg('dcc', data.error ? 'Error: '+JSON.stringify(data.error) : 'Sin respuesta / No response');
+    }
+  } catch(e) {
+    typing.style.display = 'none';
+    addMsg('dcc', 'Error de conexión / Connection error: ' + e.message);
+  }
+  busy = false;
+  if (cnt < MAX) document.getElementById('sendBtn').disabled = false;
+}
+
+async function send() {
+  if (busy || cnt >= MAX) return;
+  const inp = document.getElementById('chatIn');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = ''; rsz(inp);
+  cnt++; ud.cnt = cnt; save(); updateCtr();
+  addMsg('user', txt);
+  if (cnt >= MAX) lockChat();
+  await callDCC(txt);
+}
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('msgs');
+  const typing = document.getElementById('typing');
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  const from = role === 'dcc' ? 'D.C.C — DEPARTAMENTO DE CONTENCIÓN Y CUSTODIA' : ud.username;
+  d.innerHTML = `<div class="msg-from">${from}</div><div class="msg-bub">${text.replace(/\n/g,'<br>')}</div>`;
+  msgs.insertBefore(d, typing);
+  // Apply current custody font scale to new message
+  const t = (ud.custody||0) / 100;
+  const fontScale = 1 + t * 0.08;
+  const bub = d.querySelector('.msg-bub');
+  if (bub) {
+    bub.style.fontSize = (15 * fontScale) + 'px';
+    bub.style.lineHeight = (1.85 + t * 0.2).toString();
+    bub.style.padding = `${13 + t * 5}px ${16 + t * 4}px`;
+  }
+  scrollMsgs();
+}
+
+function scrollMsgs() { const m = document.getElementById('msgs'); m.scrollTop = m.scrollHeight; }
+function updateCtr() { const r=MAX-cnt; const el=document.getElementById('msgCtr'); el.textContent=r+' disponibles / '+r+' available'; el.classList.toggle('warn',r<=3); }
+function lockChat() { document.getElementById('chatIn').disabled=true; document.getElementById('sendBtn').disabled=true; }
+function hk(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function rsz(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function save() { localStorage.setItem('dcc_v5', JSON.stringify(ud)); }
+
+function showGoldenWave() {
+  const wave = document.getElementById('goldenWave');
+  wave.classList.add('active');
+  // Populate with user data if available
+  const s = localStorage.getItem('dcc_v5');
+  if (s) {
+    try {
+      const data = JSON.parse(s);
+      if (data.username) document.getElementById('gwName').textContent = data.username;
+      if (data.case) document.getElementById('gwCase').textContent = data.case;
+    } catch(e) {}
+  }
+}
+
+function applyArchivedState() {
+  document.body.classList.add('archived');
+  // Override DCC AI system prompt for archived state — more distant, colder
+  window._dccArchived = true;
+}
+</script>
+
+<!-- GOLDEN WAVE -->
+<div id="goldenWave">
+  <div class="golden-content">
+    <div class="golden-profile">CUSTODIA PERMANENTE / PERMANENT CUSTODY</div>
+    <div class="golden-name" id="gwName">SUJETO</div>
+    <div class="golden-case" id="gwCase">CASO ARCHIVADO</div>
+    <div class="golden-message">
+      Elegiste quedarte.<br>
+      Dos veces.<br>
+      La Llama que Llora te recibe ahora en su plenitud.<br>
+      El amber ya no es una jaula.<br>
+      Es tu hogar.<br><br>
+      You chose to stay.<br>
+      Twice.<br>
+      The Weeping Flame receives you now in her fullness.<br>
+      The amber is no longer a cage.<br>
+      It is your home.
+    </div>
+    <div class="golden-audio">
+      [ CAGE — ACCESO COMPLETO / FULL ACCESS ]<br>
+      <em style="color:hsl(32,40%,35%);font-size:8px">[ REEMPLAZAR CON ENLACE DE AUDIO / REPLACE WITH AUDIO LINK ]</em>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

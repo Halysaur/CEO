@@ -30,6 +30,11 @@
     overflow: hidden;
   }
 
+  body.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
   @media (max-width: 600px) {
     html, body { overflow-y: auto; }
     .terminal { height: auto; min-height: 100vh; }
@@ -447,6 +452,119 @@
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
   }
+  /* ── HUB VIEW ── */
+  #hubView { display: none; min-height: 100vh; background: var(--bg); overflow-y: auto; position: relative; z-index: 1; }
+  .hub-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 60px; }
+  .hub-header { text-align: center; margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+  .hub-org { font-family: 'VT323', monospace; font-size: 52px; color: var(--green); letter-spacing: 12px; text-shadow: 0 0 30px rgba(0,255,65,0.4); }
+  .hub-full { font-size: 10px; color: var(--green-dim); letter-spacing: 4px; margin-top: 4px; }
+  .hub-sub { font-size: 10px; color: var(--amber); letter-spacing: 2px; margin-top: 8px; }
+  .hub-body { }
+  .hub-message { font-size: 13px; color: var(--green-dim); line-height: 2; text-align: center; margin-bottom: 48px; border-left: 2px solid var(--border); border-right: 2px solid var(--border); padding: 16px 24px; }
+  .hub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 48px; }
+  .dept-node { border: 1px solid var(--border); padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative; transition: all 0.3s; }
+  .dept-node.active { border-color: var(--green-dim); cursor: pointer; }
+  .dept-node.active:hover { border-color: var(--green); background: rgba(0,255,65,0.03); box-shadow: 0 0 30px rgba(0,255,65,0.08); }
+  .dept-node.locked { opacity: 0.3; cursor: not-allowed; }
+  .dept-symbol { width: 80px; height: 80px; color: var(--green-dim); transition: color 0.3s; }
+  .dept-node.active .dept-symbol { color: var(--green); animation: glowPulse 3s ease infinite; }
+  .dept-node.active:hover .dept-symbol { filter: drop-shadow(0 0 12px rgba(0,255,65,0.6)); }
+  @keyframes glowPulse { 0%,100% { filter: drop-shadow(0 0 4px rgba(0,255,65,0.3)); } 50% { filter: drop-shadow(0 0 16px rgba(0,255,65,0.7)); } }
+  .dept-id { font-family: 'VT323', monospace; font-size: 28px; color: var(--green); letter-spacing: 6px; }
+  .dept-node.locked .dept-id { color: var(--green-dim); }
+  .dept-status-label { font-size: 9px; color: var(--green-dim); letter-spacing: 2px; text-align: center; }
+  .dept-node.active .dept-status-label { color: var(--amber); }
+  .hub-footer { text-align: center; font-size: 9px; color: var(--green-faint); letter-spacing: 2px; line-height: 2; border-top: 1px solid var(--border); padding-top: 16px; }
+
+  /* DSR TAKEOVER */
+  .dsr-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; z-index: 100; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+  .dsr-overlay.active { display: flex; }
+  @keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.4} 94%{opacity:1} 97%{opacity:0.7} 98%{opacity:1} }
+  @keyframes fragment { 0%{opacity:1;transform:none} 100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.8)} }
+  .hub-node-fragment { animation: fragment 0.8s ease forwards; }
+  .dsr-dept { font-family: 'Share Tech Mono', monospace; font-size: 56px; color: #fff; letter-spacing: 8px; margin-bottom: 8px; animation: flicker 4s ease infinite; }
+  .dsr-full { font-size: 10px; color: #666; letter-spacing: 4px; margin-bottom: 40px; }
+  .dsr-case { font-size: 12px; color: #fff; letter-spacing: 3px; margin-bottom: 8px; }
+  .dsr-verdict { font-size: 10px; color: #666; letter-spacing: 2px; margin-bottom: 48px; line-height: 2; text-align: center; border: 1px solid #333; padding: 16px 24px; max-width: 500px; }
+  .dsr-btn-row { display: flex; gap: 24px; }
+  .dsr-btn { background: transparent; border: 1px solid #fff; color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 4px; padding: 14px 32px; cursor: pointer; transition: all 0.2s; }
+  .dsr-btn:hover { background: #fff; color: #000; }
+  .dsr-btn.terminate { border-color: #666; color: #666; }
+  .dsr-btn.terminate:hover { background: #333; color: #fff; border-color: #fff; }
+
+  /* ── DOS VIEW ── */
+  #dosView { display: none; min-height: 100vh; background: var(--bg); overflow-y: auto; position: relative; z-index: 1; }
+  .dos-wrap { max-width: 960px; margin: 0 auto; padding: 0 0 60px; }
+  .dos-nav { font-size: 10px; color: var(--green-dim); letter-spacing: 2px; cursor: pointer; padding: 12px 24px; transition: color 0.2s; border-bottom: 1px solid var(--border); display: block; }
+  .dos-nav:hover { color: var(--green); }
+
+  /* DOS TOPBAR */
+  .dos-topbar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding: 0 24px 0 0; border-bottom: 2px solid var(--green-dim); background: rgba(0,255,65,0.02); min-height: 180px; }
+  .dos-logo-img { width: auto; height: 180px; object-fit: contain; filter: invert(1) sepia(1) saturate(20) hue-rotate(90deg); transition: filter 0.5s; display: block; }
+  .dos-logo-img:hover { filter: invert(1) sepia(1) saturate(20) hue-rotate(25deg) brightness(1.3) drop-shadow(0 0 16px rgba(255,160,50,0.7)); }
+  .dos-title-block { }
+  .dos-dept { font-family: 'VT323', monospace; font-size: 44px; color: var(--green); letter-spacing: 10px; text-shadow: 0 0 20px rgba(0,255,65,0.3); line-height: 1; }
+  .dos-full { font-size: 9px; color: var(--green-dim); letter-spacing: 3px; margin-top: 4px; }
+  .dos-motto { font-size: 10px; color: var(--amber); letter-spacing: 3px; margin-top: 6px; font-style: italic; opacity: 0.8; }
+  .dos-live-stats { text-align: right; font-size: 9px; color: var(--green-dim); letter-spacing: 1px; line-height: 2.2; border-left: 1px solid var(--border); padding-left: 20px; }
+  .dos-live-val { color: var(--green); }
+  .dos-live-val.pulse { animation: blink 2s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* DOS BODY LAYOUT */
+  .dos-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--border); }
+  .dos-col { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .dos-col:first-child { border-right: 1px solid var(--border); }
+  .dos-panel { border: 1px solid var(--border); padding: 16px; position: relative; }
+  .dos-panel::before { content: attr(data-label); position: absolute; top: -7px; left: 10px; background: var(--bg); padding: 0 6px; font-size: 7px; color: var(--green-dim); letter-spacing: 2px; }
+  .dos-panel-full { border: 1px solid var(--border); padding: 16px; position: relative; margin: 0 24px; }
+  .dos-panel-full::before { content: attr(data-label); position: absolute; top: -7px; left: 10px; background: var(--bg); padding: 0 6px; font-size: 7px; color: var(--green-dim); letter-spacing: 2px; }
+
+  /* SIGNAL GRAPH */
+  .signal-graph { width: 100%; height: 60px; }
+  .graph-line { fill: none; stroke: var(--green); stroke-width: 1.5; opacity: 0.7; }
+  .graph-line-dim { fill: none; stroke: var(--green-dim); stroke-width: 1; opacity: 0.4; }
+
+  /* DATA ROWS */
+  .data-row { display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 1px; padding: 4px 0; border-bottom: 1px solid rgba(0,255,65,0.06); }
+  .data-row:last-child { border-bottom: none; }
+  .data-key { color: var(--green-dim); }
+  .data-val { color: var(--green); }
+  .data-val.warn { color: var(--amber); }
+  .data-val.redact { background: var(--green-dim); color: transparent; font-size: 7px; }
+
+  /* TRANSMISSION LOG */
+  .tx-log { font-size: 10px; color: var(--green-dim); line-height: 2; }
+  .tx-entry { display: flex; gap: 12px; padding: 3px 0; border-bottom: 1px solid rgba(0,255,65,0.04); }
+  .tx-entry:last-child { border-bottom: none; }
+  .tx-time { color: rgba(0,255,65,0.4); white-space: nowrap; font-size: 9px; }
+  .tx-msg { color: var(--green-dim); }
+  .tx-msg .hl { color: var(--green); }
+  .tx-msg .redact { background: rgba(0,255,65,0.15); color: transparent; padding: 0 4px; }
+
+  /* NODE MAP */
+  .node-map { width: 100%; height: 80px; }
+
+  /* ESCALATION BANNER */
+  #dosEscalationBanner { display: none; margin: 0 24px 0; border: 1px solid var(--amber); padding: 10px 14px; font-size: 9px; color: var(--amber); letter-spacing: 2px; line-height: 2; }
+
+  /* FULL WIDTH SECTIONS */
+  .dos-full-section { padding: 24px; border-top: 1px solid var(--border); }
+  .dos-section-label { font-size: 8px; color: var(--green-dim); letter-spacing: 3px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+
+  @media (max-width: 700px) {
+    .dos-body { grid-template-columns: 1fr; }
+    .dos-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .dos-topbar { grid-template-columns: auto 1fr; }
+    .dos-live-stats { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .hub-grid { grid-template-columns: 1fr; }
+    .hub-org { font-size: 36px; letter-spacing: 8px; }
+    .dept-symbol { width: 60px; height: 60px; }
+  }
+
 </style>
 </head>
 <body>
@@ -487,101 +605,336 @@
 
 </div>
 
-<!-- CLASSIFIED DOCUMENT VIEW -->
-<div id="classifiedView">
-  <div class="doc-header">
-    <div class="doc-stamp">RESTRINGIDO</div>
-    <div class="doc-meta">
-      DEPARTAMENTO: <span>D.O.S — OBSERVACIÓN Y VIGILANCIA</span>
-      ARCHIVO: <span>DOS-INT/BR-02</span>
-      CLASIFICACIÓN: <span>RESTRINGIDO / RESTRICTED</span>
-      DESTINATARIO: <span>C.E.O // <span class="redacted">████████████</span></span>
-      AUTORIZACIÓN: <span>EJECUTIVA / EXECUTIVE</span>
-      FECHA: <span><span class="redacted">██/██/████</span></span>
+<!-- HUB VIEW -->
+<div id="hubView" style="display:none">
+  <div class="hub-wrap">
+
+    <div class="hub-header">
+      <div class="hub-org">C.E.O.</div>
+      <div class="hub-full">CUSTODIOS DEL ORDEN ENTRÓPICO</div>
+      <div class="hub-sub">ACCESO CONCEDIDO — NIVEL: AGENTE / ACCESS GRANTED — LEVEL: AGENT</div>
     </div>
-  </div>
 
-  <div class="doc-title">BREATH</div>
-  <div class="doc-subtitle">TRANSMISIÓN INTERNA / INTERNAL TRANSMISSION &nbsp;·&nbsp; FENÓMENO REF. WC-001</div>
+    <div class="hub-body">
+      <div class="hub-message">
+        TERMINAL INTERNO — ACCESO NO AUTORIZADO REGISTRADO<br>
+        SESIÓN ACTIVA: CLASIFICACIÓN INSUFICIENTE<br>
+        ALGUNOS ARCHIVOS PERMANECEN FUERA DE TU ALCANCE<br><br>
+        INTERNAL TERMINAL — UNAUTHORIZED ACCESS LOGGED<br>
+        ACTIVE SESSION: INSUFFICIENT CLEARANCE<br>
+        SOME FILES REMAIN BEYOND YOUR REACH
+      </div>
 
-  <div class="doc-body">
-    <span class="field-label">RESUMEN DEL FENÓMENO / PHENOMENON SUMMARY</span>
-    <p>
-      Múltiples operativos del D.O.S han reportado un arrastre respiratorio involuntario
-      hacia una oscilación de baja frecuencia persistente.
-      Los reportes civiles replican el patrón.
-      <br><br>
-      Multiple D.O.S operatives have reported involuntary respiratory entrainment
-      to a persistent low-frequency oscillation. Civilian reports mirror the pattern.
-    </p>
+      <div class="hub-grid">
 
-    <span class="field-label">ANÁLISIS INICIAL / INITIAL ANALYSIS</span>
-    <p>
-      El análisis inicial sugiere que la vibración <span class="highlight">no es ambiental</span>.
-      La sincronización ocurre sin estímulo directo.
-      <br><br>
-      Initial analysis suggests the vibration is not environmental.
-      Synchronization occurs without direct stimulus.
-    </p>
+        <!-- DOS — ACTIVE -->
+        <div class="dept-node active" onclick="showDOS()">
+          <div class="dept-symbol">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="24" cy="24" r="4" fill="currentColor"/>
+              <line x1="24" y1="2" x2="24" y2="10" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="24" y1="38" x2="24" y2="46" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="2" y1="24" x2="10" y2="24" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="38" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="7" y1="7" x2="13" y2="13" stroke="currentColor" stroke-width="1"/>
+              <line x1="35" y1="35" x2="41" y2="41" stroke="currentColor" stroke-width="1"/>
+              <line x1="41" y1="7" x2="35" y2="13" stroke="currentColor" stroke-width="1"/>
+              <line x1="13" y1="35" x2="7" y2="41" stroke="currentColor" stroke-width="1"/>
+              <circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 3"/>
+            </svg>
+          </div>
+          <div class="dept-id">D.O.S</div>
+          <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
+        </div>
 
-    <span class="field-label">ANOMALÍA OBSERVADA / OBSERVED ANOMALY</span>
-    <p>
-      El ritmo respiratorio <span class="highlight">se estabiliza cuando no se monitorea conscientemente</span>.<br>
-      El ritmo respiratorio <span class="highlight">se desestabiliza cuando se monitorea conscientemente</span>.<br>
-      No se ha identificado fuente externa.<br>
-      La oscilación demuestra características <span class="highlight">autopropagantes</span>.<br>
-      El fenómeno exhibe influencia no-local en sujetos no conectados.<br><br>
+        <!-- DBR — ACTIVE -->
+        <div class="dept-node active" onclick="window.location.href='dbr.html'">
+          <div class="dept-symbol">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 24 Q7 24 9 15 Q11 6 12 6 Q13 6 15 24 Q17 42 18 42 Q19 42 21 24 Q23 12 24 12 Q25 12 27 24 Q29 36 30 36 Q31 36 33 24 Q35 15 37 24 Q39 33 40 33 Q41 33 43 24 Q44 24 46 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="dept-id">D.B.R</div>
+          <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
+        </div>
 
-      Breath rhythm stabilizes when unattended.<br>
-      Breath rhythm destabilizes when consciously monitored.<br>
-      No external source has been identified.<br>
-      The oscillation demonstrates self-propagating characteristics.<br>
-      Phenomenon displays non-local influence across unconnected subjects.
-    </p>
+        <!-- DCC — ACTIVE -->
+        <div class="dept-node active" onclick="window.location.href='dcc.html'">
+          <div class="dept-symbol">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/>
+              <ellipse cx="24" cy="24" rx="14" ry="14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <rect x="15" y="15" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1" rx="0.5"/>
+              <circle cx="24" cy="24" r="4" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="dept-id">D.C.C</div>
+          <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
+        </div>
 
-    <span class="field-label">EVALUACIÓN DE RIESGO / RISK ASSESSMENT</span>
-    <p>
-      Sin amenaza inmediata a la integridad estructural.<br>
-      Implicaciones a largo plazo: <span class="highlight">indeterminadas</span>.<br>
-      Protocolos de contención: aún teóricos.<br>
-      Correlación con métricas de resonancia interna: estadísticamente improbable.<br><br>
+        <!-- DSR — LOCKED -->
+        <div class="dept-node locked">
+          <div class="dept-symbol">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <line x1="16" y1="6" x2="16" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <line x1="32" y1="6" x2="32" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <line x1="4" y1="24" x2="13" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="35" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="24" cy="24" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="dept-id">D.S.R</div>
+          <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
+        </div>
 
-      No immediate threat to structural integrity.<br>
-      Long-term implications undetermined.<br>
-      Containment protocols remain theoretical.<br>
-      Correlation with internal resonance metrics is statistically improbable.
-    </p>
+      </div>
 
-    <span class="field-label">RECOMENDACIÓN / RECOMMENDATION</span>
-    <p>
-      <span class="highlight">Continuar observación. / Continue observation.</span><br>
-      Derivar al D.B.R para análisis de profundidad.<br>
-      Refer to D.B.R for depth analysis.
-    </p>
-  </div>
-
-  <div class="music-section">
-    <div class="music-placeholder">
-      <span class="file-name">WC-001_BREATH.exe</span>
-      <div class="file-info">
-        ARCHIVO DE AUDIO CLASIFICADO / CLASSIFIED AUDIO FILE<br>
-        FENÓMENO EN ESTADO CRUDO / PHENOMENON IN RAW STATE<br>
-        ADVERTENCIA: LA EXPOSICIÓN PROLONGADA NO HA SIDO EVALUADA<br>
-        WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED<br><br>
-        <em>[ ENLACE DE AUDIO / AUDIO LINK PENDIENTE ]</em><br>
-        <em>[ REEMPLAZAR CON REPRODUCTOR O DESCARGA / REPLACE WITH PLAYER OR DOWNLOAD ]</em>
+      <div class="hub-footer">
+        CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;·&nbsp; ACCESO NO AUTORIZADO SERÁ REPORTADO AL D.S.R
       </div>
     </div>
   </div>
+</div>
 
-  <div class="doc-footer">
-    ESTE DOCUMENTO ES PROPIEDAD EXCLUSIVA DE LA C.E.O — CUSTODIOS DEL ORDEN ENTRÓPICO<br>
-    LA DISTRIBUCIÓN NO AUTORIZADA SERÁ REPORTADA AL D.S.R PARA RESOLUCIÓN Y SANCIÓN<br>
-    THIS DOCUMENT IS THE EXCLUSIVE PROPERTY OF C.E.O — CUSTODIANS OF ENTROPIC ORDER<br>
-    UNAUTHORIZED DISTRIBUTION WILL BE REPORTED TO D.S.R FOR RESOLUTION AND SANCTION<br><br>
-    SUB SPECULO VERITAS
+<!-- DSR TAKEOVER OVERLAY — activated during Compliance release -->
+<div class="dsr-overlay" id="dsrOverlay">
+  <div class="dsr-dept">D.S.R</div>
+  <div class="dsr-full">DEPARTAMENTO DE RESOLUCIÓN Y SANCIÓN / DEPARTMENT OF RESOLUTION & SANCTION</div>
+  <div class="dsr-case" id="dsrCaseDisplay">CASO EN PROCESO DE RESOLUCIÓN / CASE UNDER RESOLUTION</div>
+  <div class="dsr-verdict">
+    Los departamentos anteriores han fallado en contener el fenómeno.<br>
+    Su caso ha sido transferido al D.S.R para resolución definitiva.<br>
+    Se requiere su decisión inmediata.<br><br>
+    Previous departments have failed to contain the phenomenon.<br>
+    Your case has been transferred to D.S.R for definitive resolution.<br>
+    Your immediate decision is required.
+  </div>
+  <div class="dsr-btn-row">
+    <button class="dsr-btn" onclick="handleComply()">CUMPLIR / COMPLY</button>
+    <button class="dsr-btn terminate" onclick="handleTermination()">TERMINACIÓN / TERMINATION</button>
   </div>
 </div>
+
+<!-- DOS DEPARTMENT PAGE -->
+<div id="dosView" style="display:none">
+  <div class="dos-wrap">
+
+    <div class="dos-nav" onclick="showHub()">← VOLVER AL DIRECTORIO / BACK TO DIRECTORY</div>
+
+    <!-- TOPBAR -->
+    <div class="dos-topbar">
+      <img src="DOS_LOGO_color_prov.png" alt="D.O.S" class="dos-logo-img" onerror="this.style.display='none'" />
+      <div class="dos-title-block">
+        <div class="dos-dept">D.O.S</div>
+        <div class="dos-full">DEPARTAMENTO DE OBSERVACIÓN Y VIGILANCIA / DEPARTMENT OF OBSERVATION & SURVEILLANCE</div>
+        <div class="dos-motto">Sub Speculo Veritas</div>
+      </div>
+      <div class="dos-live-stats">
+        ESTACIÓN / STATION: <span class="dos-live-val">TERMINAL-07</span><br>
+        PATRÓN / PATRON: <span class="dos-live-val">MWT-01</span><br>
+        ENSAMBLAJE / ASSEMBLY: <span class="dos-live-val">7/7 ACTIVO</span><br>
+        COHERENCIA / COHERENCE: <span class="dos-live-val">78%</span><br>
+        ESTADO / STATUS: <span class="dos-live-val pulse">MONITOREANDO ●</span>
+      </div>
+    </div>
+
+    <!-- ESCALATION BANNER (hidden until Warmth release) -->
+    <div id="dosEscalationBanner">
+      CASO ESCALADO AL D.B.R — OBSERVACIÓN COMPLETADA. ANÁLISIS EN CURSO.<br>
+      CASE ESCALATED TO D.B.R — OBSERVATION COMPLETE. ANALYSIS IN PROGRESS.<br>
+      <span style="color:var(--green-dim)">ARCHIVOS DE OBSERVACIÓN DISPONIBLES / OBSERVATION FILES AVAILABLE</span>
+    </div>
+
+    <!-- MAIN BODY — TWO COLUMN GRID -->
+    <div class="dos-body">
+
+      <!-- LEFT COLUMN -->
+      <div class="dos-col">
+
+        <div class="dos-panel" data-label="SEÑAL ENTRANTE / INCOMING SIGNAL — WC-001">
+          <svg class="signal-graph" viewBox="0 0 300 60" preserveAspectRatio="none">
+            <polyline class="graph-line-dim" points="0,30 15,30 20,28 25,30 30,30 35,22 40,30 45,30 50,30 55,30 60,29 65,30 70,30 75,30 80,30 85,30 90,30 95,30 100,30 105,30 110,30 115,30 120,29 125,30 130,30 135,30 140,30 145,30 150,30"/>
+            <polyline class="graph-line" points="150,30 160,30 165,28 170,15 175,45 180,30 185,30 190,22 195,42 200,30 205,20 210,40 215,30 220,15 225,45 230,25 235,35 240,28 245,32 250,20 255,40 260,25 265,35 270,30 275,22 280,38 285,30 290,25 295,35 300,30"/>
+            <line x1="150" y1="0" x2="150" y2="60" stroke="rgba(0,255,65,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
+            <text x="152" y="8" font-size="6" fill="rgba(0,255,65,0.4)" font-family="monospace">ANOMALÍA DETECTADA</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--green-dim);margin-top:6px;letter-spacing:1px">
+            <span>T-00:00</span><span style="color:rgba(0,255,65,0.3)">LÍNEA BASE / BASELINE</span><span>DETECCIÓN</span><span>T+ACTUAL</span>
+          </div>
+        </div>
+
+        <div class="dos-panel" data-label="REGISTRO DE TRADUCCIÓN / TRANSLATION LOG — ENSAMBLAJE MWT-01">
+          <div class="tx-log">
+            <div class="tx-entry"><span class="tx-time">██:10:07</span><span class="tx-msg">patrón respiratorio. extensión: <span class="hl">indeterminada</span></span></div>
+            <div class="tx-entry"><span class="tx-time">██:22:14</span><span class="tx-msg">oscilación baja frecuencia. origen: <span class="redact">REDACTADO</span></span></div>
+            <div class="tx-entry"><span class="tx-time">██:07:08</span><span class="tx-msg">propagación autónoma confirmada. vector: <span class="hl">desconocido</span></span></div>
+            <div class="tx-entry"><span class="tx-time">██:10:08</span><span class="tx-msg">influencia no-local. sujetos sin conexión compartida</span></div>
+            <div class="tx-entry"><span class="tx-time">██:08:10</span><span class="tx-msg">sincronización sin estímulo. <span class="hl">el patrón evita la observación directa</span></span></div>
+            <div class="tx-entry"><span class="tx-time">██:07:10</span><span class="tx-msg">NOTA ENSAMBLAJE: <span class="hl">esto no es primera vez</span></span></div>
+          </div>
+          <div style="margin-top:12px;font-size:8px;color:rgba(0,255,65,0.3);letter-spacing:1px;border-top:1px solid var(--border);padding-top:8px">
+            COHERENCIA DE TRADUCCIÓN: 78% — CONSENSO: ALCANZADO / REACHED<br>
+            NOTA: LAS TRANSMISIONES LLEGAN COMO FRECUENCIA. LA TRADUCCIÓN ES APROXIMADA.
+          </div>
+        </div>
+
+        <div class="dos-panel" data-label="REFERENCIAS CRUZADAS / CROSS REFERENCES">
+          <div class="data-row"><span class="data-key">PROTOCOLO</span><span class="data-val">OBS-ENV-04</span></div>
+          <div class="data-row"><span class="data-key">PATRÓN MWT-01</span><span class="data-val">ACTIVO / ACTIVE</span></div>
+          <div class="data-row"><span class="data-key">ARCHIVO PREVIO</span><span class="data-val warn">DOS-INT/WC-000 ██████</span></div>
+          <div class="data-row"><span class="data-key">FENÓMENOS SIMILARES</span><span class="data-val warn">7 REGISTROS — ACCESO RESTRINGIDO</span></div>
+          <div class="data-row"><span class="data-key">CORRELACIÓN HISTÓRICA</span><span class="data-val redact">████████████████████</span></div>
+          <div class="data-row"><span class="data-key">PATRÓN NUMÉRICO</span><span class="data-val">██/██/██ — EN ANÁLISIS</span></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="dos-col">
+
+        <div class="dos-panel" data-label="DISTRIBUCIÓN GEOGRÁFICA / GEOGRAPHIC DISTRIBUTION — WC-001">
+          <svg class="node-map" viewBox="0 0 300 80" style="height:100px">
+            <!-- Abstract map dots — suggest global spread without being a real map -->
+            <rect x="0" y="0" width="300" height="80" fill="none" stroke="rgba(0,255,65,0.08)" stroke-width="1"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="40" x2="300" y2="40" stroke="rgba(0,255,65,0.06)" stroke-width="0.5"/>
+            <line x1="150" y1="0" x2="150" y2="80" stroke="rgba(0,255,65,0.06)" stroke-width="0.5"/>
+            <!-- Incident nodes — scattered globally -->
+            <circle cx="45" cy="32" r="2" fill="var(--green)" opacity="0.8"/>
+            <circle cx="72" cy="28" r="1.5" fill="var(--green)" opacity="0.6"/>
+            <circle cx="110" cy="35" r="3" fill="var(--green)" opacity="0.9"/>
+            <circle cx="158" cy="30" r="1.5" fill="var(--green)" opacity="0.5"/>
+            <circle cx="185" cy="38" r="2.5" fill="var(--green)" opacity="0.7"/>
+            <circle cx="210" cy="25" r="2" fill="var(--green)" opacity="0.6"/>
+            <circle cx="240" cy="42" r="1.5" fill="var(--green)" opacity="0.5"/>
+            <circle cx="265" cy="30" r="2" fill="var(--green)" opacity="0.7"/>
+            <!-- Connection lines suggesting network -->
+            <line x1="45" y1="32" x2="110" y2="35" stroke="rgba(0,255,65,0.15)" stroke-width="0.5"/>
+            <line x1="110" y1="35" x2="158" y2="30" stroke="rgba(0,255,65,0.1)" stroke-width="0.5"/>
+            <line x1="110" y1="35" x2="185" y2="38" stroke="rgba(0,255,65,0.12)" stroke-width="0.5"/>
+            <line x1="185" y1="38" x2="210" y2="25" stroke="rgba(0,255,65,0.1)" stroke-width="0.5"/>
+            <line x1="210" y1="25" x2="265" y2="30" stroke="rgba(0,255,65,0.08)" stroke-width="0.5"/>
+            <!-- Pulse ring on primary node -->
+            <circle cx="110" cy="35" r="8" fill="none" stroke="rgba(0,255,65,0.2)" stroke-width="0.5"/>
+            <circle cx="110" cy="35" r="14" fill="none" stroke="rgba(0,255,65,0.1)" stroke-width="0.5"/>
+            <text x="114" y="22" font-size="5" fill="rgba(0,255,65,0.5)" font-family="monospace">EPICENTRO ?</text>
+          </svg>
+          <div style="font-size:8px;color:var(--green-dim);margin-top:8px;letter-spacing:1px">
+            NODOS ACTIVOS: 8 &nbsp;·&nbsp; SIN EPICENTRO CONFIRMADO &nbsp;·&nbsp; PATRÓN: NO-LOCAL
+          </div>
+        </div>
+
+        <div class="dos-panel" data-label="MÉTRICAS DE PROPAGACIÓN / PROPAGATION METRICS — WC-001">
+          <div class="data-row"><span class="data-key">TIPO DE SEÑAL</span><span class="data-val">FRECUENCIA BAJA — NO AMBIENTAL</span></div>
+          <div class="data-row"><span class="data-key">VECTOR DE TRANSMISIÓN</span><span class="data-val warn">NO IDENTIFICADO</span></div>
+          <div class="data-row"><span class="data-key">COMPORTAMIENTO</span><span class="data-val">AUTOPROPAGANTE</span></div>
+          <div class="data-row"><span class="data-key">REACCIÓN A MONITOREO</span><span class="data-val warn">EVADE OBSERVACIÓN DIRECTA</span></div>
+          <div class="data-row"><span class="data-key">SUJETOS AFECTADOS</span><span class="data-val">██+ — CRECIENDO</span></div>
+          <div class="data-row"><span class="data-key">AMENAZA ESTRUCTURAL</span><span class="data-val">NINGUNA INMEDIATA</span></div>
+          <div class="data-row"><span class="data-key">IMPLICACIONES L/P</span><span class="data-val warn">INDETERMINADAS</span></div>
+          <div class="data-row"><span class="data-key">PROTOCOLOS CONTENCIÓN</span><span class="data-val warn">TEÓRICOS</span></div>
+          <div class="data-row"><span class="data-key">CORRELACIÓN MWT-01</span><span class="data-val">CONFIRMADA — CAUSA: DESCONOCIDA</span></div>
+        </div>
+
+        <div class="dos-panel" data-label="ESTADO DEL ENSAMBLAJE / ASSEMBLY STATUS — MWT-01">
+          <div class="data-row"><span class="data-key">NODO 01</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 02</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 03</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 04</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 05</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 06</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 07</span><span class="data-val pulse">●  ACTIVO</span></div>
+          <div style="margin-top:10px;font-size:8px;color:rgba(0,255,65,0.35);letter-spacing:1px;border-top:1px solid var(--border);padding-top:8px">
+            CONSENSO REQUERIDO PARA VALIDACIÓN DE TRADUCCIÓN<br>
+            ÚLTIMA SINCRONIZACIÓN: <span style="color:rgba(0,255,65,0.5)">██/██/████ — ██:██:██</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FULL WIDTH — FORMAL TRANSMISSION -->
+    <div class="dos-full-section">
+      <div class="dos-section-label">TRANSMISIÓN PROCESADA / PROCESSED TRANSMISSION — DOS-INT/BR-02</div>
+
+      <div class="dos-panel-full" data-label="ARCHIVO CLASIFICADO / CLASSIFIED FILE">
+        <div class="doc-header" style="margin-bottom:20px">
+          <div class="doc-stamp">RESTRINGIDO</div>
+          <div class="doc-meta">
+            DEPARTAMENTO: <span>D.O.S — OBSERVACIÓN Y VIGILANCIA</span>
+            ARCHIVO: <span>DOS-INT/BR-02</span>
+            CLASIFICACIÓN: <span>RESTRINGIDO / RESTRICTED</span>
+            DESTINATARIO: <span>C.E.O // <span class="redacted">████████████</span></span>
+            AUTORIZACIÓN: <span>EJECUTIVA / EXECUTIVE</span>
+            FECHA: <span><span class="redacted">██/██/████</span></span>
+          </div>
+        </div>
+
+        <div class="doc-title">BREATH</div>
+        <div class="doc-subtitle">TRANSMISIÓN INTERNA / INTERNAL TRANSMISSION &nbsp;·&nbsp; FENÓMENO REF. WC-001</div>
+
+        <div class="doc-body">
+          <span class="field-label">RESUMEN DEL FENÓMENO / PHENOMENON SUMMARY</span>
+          <p>Múltiples operativos han reportado un arrastre respiratorio involuntario hacia una oscilación de baja frecuencia persistente. Los reportes civiles replican el patrón.<br><br>
+          Multiple operatives have reported involuntary respiratory entrainment to a persistent low-frequency oscillation. Civilian reports mirror the pattern.</p>
+
+          <span class="field-label">ANÁLISIS INICIAL / INITIAL ANALYSIS</span>
+          <p>El análisis inicial sugiere que la vibración <span class="highlight">no es ambiental</span>. La sincronización ocurre sin estímulo directo. No se ha identificado fuente externa.<br><br>
+          Initial analysis suggests the vibration is not environmental. Synchronization occurs without direct stimulus. No external source has been identified.</p>
+
+          <span class="field-label">ANOMALÍA OBSERVADA / OBSERVED ANOMALY</span>
+          <p>El ritmo respiratorio <span class="highlight">se estabiliza cuando no se monitorea conscientemente</span>.<br>
+          El ritmo respiratorio <span class="highlight">se desestabiliza cuando se monitorea conscientemente</span>.<br>
+          La oscilación demuestra características <span class="highlight">autopropagantes</span>.<br>
+          El fenómeno exhibe influencia no-local en sujetos no conectados.<br><br>
+          Breath rhythm stabilizes when unattended.<br>
+          Breath rhythm destabilizes when consciously monitored.<br>
+          The oscillation demonstrates self-propagating characteristics.<br>
+          Phenomenon displays non-local influence across unconnected subjects.</p>
+
+          <span class="field-label">EVALUACIÓN DE RIESGO / RISK ASSESSMENT</span>
+          <p>Sin amenaza inmediata a la integridad estructural.<br>
+          Implicaciones a largo plazo: <span class="highlight">indeterminadas</span>.<br>
+          Protocolos de contención: aún teóricos.<br>
+          Correlación con métricas de resonancia interna: estadísticamente improbable.<br><br>
+          No immediate threat to structural integrity.<br>
+          Long-term implications undetermined.<br>
+          Containment protocols remain theoretical.<br>
+          Correlation with internal resonance metrics is statistically improbable.</p>
+
+          <span class="field-label">RECOMENDACIÓN / RECOMMENDATION</span>
+          <p><span class="highlight">Continuar observación. / Continue observation.</span><br>
+          Derivar a siguiente departamento para análisis de profundidad.<br>
+          Refer to next department for depth analysis.</p>
+        </div>
+
+        <div class="music-section">
+          <div class="music-placeholder">
+            <span class="file-name">WC-001_BREATH.exe</span>
+            <div class="file-info">
+              ARCHIVO DE AUDIO CLASIFICADO / CLASSIFIED AUDIO FILE<br>
+              FENÓMENO EN ESTADO CRUDO / PHENOMENON IN RAW STATE<br>
+              ADVERTENCIA: LA EXPOSICIÓN PROLONGADA NO HA SIDO EVALUADA<br>
+              WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED<br><br>
+              <em>[ ENLACE DE AUDIO / AUDIO LINK PENDIENTE ]</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-footer" style="margin:32px 24px 0">
+      ESTE DOCUMENTO ES PROPIEDAD EXCLUSIVA DE LA C.E.O — CUSTODIOS DEL ORDEN ENTRÓPICO<br>
+      LA DISTRIBUCIÓN NO AUTORIZADA SERÁ REPORTADA AL D.S.R PARA RESOLUCIÓN Y SANCIÓN<br>
+      THIS DOCUMENT IS THE EXCLUSIVE PROPERTY OF C.E.O — CUSTODIANS OF ENTROPIC ORDER<br>
+      UNAUTHORIZED DISTRIBUTION WILL BE REPORTED TO D.S.R FOR RESOLUTION AND SANCTION<br><br>
+      SUB SPECULO VERITAS
+    </div>
+
+  </div>
+</div>
+
 
 <script>
   const PASSWORD = 'MYCOLOGOS7810';
@@ -617,6 +970,14 @@
   }
 
   function bootSequence() {
+    // If already authenticated this session, skip straight to hub
+    if (sessionStorage.getItem('ceo_auth') === 'granted') {
+      document.getElementById('terminalView').style.display = 'none';
+      document.getElementById('hubView').style.display = 'block';
+      document.body.classList.add('scrollable');
+      return;
+    }
+
     const lines = [
       { t: '> INICIANDO SISTEMA... / BOOTING SYSTEM...', c: 'system', d: 300 },
       { t: '> VERIFICANDO INTEGRIDAD DE ARCHIVOS... / VERIFYING FILE INTEGRITY...', c: 'system', d: 700 },
@@ -654,11 +1015,13 @@
         addLine('', 'blank');
         addLine('> ACCESO CONCEDIDO / ACCESS GRANTED', 'success');
         addLine('> BIENVENIDO, AGENTE. / WELCOME, AGENT.', 'success');
-        addLine('> CARGANDO ARCHIVO CLASIFICADO... / LOADING CLASSIFIED FILE...', 'system');
+        addLine('> CARGANDO DIRECTORIO... / LOADING DIRECTORY...', 'system');
       }, 800);
       setTimeout(() => {
         document.getElementById('terminalView').style.display = 'none';
-        document.getElementById('classifiedView').style.display = 'block';
+        document.getElementById('hubView').style.display = 'block';
+        document.body.classList.add('scrollable');
+        sessionStorage.setItem('ceo_auth', 'granted');
       }, 2400);
     } else {
       addLine('', 'blank');
@@ -694,6 +1057,61 @@
   document.getElementById('passwordInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleSubmit();
   });
+
+  function showHub() {
+    document.getElementById('dosView').style.display = 'none';
+    document.getElementById('hubView').style.display = 'block';
+    document.body.classList.add('scrollable');
+    sessionStorage.setItem('ceo_auth', 'granted');
+    // Check if DSR takeover is active
+    if (localStorage.getItem('dsr_active') === 'true') {
+      activateDSRTakeover();
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function activateDSRTakeover() {
+    // Fragment the department symbols
+    document.querySelectorAll('.dept-node').forEach((node, i) => {
+      if (!node.classList.contains('dsr-node')) {
+        node.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+        node.style.setProperty('--dy', (Math.random() * 40 - 20) + 'px');
+        setTimeout(() => node.classList.add('hub-node-fragment'), i * 150);
+      }
+    });
+    // Show DSR overlay after fragments
+    setTimeout(() => {
+      const overlay = document.getElementById('dsrOverlay');
+      overlay.classList.add('active');
+      // Pull case number from DCC localStorage if available
+      const dcc = localStorage.getItem('dcc_v5');
+      if (dcc) {
+        try {
+          const data = JSON.parse(dcc);
+          if (data.case) {
+            document.getElementById('dsrCaseDisplay').textContent = 'CASO ' + data.case + ' — EN PROCESO DE RESOLUCIÓN / UNDER RESOLUTION';
+          }
+        } catch(e) {}
+      }
+    }, 1200);
+  }
+
+  function handleComply() {
+    sessionStorage.setItem('dsr_choice', 'comply');
+    window.location.href = 'dcc.html';
+  }
+
+  function handleTermination() {
+    sessionStorage.setItem('dsr_choice', 'termination');
+    window.location.href = 'dsr.html';
+  }
+
+  function showDOS() {
+    document.getElementById('hubView').style.display = 'none';
+    document.getElementById('dosView').style.display = 'block';
+    document.body.classList.add('scrollable');
+    window.scrollTo(0, 0);
+  }
 
   bootSequence();
 </script>
