@@ -587,7 +587,26 @@
   /* NODE MAP */
   .node-map { width: 100%; height: 80px; }
 
-  /* ESCALATION BANNER */
+  /* DOWNLOAD BUTTON */
+  .dos-download-btn {
+    display: inline-block;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: all 0.3s;
+    background: transparent;
+    cursor: pointer;
+  }
+  .dos-download-btn:hover {
+    border-color: var(--green);
+    background: rgba(0,255,65,0.05);
+    box-shadow: 0 0 16px rgba(0,255,65,0.1);
+    color: var(--green);
+  }
   #dosEscalationBanner { display: none; margin: 0 24px 0; border: 1px solid var(--amber); padding: 10px 14px; font-size: 9px; color: var(--amber); letter-spacing: 2px; line-height: 2; }
 
   /* FULL WIDTH SECTIONS */
@@ -958,11 +977,20 @@
               ARCHIVO DE AUDIO CLASIFICADO / CLASSIFIED AUDIO FILE<br>
               FENÓMENO EN ESTADO CRUDO / PHENOMENON IN RAW STATE<br>
               ADVERTENCIA: LA EXPOSICIÓN PROLONGADA NO HA SIDO EVALUADA<br>
-              WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED<br><br>
-              <em>[ ENLACE DE AUDIO / AUDIO LINK PENDIENTE ]</em>
+              WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div style="margin: 32px 24px 0; border-top: 1px solid var(--border); padding-top: 24px;">
+      <div style="font-size:9px; color:var(--green-dim); letter-spacing:3px; margin-bottom:12px;">ARCHIVOS DE TRADUCCIÓN / TRANSLATION FILES — WC-001</div>
+      <a href="DOS-INT_WC-001_BREATH.zip" download class="dos-download-btn">
+        ACCEDER A ARCHIVOS / ACCESS FILES &nbsp;—&nbsp; DOS-INT_WC-001_BREATH.zip
+      </a>
+      <div style="font-size:8px; color:var(--green-faint); letter-spacing:1px; margin-top:10px;">
+        CONTIENE: WC-001_BREATH.mp3 · WC-001_BREATH.wav · README.txt
       </div>
     </div>
 
