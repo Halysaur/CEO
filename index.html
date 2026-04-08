@@ -1005,9 +1005,16 @@
 
 
 <script>
-  const PASSWORD = 'MYCOLOGOS7810';
+  const PASSWORD_HASH = '56175d819749c64efda7ce17792ff8e87ad873777bd8f4b56c8225e257739f5f';
   let attempts = 0;
   const MAX_ATTEMPTS = 5;
+
+  async function hashInput(str) {
+    const msgBuffer = new TextEncoder().encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
 
   const hints = [
     null,
@@ -1067,7 +1074,7 @@
     lines.forEach(l => addLine(l.t, l.c, l.d));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const input = document.getElementById('passwordInput');
     const val = input.value.trim().toUpperCase();
     if (!val) return;
@@ -1076,7 +1083,9 @@
     addLine(`> ${input.value.trim()}`, 'input-echo');
     input.value = '';
 
-    if (val === PASSWORD) {
+    const hash = await hashInput(val);
+
+    if (hash === PASSWORD_HASH) {
       addLine('', 'blank');
       addLine('> VERIFICANDO... / VERIFYING...', 'system');
       setTimeout(() => addLine('> ........................................', 'system'), 400);
