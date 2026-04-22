@@ -988,7 +988,7 @@
               WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED
             </div>
             <div style="margin-top:20px; border-top:1px solid rgba(0,255,65,0.1); padding-top:16px;">
-              <a href="https://github.com/Halysaur/CEO/releases/download/v1.o/DOS-INT_WC-001_BREATH.zip" class="dos-download-btn" target="_blank" rel="noopener">
+              <a href="https://github.com/Halysaur/CEO/releases/download/v1.o/DOS-INT_WC-001_BREATH.zip" class="dos-download-btn" target="_blank" rel="noopener" onclick="if(typeof gtag==='function')gtag('event','breath_downloaded')">
                 ACCEDER A ARCHIVOS / ACCESS FILES &nbsp;—&nbsp; DOS-INT_WC-001_BREATH.zip
               </a>
               <div style="font-size:8px; color:var(--green-faint); letter-spacing:1px; margin-top:10px;">
@@ -1094,6 +1094,12 @@
     const hash = await hashInput(val);
 
     if (hash === PASSWORD_HASH) {
+      // Fire GA event on successful password crack
+      if (typeof gtag === 'function') {
+        gtag('event', 'password_cracked', {
+          'attempts': attempts
+        });
+      }
       addLine('', 'blank');
       addLine('> VERIFICANDO... / VERIFYING...', 'system');
       setTimeout(() => addLine('> ........................................', 'system'), 400);
