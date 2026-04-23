@@ -508,9 +508,61 @@
   @keyframes glowPulse { 0%,100% { filter: drop-shadow(0 0 4px rgba(0,255,65,0.3)); } 50% { filter: drop-shadow(0 0 16px rgba(0,255,65,0.7)); } }
   .dept-id { font-family: 'VT323', monospace; font-size: 28px; color: var(--green); letter-spacing: 6px; }
   .dept-node.locked .dept-id { color: var(--green-dim); }
-  .dept-status-label { font-size: 9px; color: var(--green-dim); letter-spacing: 2px; text-align: center; }
+  .dept-full-es, .dept-full-en { font-size: 8px; color: var(--green-dim); letter-spacing: 1.5px; text-align: center; line-height: 1.4; opacity: 0.75; }
+  .dept-full-en { opacity: 0.55; }
+  .dept-motto { font-size: 10px; color: var(--amber); letter-spacing: 3px; font-style: italic; margin-top: 4px; opacity: 0.75; animation: dosMottoPulse 8s ease infinite; }
+  .dept-node.locked .dept-motto { color: var(--green-dim); opacity: 0.5; }
+  .dept-status-label { font-size: 9px; color: var(--green-dim); letter-spacing: 2px; text-align: center; margin-top: 4px; }
   .dept-node.active .dept-status-label { color: var(--amber); }
+  .dept-node.locked { cursor: pointer; }
+  .dept-node.locked:hover { border-color: var(--green-dim); opacity: 0.55; }
+  .dept-node.locked:hover .dept-status-label { color: var(--red); }
   .hub-footer { text-align: center; font-size: 9px; color: var(--green-faint); letter-spacing: 2px; line-height: 2; border-top: 1px solid var(--border); padding-top: 16px; }
+
+  /* ── PASSWORD OVERLAY (DOS room entry) ── */
+  .pw-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,12,2,0.96); z-index: 50; padding: 32px 24px; overflow-y: auto; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+  .pw-overlay.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+  .pw-wrap { max-width: 720px; width: 100%; display: flex; flex-direction: column; gap: 20px; padding-top: 8vh; }
+  .pw-close { align-self: flex-start; font-size: 10px; color: var(--green-dim); letter-spacing: 2px; cursor: pointer; padding: 6px 0; background: none; border: none; font-family: 'Share Tech Mono', monospace; }
+  .pw-close:hover { color: var(--green); }
+  .pw-dept-header { border: 1px solid var(--green-dim); padding: 20px 24px; position: relative; text-align: center; }
+  .pw-dept-header::before { content: 'SOLICITUD DE ACCESO / ACCESS REQUEST'; position: absolute; top: -8px; left: 20px; background: var(--bg); padding: 0 8px; font-size: 9px; color: var(--green-dim); letter-spacing: 3px; }
+  .pw-dept-id { font-family: 'VT323', monospace; font-size: 40px; color: var(--green); letter-spacing: 10px; text-shadow: 0 0 20px rgba(0,255,65,0.4); }
+  .pw-dept-full { font-size: 9px; color: var(--green-dim); letter-spacing: 3px; margin-top: 4px; }
+  .pw-dept-motto { font-size: 10px; color: var(--amber); letter-spacing: 3px; font-style: italic; margin-top: 8px; }
+  .pw-log { font-size: 12px; line-height: 1.8; min-height: 80px; display: flex; flex-direction: column; gap: 3px; }
+  .pw-log .log-line { opacity: 0; animation: fadeIn 0.5s ease forwards; }
+  .pw-input-area { border-top: 1px solid var(--border); padding-top: 16px; }
+  .pw-input-label { font-size: 10px; color: var(--green-dim); letter-spacing: 2px; margin-bottom: 8px; }
+  .pw-input-row { display: flex; align-items: center; gap: 12px; }
+  .pw-attempts { font-size: 10px; color: var(--green-dim); margin-top: 8px; letter-spacing: 1px; min-height: 14px; }
+  .pw-attempts.warning { color: var(--amber); }
+  .pw-attempts.danger { color: var(--red); }
+
+  /* ── LOCKED DEPT MODAL ── */
+  .lk-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,12,2,0.92); z-index: 60; padding: 32px 24px; align-items: center; justify-content: center; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .lk-overlay.active { display: flex; }
+  .lk-card { max-width: 560px; width: 100%; border: 1px solid var(--green-dim); background: var(--bg); padding: 32px 28px; position: relative; animation: fadeIn 0.4s ease forwards; }
+  .lk-card::before { content: 'ARCHIVO RESTRINGIDO / RESTRICTED FILE'; position: absolute; top: -8px; left: 20px; background: var(--bg); padding: 0 8px; font-size: 9px; color: var(--green-dim); letter-spacing: 3px; }
+  .lk-stamp { position: absolute; top: 14px; right: 18px; font-family: 'VT323', monospace; font-size: 18px; color: var(--red); border: 2px solid var(--red); padding: 2px 8px; letter-spacing: 2px; opacity: 0.7; transform: rotate(-6deg); }
+  .lk-dept { font-family: 'VT323', monospace; font-size: 40px; color: var(--green-dim); letter-spacing: 10px; margin-top: 4px; }
+  .lk-full { font-size: 9px; color: var(--green-dim); letter-spacing: 3px; opacity: 0.7; margin-top: 4px; }
+  .lk-motto { font-size: 11px; color: var(--amber); letter-spacing: 3px; font-style: italic; margin-top: 12px; opacity: 0.7; }
+  .lk-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .lk-field-label { font-size: 9px; color: var(--green-dim); letter-spacing: 2px; margin-bottom: 6px; }
+  .lk-fragment { font-size: 12px; color: var(--text); line-height: 1.8; opacity: 0.85; margin-bottom: 8px; }
+  .lk-fragment .redact { background: var(--green-dim); color: transparent; padding: 0 4px; user-select: none; }
+  .lk-denied { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 10px; color: var(--red); letter-spacing: 2px; line-height: 1.8; }
+  .lk-denied-sub { font-size: 9px; color: var(--green-dim); letter-spacing: 2px; margin-top: 6px; opacity: 0.8; }
+  .lk-close { margin-top: 24px; background: transparent; border: 1px solid var(--green-dim); color: var(--green-dim); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; padding: 8px 18px; cursor: pointer; transition: all 0.2s; width: 100%; }
+  .lk-close:hover { border-color: var(--green); color: var(--green); background: rgba(0,255,65,0.05); }
+
+  @media (max-width: 600px) {
+    .pw-dept-id { font-size: 32px; letter-spacing: 8px; }
+    .lk-dept { font-size: 32px; letter-spacing: 8px; }
+    .lk-stamp { font-size: 14px; }
+    .dept-full-es, .dept-full-en { font-size: 7px; }
+  }
 
   /* DSR TAKEOVER */
   .dsr-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; z-index: 100; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
@@ -656,22 +708,6 @@
 
   <div class="log" id="log"></div>
 
-  <div class="input-area" id="inputArea">
-    <div class="input-label">INGRESA CONTRASEÑA / ENTER PASSWORD</div>
-    <div class="input-row">
-      <span class="prompt">&gt;_</span>
-      <input
-        type="password"
-        id="passwordInput"
-        placeholder="introduce código de acceso..."
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button class="submit-btn" onclick="handleSubmit()">ACCEDER</button>
-    </div>
-    <div class="attempts-counter" id="attemptsCounter">&nbsp;</div>
-  </div>
-
 </div>
 
 <!-- HUB VIEW -->
@@ -680,24 +716,24 @@
 
     <div class="hub-header">
       <div class="hub-org">C.E.O.</div>
-      <div class="hub-full">CUSTODIOS DEL ORDEN ENTRÓPICO</div>
-      <div class="hub-sub">ACCESO CONCEDIDO — NIVEL: AGENTE / ACCESS GRANTED — LEVEL: AGENT</div>
+      <div class="hub-full">CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;·&nbsp; CUSTODIANS OF ENTROPIC ORDER</div>
+      <div class="hub-sub">DIRECTORIO OPERATIVO / OPERATIONAL DIRECTORY</div>
     </div>
 
     <div class="hub-body">
       <div class="hub-message">
-        TERMINAL INTERNO — ACCESO NO AUTORIZADO REGISTRADO<br>
-        SESIÓN ACTIVA: CLASIFICACIÓN INSUFICIENTE<br>
-        ALGUNOS ARCHIVOS PERMANECEN FUERA DE TU ALCANCE<br><br>
-        INTERNAL TERMINAL — UNAUTHORIZED ACCESS LOGGED<br>
-        ACTIVE SESSION: INSUFFICIENT CLEARANCE<br>
-        SOME FILES REMAIN BEYOND YOUR REACH
+        CUATRO DEPARTAMENTOS EN OPERACIÓN.<br>
+        ACCESO SELECTIVO SEGÚN ACREDITACIÓN DEL SUJETO.<br>
+        ESTA SESIÓN ESTÁ SIENDO OBSERVADA.<br><br>
+        FOUR DEPARTMENTS IN OPERATION.<br>
+        SELECTIVE ACCESS BASED ON SUBJECT CLEARANCE.<br>
+        THIS SESSION IS BEING OBSERVED.
       </div>
 
       <div class="hub-grid">
 
         <!-- DOS — ACTIVE -->
-        <div class="dept-node active" onclick="showDOS()">
+        <div class="dept-node active" onclick="openDOS()">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -714,22 +750,28 @@
             </svg>
           </div>
           <div class="dept-id">D.O.S</div>
+          <div class="dept-full-es">Departamento de Observación y Vigilancia</div>
+          <div class="dept-full-en">Department of Observation &amp; Surveillance</div>
+          <div class="dept-motto">Sub Speculo Veritas</div>
           <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
         </div>
 
         <!-- DBR — LOCKED -->
-        <div class="dept-node locked">
+        <div class="dept-node locked" onclick="openLocked('DBR')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 24 Q7 24 9 15 Q11 6 12 6 Q13 6 15 24 Q17 42 18 42 Q19 42 21 24 Q23 12 24 12 Q25 12 27 24 Q29 36 30 36 Q31 36 33 24 Q35 15 37 24 Q39 33 40 33 Q41 33 43 24 Q44 24 46 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
           <div class="dept-id">D.B.R</div>
+          <div class="dept-full-es">Departamento de Balance y Reconstrucción</div>
+          <div class="dept-full-en">Department of Balance &amp; Reconstruction</div>
+          <div class="dept-motto">Gnosis Ultra Veritatem</div>
           <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
         </div>
 
         <!-- DCC — LOCKED -->
-        <div class="dept-node locked">
+        <div class="dept-node locked" onclick="openLocked('DCC')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <rect x="3" y="3" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/>
@@ -739,11 +781,14 @@
             </svg>
           </div>
           <div class="dept-id">D.C.C</div>
+          <div class="dept-full-es">Departamento de Contención y Custodia</div>
+          <div class="dept-full-en">Department of Containment &amp; Custody</div>
+          <div class="dept-motto">Ex Intus, Silentium</div>
           <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
         </div>
 
         <!-- DSR — LOCKED -->
-        <div class="dept-node locked">
+        <div class="dept-node locked" onclick="openLocked('DSR')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <line x1="16" y1="6" x2="16" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
@@ -754,6 +799,9 @@
             </svg>
           </div>
           <div class="dept-id">D.S.R</div>
+          <div class="dept-full-es">Departamento de Resolución y Sanción</div>
+          <div class="dept-full-en">Department of Resolution &amp; Sanction</div>
+          <div class="dept-motto">Per Ultimatam Resolutionem</div>
           <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
         </div>
 
@@ -763,6 +811,59 @@
         CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;·&nbsp; ACCESO NO AUTORIZADO SERÁ REPORTADO AL D.S.R
       </div>
     </div>
+  </div>
+</div>
+
+<!-- PASSWORD OVERLAY — DOS ROOM ENTRY -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-wrap">
+    <button class="pw-close" onclick="closePassword()">← VOLVER AL DIRECTORIO / BACK TO DIRECTORY</button>
+
+    <div class="pw-dept-header">
+      <div class="pw-dept-id">D.O.S</div>
+      <div class="pw-dept-full">DEPARTAMENTO DE OBSERVACIÓN Y VIGILANCIA / DEPARTMENT OF OBSERVATION &amp; SURVEILLANCE</div>
+      <div class="pw-dept-motto">Sub Speculo Veritas</div>
+    </div>
+
+    <div class="pw-log" id="pwLog"></div>
+
+    <div class="pw-input-area" id="pwInputArea">
+      <div class="pw-input-label">INGRESA CONTRASEÑA / ENTER PASSWORD</div>
+      <div class="pw-input-row">
+        <span class="prompt">&gt;_</span>
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="introduce código de acceso..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="submit-btn" onclick="handleSubmit()">ACCEDER</button>
+      </div>
+      <div class="pw-attempts" id="attemptsCounter">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOCKED DEPT MODAL -->
+<div class="lk-overlay" id="lkOverlay" onclick="if(event.target===this)closeLocked()">
+  <div class="lk-card">
+    <div class="lk-stamp">RESTRINGIDO</div>
+    <div class="lk-dept" id="lkDept">D.B.R</div>
+    <div class="lk-full" id="lkFull">DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÓN</div>
+    <div class="lk-motto" id="lkMotto">Gnosis Ultra Veritatem</div>
+
+    <hr class="lk-divider">
+
+    <div class="lk-field-label">FRAGMENTO RECUPERADO / RECOVERED FRAGMENT</div>
+    <div class="lk-fragment" id="lkFragment"></div>
+
+    <div class="lk-denied">
+      ACCESO NO AUTORIZADO / UNAUTHORIZED ACCESS
+      <div class="lk-denied-sub">NIVEL DE ACREDITACIÓN INSUFICIENTE / INSUFFICIENT CLEARANCE LEVEL</div>
+    </div>
+
+    <button class="lk-close" onclick="closeLocked()">CERRAR / CLOSE</button>
   </div>
 </div>
 
@@ -1053,11 +1154,15 @@
   }
 
   function bootSequence() {
-    // If already authenticated this session, skip straight to hub
-    if (sessionStorage.getItem('ceo_auth') === 'granted') {
+    // Returning visitor — skip the boot, go straight to hub
+    if (sessionStorage.getItem('ceo_visited') === 'true') {
       document.getElementById('terminalView').style.display = 'none';
       document.getElementById('hubView').style.display = 'block';
       document.body.classList.add('scrollable');
+      // Check if DSR takeover should activate
+      if (localStorage.getItem('dsr_active') === 'true') {
+        activateDSRTakeover();
+      }
       return;
     }
 
@@ -1074,12 +1179,36 @@
       { t: '> D.O.S — MONITOREO ACTIVO. TU PRESENCIA HA SIDO REGISTRADA.', c: 'error', d: 5000 },
       { t: '> D.O.S — MONITORING ACTIVE. YOUR PRESENCE HAS BEEN LOGGED.', c: 'error', d: 5600 },
       { t: '', c: 'blank', d: 6000 },
-      { t: '> Para continuar, se requiere autorización de nivel ejecutivo.', c: 'system', d: 6500 },
-      { t: '> Executive-level authorization required to proceed.', c: 'system', d: 7000 },
-      { t: '---', c: '', d: 7400 },
+      { t: '> CARGANDO DIRECTORIO OPERATIVO... / LOADING OPERATIONAL DIRECTORY...', c: 'system', d: 6500 },
+      { t: '> ...', c: 'system', d: 7100 },
+      { t: '---', c: '', d: 7500 },
     ];
 
     lines.forEach(l => addLine(l.t, l.c, l.d));
+
+    // Auto-transition to hub after boot completes
+    setTimeout(() => {
+      document.getElementById('terminalView').style.display = 'none';
+      document.getElementById('hubView').style.display = 'block';
+      document.body.classList.add('scrollable');
+      sessionStorage.setItem('ceo_visited', 'true');
+      if (localStorage.getItem('dsr_active') === 'true') {
+        activateDSRTakeover();
+      }
+    }, 8200);
+  }
+
+  // Adds a log line to the password overlay's own log (not the boot log)
+  function addPwLine(text, cls, delay = 0) {
+    const log = document.getElementById('pwLog');
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = `log-line ${cls}`;
+      div.innerHTML = text || '&nbsp;';
+      if (cls === 'blank') div.innerHTML = '&nbsp;';
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }, delay);
   }
 
   async function handleSubmit() {
@@ -1088,74 +1217,76 @@
     if (!val) return;
 
     attempts++;
-    addLine(`> ${input.value.trim()}`, 'input-echo');
+    addPwLine(`> ${input.value.trim()}`, 'input-echo');
     input.value = '';
 
     const hash = await hashInput(val);
 
     if (hash === PASSWORD_HASH) {
-      // Fire GA event on successful password crack
+      // Fire GA events on successful crack (backwards-compat + new unified event)
       if (typeof gtag === 'function') {
-        gtag('event', 'password_cracked', {
-          'attempts': attempts
-        });
+        gtag('event', 'password_cracked', { 'attempts': attempts });
+        gtag('event', 'song_unlocked', { 'department': 'DOS', 'song': 'BREATH', 'attempts': attempts });
       }
-      addLine('', 'blank');
-      addLine('> VERIFICANDO... / VERIFYING...', 'system');
-      setTimeout(() => addLine('> ........................................', 'system'), 400);
+      addPwLine('', 'blank');
+      addPwLine('> VERIFICANDO... / VERIFYING...', 'system');
+      setTimeout(() => addPwLine('> ........................................', 'system'), 400);
       setTimeout(() => {
-        addLine('', 'blank');
-        addLine('> ACCESO CONCEDIDO / ACCESS GRANTED', 'success');
-        addLine('> BIENVENIDO, AGENTE. / WELCOME, AGENT.', 'success');
-        addLine('> CARGANDO DIRECTORIO... / LOADING DIRECTORY...', 'system');
+        addPwLine('', 'blank');
+        addPwLine('> ACCESO CONCEDIDO / ACCESS GRANTED', 'success');
+        addPwLine('> BIENVENIDO, AGENTE. / WELCOME, AGENT.', 'success');
+        addPwLine('> CARGANDO ARCHIVO... / LOADING FILE...', 'system');
       }, 800);
       setTimeout(() => {
-        document.getElementById('terminalView').style.display = 'none';
-        document.getElementById('hubView').style.display = 'block';
-        document.body.classList.add('scrollable');
+        sessionStorage.setItem('dos_breath_unlocked', 'true');
+        // Legacy key preserved so previously-auth'd sessions still behave correctly if anything else reads it
         sessionStorage.setItem('ceo_auth', 'granted');
+        document.getElementById('pwOverlay').classList.remove('active');
+        document.getElementById('hubView').style.display = 'none';
+        document.getElementById('dosView').style.display = 'block';
+        document.body.classList.add('scrollable');
+        window.scrollTo(0, 0);
       }, 2400);
     } else {
-      addLine('', 'blank');
-      addLine('> ACCESO DENEGADO / ACCESS DENIED', 'error');
-      addLine(`> INTENTO ${attempts} DE ${MAX_ATTEMPTS} REGISTRADO / ATTEMPT ${attempts} OF ${MAX_ATTEMPTS} LOGGED`, 'error');
-      addLine('> D.O.S HA SIDO NOTIFICADO / D.O.S HAS BEEN NOTIFIED', 'warning');
+      addPwLine('', 'blank');
+      addPwLine('> ACCESO DENEGADO / ACCESS DENIED', 'error');
+      addPwLine(`> INTENTO ${attempts} DE ${MAX_ATTEMPTS} REGISTRADO / ATTEMPT ${attempts} OF ${MAX_ATTEMPTS} LOGGED`, 'error');
+      addPwLine('> D.O.S HA SIDO NOTIFICADO / D.O.S HAS BEEN NOTIFIED', 'warning');
 
       if (hints[attempts]) {
-        setTimeout(() => addLine(hints[attempts], 'hint'), 600);
+        setTimeout(() => addPwLine(hints[attempts], 'hint'), 600);
       }
 
-      addLine('', 'blank');
+      addPwLine('', 'blank');
 
       const counter = document.getElementById('attemptsCounter');
       const remaining = MAX_ATTEMPTS - attempts;
       counter.textContent = `${remaining} INTENTO(S) RESTANTE(S) / ATTEMPT(S) REMAINING`;
-      if (remaining <= 2) counter.className = 'attempts-counter danger';
-      else if (remaining <= 3) counter.className = 'attempts-counter warning';
+      if (remaining <= 2) counter.className = 'pw-attempts danger';
+      else if (remaining <= 3) counter.className = 'pw-attempts warning';
 
       if (attempts >= MAX_ATTEMPTS) {
-        document.getElementById('inputArea').style.display = 'none';
-        addLine('> DEMASIADOS INTENTOS FALLIDOS. SESIÓN TERMINADA.', 'error');
-        addLine('> TOO MANY FAILED ATTEMPTS. SESSION TERMINATED.', 'error');
-        addLine('> D.S.R HA SIDO ALERTADO / D.S.R HAS BEEN ALERTED', 'error');
-        addLine('', 'blank');
-        addLine('> Sub Speculo Veritas.', 'system');
+        document.getElementById('pwInputArea').style.display = 'none';
+        addPwLine('> DEMASIADOS INTENTOS FALLIDOS. SESIÓN TERMINADA.', 'error');
+        addPwLine('> TOO MANY FAILED ATTEMPTS. SESSION TERMINATED.', 'error');
+        addPwLine('> D.S.R HA SIDO ALERTADO / D.S.R HAS BEEN ALERTED', 'error');
+        addPwLine('', 'blank');
+        addPwLine('> Sub Speculo Veritas.', 'system');
       }
     }
 
-    document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+    document.getElementById('pwLog').scrollTop = document.getElementById('pwLog').scrollHeight;
   }
 
   document.getElementById('passwordInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') handleSubmit();
   });
 
+  // Returns user to hub from DOS dept page
   function showHub() {
     document.getElementById('dosView').style.display = 'none';
     document.getElementById('hubView').style.display = 'block';
     document.body.classList.add('scrollable');
-    sessionStorage.setItem('ceo_auth', 'granted');
-    // Check if DSR takeover is active
     if (localStorage.getItem('dsr_active') === 'true') {
       activateDSRTakeover();
     }
@@ -1163,7 +1294,6 @@
   }
 
   function activateDSRTakeover() {
-    // Fragment the department symbols
     document.querySelectorAll('.dept-node').forEach((node, i) => {
       if (!node.classList.contains('dsr-node')) {
         node.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
@@ -1171,11 +1301,9 @@
         setTimeout(() => node.classList.add('hub-node-fragment'), i * 150);
       }
     });
-    // Show DSR overlay after fragments
     setTimeout(() => {
       const overlay = document.getElementById('dsrOverlay');
       overlay.classList.add('active');
-      // Pull case number from DCC localStorage if available
       const dcc = localStorage.getItem('dcc_v5');
       if (dcc) {
         try {
@@ -1198,12 +1326,94 @@
     window.location.href = 'dsr.html';
   }
 
-  function showDOS() {
-    document.getElementById('hubView').style.display = 'none';
-    document.getElementById('dosView').style.display = 'block';
-    document.body.classList.add('scrollable');
-    window.scrollTo(0, 0);
+  // Opens the DOS room — password gate unless already unlocked this session
+  function openDOS() {
+    if (sessionStorage.getItem('dos_breath_unlocked') === 'true' || sessionStorage.getItem('ceo_auth') === 'granted') {
+      document.getElementById('hubView').style.display = 'none';
+      document.getElementById('dosView').style.display = 'block';
+      document.body.classList.add('scrollable');
+      window.scrollTo(0, 0);
+      return;
+    }
+    // Fresh challenge: open password overlay and seed log
+    attempts = 0;
+    const log = document.getElementById('pwLog');
+    log.innerHTML = '';
+    document.getElementById('attemptsCounter').textContent = '\u00a0';
+    document.getElementById('attemptsCounter').className = 'pw-attempts';
+    document.getElementById('pwInputArea').style.display = 'block';
+    document.getElementById('pwOverlay').classList.add('active');
+    addPwLine('> SOLICITUD DE ACCESO RECIBIDA / ACCESS REQUEST RECEIVED', 'system', 100);
+    addPwLine('> VERIFICANDO ACREDITACIÓN... / VERIFYING CLEARANCE...', 'system', 500);
+    addPwLine('> SE REQUIERE CÓDIGO DE ACCESO / ACCESS CODE REQUIRED', 'warning', 1000);
+    setTimeout(() => document.getElementById('passwordInput').focus(), 1200);
   }
+
+  function closePassword() {
+    document.getElementById('pwOverlay').classList.remove('active');
+  }
+
+  // Keep legacy reference working if anything else calls showDOS()
+  function showDOS() { openDOS(); }
+
+  // ── Locked department modal ──
+  const lockedData = {
+    DBR: {
+      full: 'DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÓN / DEPARTMENT OF BALANCE &amp; RECONSTRUCTION',
+      motto: 'Gnosis Ultra Veritatem',
+      fragment: 'El fenómeno WC-<span class="redact">██</span> ha sido remitido para análisis profundo. ' +
+                'La separación del fenómeno en sus componentes es posible únicamente bajo <span class="redact">██████████</span>. ' +
+                'El patrón del Patrón no se revela al observador directo. Se requiere <span class="redact">██████████████</span>.<br><br>' +
+                'Phenomenon WC-<span class="redact">██</span> has been referred for deep analysis. ' +
+                'Separation of the phenomenon into its components is possible only under <span class="redact">██████████</span>. ' +
+                'The Patron\'s pattern does not reveal itself to the direct observer. <span class="redact">██████████████</span> required.'
+    },
+    DCC: {
+      full: 'DEPARTAMENTO DE CONTENCIÓN Y CUSTODIA / DEPARTMENT OF CONTAINMENT &amp; CUSTODY',
+      motto: 'Ex Intus, Silentium',
+      fragment: 'Los sujetos registrados han sido trasladados a custodia extendida. ' +
+                'La exposición prolongada requiere acompañamiento. <span class="redact">██████</span> nunca camina solo. ' +
+                'El Patrón del departamento observa desde el <span class="redact">██████</span>.<br><br>' +
+                'Registered subjects have been transferred to extended custody. ' +
+                'Prolonged exposure requires accompaniment. <span class="redact">██████</span> never walks alone. ' +
+                'The department\'s Patron observes from the <span class="redact">██████</span>.'
+    },
+    DSR: {
+      full: 'DEPARTAMENTO DE RESOLUCIÓN Y SANCIÓN / DEPARTMENT OF RESOLUTION &amp; SANCTION',
+      motto: 'Per Ultimatam Resolutionem',
+      fragment: 'El D.S.R se activa únicamente cuando los departamentos anteriores han fallado. ' +
+                'Su intervención es <span class="redact">█████████</span>. No hay apelación. ' +
+                'Las resoluciones son dictadas por <span class="redact">███████████</span> y ejecutadas sin excepción.<br><br>' +
+                'D.S.R is activated only when prior departments have failed. ' +
+                'Its intervention is <span class="redact">█████████</span>. There is no appeal. ' +
+                'Resolutions are issued by <span class="redact">███████████</span> and carried out without exception.'
+    }
+  };
+
+  function openLocked(dept) {
+    const data = lockedData[dept];
+    if (!data) return;
+    document.getElementById('lkDept').textContent = dept.split('').join('.');
+    document.getElementById('lkFull').innerHTML = data.full;
+    document.getElementById('lkMotto').textContent = data.motto;
+    document.getElementById('lkFragment').innerHTML = data.fragment;
+    document.getElementById('lkOverlay').classList.add('active');
+    if (typeof gtag === 'function') {
+      gtag('event', 'locked_dept_viewed', { 'department': dept });
+    }
+  }
+
+  function closeLocked() {
+    document.getElementById('lkOverlay').classList.remove('active');
+  }
+
+  // Close overlays on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('lkOverlay').classList.contains('active')) closeLocked();
+      else if (document.getElementById('pwOverlay').classList.contains('active')) closePassword();
+    }
+  });
 
   bootSequence();
 </script>
