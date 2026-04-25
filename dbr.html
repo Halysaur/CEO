@@ -1,956 +1,2086 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D.B.R — SPECIMEN ANALYSIS / WC-002</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D.B.R / Protocolo de Disección Espectral / WR-01</title>
+<meta name="description" content="División de Balance y Reconstrucción. Custodios del Orden Entrópico.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Rajdhani:wght@300;400;600&display=swap');
-
-  :root {
-    --bg: #03080a;
-    --bg2: #060f12;
-    --border: #0d2a30;
-    --border-bright: #1a4a54;
-    --cyan: #00c8d4;
-    --cyan-dim: #006e78;
-    --cyan-faint: #002225;
-    --white: #c8eef2;
-    --white-dim: #6a9ea4;
-    --red: #ff3a2a;
-    --amber: #ffaa00;
-    --green: #00ff41;
-    --restricted: #ff3a2a;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html, body {
-    min-height: 100%;
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* Scanlines */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 999;
-  }
-
-  .wrapper {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 24px 24px 60px;
-  }
-
-  /* TOP BAR */
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid var(--border-bright);
-    padding-bottom: 14px;
-    margin-bottom: 24px;
-    animation: fadeIn 0.4s ease forwards;
-  }
-
-  .topbar-left .dept {
-    font-family: 'VT323', monospace;
-    font-size: 26px;
-    color: var(--cyan);
-    letter-spacing: 5px;
-    text-shadow: 0 0 20px rgba(0,200,212,0.4);
-  }
-
-  .topbar-left .dept-full {
-    font-size: 9px;
-    color: var(--cyan-dim);
-    letter-spacing: 2px;
-    margin-top: 2px;
-  }
-
-  .topbar-right {
-    text-align: right;
-    font-size: 9px;
-    color: var(--white-dim);
-    line-height: 2;
-    letter-spacing: 1px;
-  }
-
-  .status-active {
-    color: var(--cyan);
-  }
-
-  /* SPECIMEN HEADER */
-  .specimen-header {
-    border: 1px solid var(--border-bright);
-    padding: 20px 24px;
-    margin-bottom: 20px;
-    position: relative;
-    animation: fadeIn 0.4s ease 0.2s both;
-  }
-
-  .specimen-header::before {
-    content: 'ARCHIVO DE ESPÉCIMEN / SPECIMEN FILE';
-    position: absolute;
-    top: -8px; left: 16px;
-    background: var(--bg);
-    padding: 0 8px;
-    font-size: 8px;
-    color: var(--cyan-dim);
-    letter-spacing: 3px;
-  }
-
-  .specimen-id {
-    font-family: 'VT323', monospace;
-    font-size: 42px;
-    color: var(--cyan);
-    letter-spacing: 8px;
-    text-shadow: 0 0 30px rgba(0,200,212,0.3);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .specimen-sub {
-    font-size: 9px;
-    color: var(--cyan-dim);
-    letter-spacing: 3px;
-    margin-bottom: 16px;
-  }
-
-  .specimen-meta {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px 16px;
-    font-size: 10px;
-    color: var(--white-dim);
-    letter-spacing: 1px;
-  }
-
-  .specimen-meta span { color: var(--white); }
-
-  .restricted-stamp {
-    position: absolute;
-    top: 16px; right: 20px;
-    font-family: 'VT323', monospace;
-    font-size: 20px;
-    color: var(--restricted);
-    border: 2px solid var(--restricted);
-    padding: 2px 10px;
-    letter-spacing: 3px;
-    opacity: 0.8;
-    transform: rotate(-6deg);
-  }
-
-  /* PROGRESS BAR */
-  .progress-section {
-    margin-bottom: 20px;
-    animation: fadeIn 0.4s ease 0.3s both;
-  }
-
-  .progress-label {
-    font-size: 9px;
-    color: var(--cyan-dim);
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-  }
-
-  .progress-bar {
-    height: 3px;
-    background: var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--cyan);
-    transition: width 0.6s ease;
-    box-shadow: 0 0 8px var(--cyan);
-  }
-
-  .progress-text {
-    font-size: 9px;
-    color: var(--white-dim);
-    margin-top: 4px;
-    text-align: right;
-    letter-spacing: 1px;
-  }
-
-  /* ANALYSIS NOTICE */
-  .analysis-notice {
-    border-left: 2px solid var(--cyan-dim);
-    padding: 10px 16px;
-    margin-bottom: 24px;
-    font-size: 11px;
-    color: var(--white-dim);
-    line-height: 1.8;
-    animation: fadeIn 0.4s ease 0.4s both;
-  }
-
-  /* COMPONENT GRID */
-  .components-label {
-    font-size: 9px;
-    color: var(--cyan-dim);
-    letter-spacing: 3px;
-    margin-bottom: 12px;
-    animation: fadeIn 0.4s ease 0.5s both;
-  }
-
-  .components {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .component {
-    border: 1px solid var(--border);
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: border-color 0.2s, background 0.2s;
-    animation: fadeIn 0.4s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .component::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: var(--cyan-dim);
-    transition: background 0.2s;
-  }
-
-  .component.unlocked { border-color: var(--border-bright); }
-  .component.unlocked::before { background: var(--cyan); }
-  .component.playing { 
-    border-color: var(--cyan); 
-    background: rgba(0,200,212,0.03);
-  }
-  .component.playing::before { 
-    background: var(--cyan);
-    box-shadow: 0 0 8px var(--cyan);
-  }
-  .component.completed::before { background: var(--green); }
-  .component.completed { border-color: #1a3a1a; }
-
-  .component.locked {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .component-number {
-    font-family: 'VT323', monospace;
-    font-size: 28px;
-    color: var(--cyan-dim);
-    min-width: 32px;
-    line-height: 1;
-  }
-
-  .component.playing .component-number { color: var(--cyan); }
-  .component.completed .component-number { color: var(--green); }
-
-  .component-info {
-    flex: 1;
-  }
-
-  .component-name {
-    font-size: 11px;
-    color: var(--white);
-    letter-spacing: 2px;
-    margin-bottom: 2px;
-  }
-
-  .component-desc {
-    font-size: 9px;
-    color: var(--white-dim);
-    letter-spacing: 1px;
-  }
-
-  .component-status {
-    font-size: 9px;
-    letter-spacing: 1px;
-    min-width: 80px;
-    text-align: right;
-  }
-
-  .status-ready { color: var(--cyan-dim); }
-  .status-playing { color: var(--cyan); animation: blink 1s infinite; }
-  .status-complete { color: var(--green); }
-  .status-locked { color: var(--border-bright); }
-
-  .play-btn {
-    background: transparent;
-    border: 1px solid var(--cyan-dim);
-    color: var(--cyan-dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 5px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    min-width: 70px;
-    text-align: center;
-  }
-
-  .play-btn:hover {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(0,200,212,0.05);
-  }
-
-  .play-btn:disabled {
-    border-color: var(--border);
-    color: var(--border-bright);
-    cursor: not-allowed;
-  }
-
-  .play-btn.playing-state {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(0,200,212,0.08);
-  }
-
-  /* WAVEFORM VISUALIZER */
-  .waveform {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    height: 20px;
-    min-width: 60px;
-  }
-
-  .wave-bar {
-    width: 2px;
-    background: var(--cyan-dim);
-    border-radius: 1px;
-    transition: height 0.1s;
-  }
-
-  .component.playing .wave-bar {
-    background: var(--cyan);
-    animation: wave 0.8s ease infinite;
-  }
-
-  .wave-bar:nth-child(1) { animation-delay: 0s; }
-  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.15s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.05s; }
-  .wave-bar:nth-child(6) { animation-delay: 0.25s; }
-  .wave-bar:nth-child(7) { animation-delay: 0.1s; }
-
-  @keyframes wave {
-    0%, 100% { height: 3px; }
-    50% { height: 16px; }
-  }
-
-  /* RECONSTRUCTION SECTION */
-  .reconstruction {
-    border: 1px solid var(--border);
-    padding: 20px 24px;
-    margin-bottom: 24px;
-    position: relative;
-    transition: border-color 0.4s;
-    animation: fadeIn 0.4s ease 0.9s both;
-  }
-
-  .reconstruction::before {
-    content: 'RECONSTRUCCIÓN COMPLETA / FULL RECONSTRUCTION';
-    position: absolute;
-    top: -8px; left: 16px;
-    background: var(--bg);
-    padding: 0 8px;
-    font-size: 8px;
-    color: var(--cyan-dim);
-    letter-spacing: 3px;
-  }
-
-  .reconstruction.unlocked {
-    border-color: var(--cyan);
-    box-shadow: 0 0 20px rgba(0,200,212,0.05);
-  }
-
-  .recon-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .recon-title {
-    font-family: 'VT323', monospace;
-    font-size: 32px;
-    color: var(--cyan-dim);
-    letter-spacing: 4px;
-    transition: color 0.4s;
-  }
-
-  .reconstruction.unlocked .recon-title { 
-    color: var(--cyan);
-    text-shadow: 0 0 20px rgba(0,200,212,0.3);
-  }
-
-  .recon-lock {
-    font-size: 10px;
-    color: var(--restricted);
-    letter-spacing: 2px;
-    border: 1px solid var(--restricted);
-    padding: 4px 10px;
-    opacity: 0.7;
-  }
-
-  .recon-lock.hidden { display: none; }
-
-  .recon-body {
-    font-size: 10px;
-    color: var(--white-dim);
-    letter-spacing: 1px;
-    line-height: 2;
-    margin-bottom: 16px;
-  }
-
-  .recon-body.locked-text { opacity: 0.4; }
-
-  .recon-btn {
-    background: transparent;
-    border: 1px solid var(--cyan-dim);
-    color: var(--cyan-dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    padding: 10px 24px;
-    cursor: not-allowed;
-    transition: all 0.3s;
-    width: 100%;
-    text-align: center;
-    opacity: 0.4;
-  }
-
-  .recon-btn.active {
-    cursor: pointer;
-    opacity: 1;
-    border-color: var(--cyan);
-    color: var(--cyan);
-  }
-
-  .recon-btn.active:hover {
-    background: rgba(0,200,212,0.08);
-    box-shadow: 0 0 20px rgba(0,200,212,0.1);
-  }
-
-  .recon-btn.playing-full {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(0,200,212,0.08);
-    cursor: pointer;
-    opacity: 1;
-  }
-
-  /* HIDDEN FINDING */
-  .hidden-finding {
-    display: none;
-    border: 1px solid #1a3a1a;
-    padding: 16px 20px;
-    margin-bottom: 24px;
-    position: relative;
-    animation: fadeIn 0.6s ease forwards;
-  }
-
-  .hidden-finding::before {
-    content: 'HALLAZGO OCULTO / HIDDEN FINDING — NIVEL: CLASIFICADO';
-    position: absolute;
-    top: -8px; left: 16px;
-    background: var(--bg);
-    padding: 0 8px;
-    font-size: 8px;
-    color: #2a6a2a;
-    letter-spacing: 2px;
-  }
-
-  .hidden-finding p {
-    font-size: 11px;
-    color: #4a9a4a;
-    letter-spacing: 1px;
-    line-height: 1.9;
-    font-style: italic;
-  }
-
-  /* DBR NOTE */
-  .dbr-note {
-    border-left: 2px solid var(--cyan-dim);
-    padding: 12px 16px;
-    margin-bottom: 24px;
-    animation: fadeIn 0.4s ease 1s both;
-  }
-
-  .dbr-note p {
-    font-size: 10px;
-    color: var(--white-dim);
-    letter-spacing: 1px;
-    line-height: 1.9;
-  }
-
-  .dbr-note .note-label {
-    font-size: 8px;
-    color: var(--cyan-dim);
-    letter-spacing: 3px;
-    margin-bottom: 6px;
-  }
-
-  /* FOOTER */
-  .doc-footer {
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    font-size: 9px;
-    color: #1a3a40;
-    letter-spacing: 1px;
-    line-height: 2;
-    animation: fadeIn 0.4s ease 1.1s both;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(3px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0.3; }
-  }
-
-  /* DOWNLOAD LINK */
-  .download-section {
-    display: none;
-    margin-top: 16px;
-    padding: 12px 16px;
-    border: 1px solid #1a3a1a;
-    animation: fadeIn 0.6s ease forwards;
-  }
-
-  .download-section p {
-    font-size: 10px;
-    color: var(--green);
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-
-  .download-btn {
-    background: transparent;
-    border: 1px solid var(--green);
-    color: var(--green);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .download-btn:hover {
-    background: rgba(0,255,65,0.05);
-  }
-
-  @media (max-width: 600px) {
-    .specimen-meta { grid-template-columns: 1fr 1fr; }
-    .specimen-id { font-size: 32px; }
-    .component { flex-wrap: wrap; gap: 10px; }
-    .waveform { display: none; }
-  }
+/* ============================================================
+   D.B.R INTERFACE
+   Custodios del Orden Entrópico
+   Protocolo de Disección Espectral / WR-01
+   ============================================================ */
+
+:root {
+  --bg:          #07070a;
+  --bg-2:        #0c0c11;
+  --surface:     #111117;
+  --surface-2:   #16161e;
+  --surface-3:   #1c1c25;
+  --line:        #25252f;
+  --line-bright: #32323e;
+  --line-faint:  #18181f;
+
+  --text:        #e6e6ea;
+  --text-dim:    #8a8a94;
+  --text-faint:  #44444e;
+  --text-ghost:  #2a2a33;
+
+  --dbr:         #9c7cff;
+  --dbr-hot:     #b79dff;
+  --dbr-dim:     #5e4aaa;
+  --dbr-faint:   #2e2456;
+  --dbr-glow:    rgba(156, 124, 255, 0.22);
+
+  --c-drums:     #4d7eff;
+  --c-keys:      #5fd578;
+  --c-vocal:     #b67bff;
+  --c-bass:      #e76070;
+
+  --signal:      #5fd578;
+  --warn:        #ffb155;
+  --noise:       #e76070;
+
+  --grain-opacity: 0.04;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Roboto Slab', Georgia, serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at top, rgba(94, 71, 170, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(156, 124, 255, 0.03) 0%, transparent 60%),
+    var(--bg);
+  position: relative;
+}
+
+/* subtle grain texture over everything */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* numeric readouts: tabular, monospace where appropriate */
+.num, .mono {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 32px 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   CROSSHEAD (top banner, always visible)
+   ============================================================ */
+
+.crosshead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.crosshead-left { display: flex; gap: 28px; align-items: center; }
+.crosshead-right { display: flex; gap: 24px; align-items: center; }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+.back-link:hover {
+  color: var(--dbr);
+  border-color: var(--dbr-dim);
+  background-color: rgba(156, 124, 255, 0.06);
+}
+.back-link:hover .back-arrow { transform: translateX(-2px); }
+.back-arrow {
+  font-family: 'JetBrains Mono', monospace;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.crest {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+.crest-mark {
+  width: 14px; height: 14px;
+  border: 1px solid var(--dbr);
+  transform: rotate(45deg);
+  position: relative;
+}
+.crest-mark::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--dbr);
+  opacity: 0.6;
+}
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--dbr);
+  box-shadow: 0 0 8px var(--dbr-glow);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.85); }
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.header {
+  margin-top: 48px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 48px;
+  align-items: stretch;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.header-right .dbr-logo-wrap {
+  display: inline-block;
+  margin-bottom: auto;
+  cursor: default;
+  align-self: flex-end;
+}
+.header-right .dbr-logo {
+  height: 180px;
+  width: auto;
+  display: block;
+  /* Logo PNG is already pre-colored DBR violet. No color filter needed. */
+  filter: none;
+  transition:
+    filter 0.4s ease,
+    transform 0.4s ease;
+}
+.header-right .dbr-logo-wrap:hover .dbr-logo {
+  filter:
+    drop-shadow(0 0 18px rgba(156, 124, 255, 0.58))
+    drop-shadow(0 0 42px rgba(156, 124, 255, 0.38))
+    drop-shadow(0 0 80px rgba(156, 124, 255, 0.22));
+  transform: translateY(-2px);
+}
+
+.header-left .eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.header-left h1 {
+  font-size: clamp(38px, 5.2vw, 64px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.header-left .subtitle {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--text-dim);
+  font-style: italic;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  align-items: flex-end;
+}
+.header-right .kv { display: flex; justify-content: flex-end; gap: 14px; }
+.header-right .kv .k { color: var(--text-faint); }
+.header-right .kv .v { color: var(--text); font-family: 'JetBrains Mono', monospace; font-weight: 500; letter-spacing: 0.08em; }
+
+.motto {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.motto::before, .motto::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--dbr-dim), transparent);
+  margin: 0 18px;
+}
+
+/* ============================================================
+   BRIEF (institutional paragraphs, bilingual, two columns)
+   ============================================================ */
+
+.brief {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin: 0 0 40px;
+  padding: 28px 32px;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-2) 100%);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.brief::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 24px; height: 24px;
+  border-top: 1px solid var(--dbr);
+  border-left: 1px solid var(--dbr);
+}
+.brief::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 24px; height: 24px;
+  border-bottom: 1px solid var(--dbr);
+  border-right: 1px solid var(--dbr);
+}
+
+.brief-col .lang-tag {
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.brief-col p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+}
+.brief-col p:last-child { margin-bottom: 0; }
+.brief-col strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.brief-col em {
+  color: var(--dbr);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   INITIATE OVERLAY (pre-audio)
+   ============================================================ */
+
+.initiate-shell {
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+.initiate-shell::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(156,124,255,0.025) 3px, rgba(156,124,255,0.025) 4px);
+  pointer-events: none;
+}
+
+.initiate-body {
+  text-align: center;
+  max-width: 620px;
+  position: relative;
+  z-index: 1;
+}
+.initiate-body .pre {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  font-weight: 500;
+}
+.initiate-body h2 {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text);
+  margin: 0 0 14px;
+  letter-spacing: -0.005em;
+}
+.initiate-body p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin: 0 0 36px;
+  line-height: 1.7;
+  font-style: italic;
+}
+.initiate-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--dbr);
+  color: var(--dbr);
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 18px 44px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+.initiate-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--dbr);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+.initiate-btn:hover {
+  color: var(--bg);
+  letter-spacing: 0.32em;
+}
+.initiate-btn:hover::before {
+  transform: scaleX(1);
+}
+.initiate-btn:active {
+  transform: scale(0.98);
+}
+.initiate-btn[disabled] {
+  opacity: 0.4;
+  cursor: wait;
+  pointer-events: none;
+}
+.initiate-btn .mono {
+  display: block;
+  font-size: 9px;
+  color: currentColor;
+  opacity: 0.7;
+  letter-spacing: 0.28em;
+  margin-top: 6px;
+}
+
+.initiate-status {
+  margin-top: 26px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  min-height: 14px;
+}
+
+/* ============================================================
+   MIXER SECTION
+   ============================================================ */
+
+.mixer-section {
+  display: none; /* revealed after initiate */
+  margin-top: 16px;
+}
+.mixer-section.active { display: block; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.section-head .title {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.section-head .title-es { color: var(--dbr); }
+.section-head .title-en { color: var(--text-faint); margin-left: 8px; }
+.section-head .meta {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mixer-wrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 20px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  position: relative;
+  min-width: 0;
+}
+.mixer-wrap::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 20px; height: 20px;
+  border-top: 1px solid var(--dbr-dim);
+  border-left: 1px solid var(--dbr-dim);
+}
+.mixer-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 20px; height: 20px;
+  border-bottom: 1px solid var(--dbr-dim);
+  border-right: 1px solid var(--dbr-dim);
+}
+
+@media (max-width: 880px) {
+  .mixer-scroll { overflow-x: auto; }
+  .mixer-wrap { min-width: 760px; }
+}
+
+/* ============================================================
+   CHANNEL STRIP
+   ============================================================ */
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  position: relative;
+  padding: 14px 12px 16px;
+  min-height: 520px;
+  --c: var(--dbr);
+}
+.channel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--c);
+  opacity: 0.85;
+}
+.channel.muted { opacity: 0.45; }
+.channel.muted::before { opacity: 0.3; }
+
+.ch-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.ch-num {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-family: 'JetBrains Mono', monospace;
+}
+.ch-name {
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  color: var(--c);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.ch-waveform {
+  height: 76px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-faint);
+  position: relative;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.ch-waveform canvas { width: 100%; height: 100%; display: block; }
+.ch-waveform::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: var(--text-ghost);
+  opacity: 0.7;
+}
+
+.ch-fader-area {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 240px;
+  margin-bottom: 12px;
+}
+
+.ch-fader-scale {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-ghost);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  padding: 2px 0;
+  text-align: right;
+  pointer-events: none;
+}
+.ch-fader-scale span { line-height: 1; }
+
+/* vertical fader track */
+.ch-fader {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+  border: 1px solid var(--line-faint);
+  cursor: ns-resize;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* tick marks on the track */
+.ch-fader-ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ch-fader-ticks::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: var(--text-ghost);
+  opacity: 0.4;
+}
+
+/* fader fill (from bottom up to knob) */
+.ch-fader-fill {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, var(--c) 0%, var(--c) 50%, transparent 100%);
+  opacity: 0.12;
+  transition: opacity 0.15s;
+}
+.ch-fader:hover .ch-fader-fill { opacity: 0.2; }
+
+/* fader knob */
+.ch-fader-knob {
+  position: absolute;
+  left: -5px; right: -5px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--surface-3) 0%, var(--surface) 50%, var(--bg-2) 100%);
+  border: 1px solid var(--c);
+  box-shadow:
+    0 0 0 1px var(--line-faint),
+    0 0 10px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  cursor: grab;
+  transform: translateY(-50%);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.ch-fader-knob::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 4px; right: 4px;
+  height: 1px;
+  background: var(--c);
+  opacity: 0.7;
+  transform: translateY(-50%);
+}
+.ch-fader-knob::after {
+  content: '';
+  position: absolute;
+  top: calc(50% - 2px); left: 8px; right: 8px;
+  height: 1px;
+  background: var(--c);
+  opacity: 0.3;
+}
+.ch-fader:hover .ch-fader-knob {
+  box-shadow:
+    0 0 0 1px var(--c),
+    0 0 14px rgba(156,124,255,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.ch-fader-knob.dragging { cursor: grabbing; }
+
+/* meter beside fader */
+.ch-meter {
+  width: 6px;
+  background: var(--bg);
+  border: 1px solid var(--line-faint);
+  position: relative;
+  overflow: hidden;
+}
+.ch-meter-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg, var(--c-bass) 0%, var(--warn) 30%, var(--c) 60%, var(--c) 100%);
+  transition: height 0.03s linear;
+}
+
+.ch-readout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 6px 0;
+  border-top: 1px solid var(--line-faint);
+  border-bottom: 1px solid var(--line-faint);
+}
+.ch-readout .label {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ch-readout .value {
+  font-size: 16px;
+  color: var(--c);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.ch-controls {
+  display: flex;
+  gap: 6px;
+}
+.ch-btn {
+  flex: 1;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 8px 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ch-btn:hover {
+  border-color: var(--c);
+  color: var(--c);
+}
+.ch-btn.active {
+  background: var(--c);
+  color: var(--bg);
+  border-color: var(--c);
+}
+.ch-btn.mute-btn.active {
+  background: var(--noise);
+  border-color: var(--noise);
+}
+
+/* ============================================================
+   OUTPUT SECTION
+   ============================================================ */
+
+.output-section {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 880px) {
+  .output-section { grid-template-columns: 1fr; }
+}
+
+.output-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 18px 20px;
+  position: relative;
+}
+.output-panel::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 16px; height: 16px;
+  border-top: 1px solid var(--dbr-dim);
+  border-left: 1px solid var(--dbr-dim);
+}
+
+.output-panel .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.output-panel .head .title {
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.output-panel .head .title-es { color: var(--dbr); }
+.output-panel .head .title-en { color: var(--text-faint); margin-left: 6px; }
+.output-panel .head .id {
+  font-size: 10px;
+  color: var(--text-faint);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+}
+
+.spectrum {
+  height: 160px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-faint);
+  position: relative;
+  overflow: hidden;
+}
+.spectrum canvas { width: 100%; height: 100%; display: block; }
+.spectrum::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 0%, transparent 49.8%, var(--text-ghost) 49.8%, var(--text-ghost) 50.2%, transparent 50.2%, transparent 100%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.state-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.state-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line-faint);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.state-line:last-child { border-bottom: none; }
+.state-line .k { color: var(--text-faint); }
+.state-line .v {
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.state-line .v.warn { color: var(--warn); }
+.state-line .v.noise { color: var(--noise); }
+.state-line .v.signal { color: var(--signal); }
+.state-line .v.dbr { color: var(--dbr); }
+
+.state-big {
+  margin-top: 14px;
+  padding: 16px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--noise);
+  transition: border-left-color 0.4s;
+}
+.state-big.partial  { border-left-color: var(--warn); }
+.state-big.close    { border-left-color: var(--dbr); }
+.state-big.solved   { border-left-color: var(--signal); }
+
+.state-big .lbl {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.state-big .msg-es {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.state-big .msg-en {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  font-style: italic;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+.footer-left, .footer-right { display: flex; gap: 24px; align-items: center; }
+.footer a {
+  color: var(--text-dim);
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: all 0.2s;
+}
+.footer a:hover { color: var(--dbr); border-bottom-color: var(--dbr-dim); }
+
+.observer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--dbr-faint);
+  color: var(--dbr);
+}
+.observer-chip .dot {
+  width: 5px; height: 5px;
+  background: var(--dbr);
+  border-radius: 50%;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+/* ============================================================
+   CINEMATIC SOLVE OVERLAY
+   ============================================================ */
+
+.solve-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.solve-overlay.active { opacity: 1; pointer-events: auto; }
+
+.solve-dim {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(156,124,255,0.08) 0%, rgba(7,7,10,0.82) 70%, rgba(7,7,10,0.92) 100%);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.solve-overlay.active .solve-dim { opacity: 1; }
+
+/* horizontal scan line (phase 1) */
+.scan-h {
+  position: absolute;
+  left: 0; right: 0;
+  top: -2px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--dbr-hot) 20%, var(--dbr-hot) 80%, transparent);
+  box-shadow:
+    0 0 24px 4px var(--dbr-hot),
+    0 0 60px 10px var(--dbr-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+.scan-h.run {
+  animation: scan-h-anim 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+@keyframes scan-h-anim {
+  0%   { top: -2px; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* vertical scan line (phase 2) */
+.scan-v {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -2px;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--dbr-hot) 20%, var(--dbr-hot) 80%, transparent);
+  box-shadow:
+    0 0 24px 4px var(--dbr-hot),
+    0 0 60px 10px var(--dbr-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+.scan-v.run {
+  animation: scan-v-anim 2.0s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+@keyframes scan-v-anim {
+  0%   { left: -2px; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.solve-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.solve-text.visible { opacity: 1; }
+.solve-text .pre {
+  font-size: 10px;
+  letter-spacing: 0.36em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.solve-text .main-es {
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  line-height: 1;
+}
+.solve-text .main-en {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  color: var(--dbr-hot);
+  text-transform: uppercase;
+  margin: 0 0 22px;
+  font-style: italic;
+}
+.solve-text .motto-end {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--dbr-dim);
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* element registration flash when scan passes */
+.scan-flash {
+  animation: element-register 0.6s ease;
+}
+@keyframes element-register {
+  0% { box-shadow: 0 0 0 0 var(--dbr-hot); filter: brightness(1); }
+  30% { box-shadow: 0 0 20px 2px var(--dbr-glow); filter: brightness(1.2); }
+  100% { box-shadow: 0 0 0 0 transparent; filter: brightness(1); }
+}
+
+/* ============================================================
+   REVEAL (download + record, post-solve)
+   ============================================================ */
+
+.reveal {
+  display: none;
+  margin-top: 40px;
+  padding: 36px 32px;
+  background:
+    linear-gradient(180deg, var(--surface) 0%, var(--bg-2) 100%);
+  border: 1px solid var(--dbr-dim);
+  position: relative;
+  box-shadow: 0 0 40px -10px var(--dbr-glow);
+}
+.reveal.active { display: block; animation: reveal-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+@keyframes reveal-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal::before, .reveal::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--dbr);
+}
+.reveal::before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+.reveal::after  { bottom: -1px; right: -1px; border-bottom: 1px solid; border-right: 1px solid; }
+
+.reveal-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.reveal-head .tag {
+  font-size: 10px;
+  letter-spacing: 0.36em;
+  color: var(--signal);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.reveal-head .tag::before, .reveal-head .tag::after {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--signal);
+}
+.reveal-head h3 {
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--text);
+  margin: 0 0 6px;
+  letter-spacing: 0.01em;
+}
+.reveal-head .sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-style: italic;
+  margin: 0;
+}
+
+.reveal-actions {
+  display: flex;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.reveal-actions .reveal-btn {
+  width: 100%;
+}
+
+.reveal-btn {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  font-family: inherit;
+  text-align: left;
+}
+.reveal-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--dbr);
+  transform: translateY(-2px);
+}
+.reveal-btn .lbl {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--dbr);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.reveal-btn .title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+.reveal-btn .title-es {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.reveal-btn .title-en {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-style: italic;
+  margin-top: 2px;
+}
+.reveal-btn .file {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line-faint);
+  font-size: 10px;
+  color: var(--text-faint);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.06em;
+}
+.reveal-btn .arrow {
+  align-self: flex-end;
+  font-size: 14px;
+  color: var(--dbr);
+  margin-left: 8px;
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+
+.hidden { display: none !important; }
+
+::selection {
+  background: var(--dbr);
+  color: var(--bg);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 720px) {
+  .container { padding: 20px 16px 48px; }
+  .header { grid-template-columns: 1fr; gap: 20px; }
+  .header-right { text-align: left; align-items: flex-start; order: -1; }
+  .header-right .kv { justify-content: flex-start; }
+  .header-right .dbr-logo { height: 120px; }
+  .header-meta { align-items: flex-start; }
+  .brief { grid-template-columns: 1fr; gap: 24px; padding: 20px; }
+  .motto::before, .motto::after { margin: 0 8px; }
+  .crosshead { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
 </style>
 </head>
 <body>
-<div class="wrapper">
 
-  <!-- BACK NAV -->
-  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan-dim);letter-spacing:2px;padding:12px 0;margin-bottom:4px;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--cyan-dim)'" onclick="window.location.href='index.html'">
-    ← VOLVER AL DIRECTORIO / BACK TO DIRECTORY
+<!-- cinematic solve overlay (full viewport) -->
+<div class="solve-overlay" id="solveOverlay">
+  <div class="solve-dim"></div>
+  <div class="scan-h" id="scanH"></div>
+  <div class="scan-v" id="scanV"></div>
+  <div class="solve-text" id="solveText">
+    <div class="pre">D.B.R / Análisis Terminado · Analysis Complete</div>
+    <div class="main-es" id="solveMainEs">Patrón Reconocido</div>
+    <div class="main-en" id="solveMainEn">Pattern Recognized</div>
+    <div class="motto-end">Gnosis Ultra Veritatem</div>
   </div>
+</div>
 
-  <!-- ESCALATION BANNER — hidden by default, shown during Cage/DCC release by adding class 'visible' -->
-  <div id="escalationBanner" style="display:none;border:1px solid var(--cyan-dim);padding:12px 16px;margin-bottom:16px;font-size:10px;color:var(--cyan-dim);letter-spacing:2px;line-height:2;">
-    CASO ESCALADO AL D.C.C — ANÁLISIS COMPLETADO. SUJETO EN PROCESO DE CONTENCIÓN.<br>
-    CASE ESCALATED TO D.C.C — ANALYSIS COMPLETE. SUBJECT IN CONTAINMENT PROCESS.<br>
-    <span style="color:var(--amber)">ARCHIVOS DISPONIBLES PARA CONSULTA / FILES AVAILABLE FOR REFERENCE</span>
-  </div>
+<div class="container">
 
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="dept">D.B.R</div>
-      <div class="dept-full">DEPARTAMENTO DE INVESTIGACIÓN Y BALANCE / DEPARTMENT OF BALANCE & RESEARCH</div>
+  <!-- top crosshead -->
+  <div class="crosshead">
+    <div class="crosshead-left">
+      <a href="./" class="back-link" aria-label="Volver al Hub · Return to Hub">
+        <span class="back-arrow">&larr;</span>
+        <span>Hub · Return</span>
+      </a>
+      <span class="crest"><span class="crest-mark"></span>Custodios del Orden Entrópico</span>
+      <span>División de Balance y Reconstrucción</span>
     </div>
-    <div class="topbar-right">
-      CASO: <span class="status-active" id="caseDisplay">███-████</span><br>
-      PROTOCOLO: DISECCIÓN ACTIVA<br>
-      AUTORIZACIÓN: NIVEL — SUJETO<br>
-      SOPPHIAVEL — SUPERVISANDO
-    </div>
-  </div>
-
-  <!-- SPECIMEN HEADER -->
-  <div class="specimen-header">
-    <div class="restricted-stamp">RESTRINGIDO</div>
-    <div class="specimen-id">WARMTH</div>
-    <div class="specimen-sub">ESPÉCIMEN WC-002 / FENÓMENO DE CALOR NO LOCALIZADO — SPECIMEN WC-002 / UNLOCATED WARMTH PHENOMENON</div>
-    <div class="specimen-meta">
-      CLASIFICACIÓN: <span>FENÓMENO ACTIVO</span>
-      ORIGEN: <span>INDETERMINADO</span>
-      MÉTODO: <span>DISECCIÓN POR CAPAS</span>
-      ESTADO: <span id="specimenStatus">ANÁLISIS EN CURSO</span>
-      SUJETO: <span id="subjectDisplay">REGISTRADO</span>
-      GNOSIS ULTRA VERITATEM: <span>EN PROCESO</span>
+    <div class="crosshead-right">
+      <span>Sesión <span class="num" id="sessionTime">00:00:00</span></span>
+      <span class="live-dot"></span>
     </div>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="progress-section">
-    <div class="progress-label">PROGRESO DE ANÁLISIS / ANALYSIS PROGRESS</div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  <!-- header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="eyebrow">Interfaz D.B.R · D.B.R Interface</div>
+      <h1>Protocolo de Disección Espectral</h1>
+      <p class="subtitle">Spectral Dissection Protocol · Subject WR-01</p>
     </div>
-    <div class="progress-text" id="progressText">0 DE 4 COMPONENTES ANALIZADOS / 0 OF 4 COMPONENTS ANALYZED</div>
-  </div>
-
-  <!-- NOTICE -->
-  <div class="analysis-notice">
-    PROTOCOLO DBR-07: El espécimen debe ser analizado en componentes aislados antes de la reconstrucción completa.<br>
-    Cada capa contiene información que la mezcla completa oculta deliberadamente.<br>
-    La verdad no se escucha. Se disecciona.<br><br>
-    DBR PROTOCOL-07: Specimen must be analyzed in isolated components prior to full reconstruction.<br>
-    Each layer contains information the complete mix deliberately conceals.<br>
-    Truth is not heard. It is dissected.
-  </div>
-
-  <!-- COMPONENTS -->
-  <div class="components-label">AISLAMIENTO DE COMPONENTES / COMPONENT ISOLATION</div>
-
-  <div class="components" id="componentList">
-
-    <div class="component unlocked" id="comp-0" style="animation-delay: 0.5s">
-      <div class="component-number">01</div>
-      <div class="component-info">
-        <div class="component-name">CAPA VOCAL / VOCAL LAYER</div>
-        <div class="component-desc">Frecuencia principal. Patrón de llamada y respuesta. / Primary frequency. Call and response pattern.</div>
+    <div class="header-right">
+      <a href="./" class="dbr-logo-wrap" aria-label="D.B.R · Investigación y Balance">
+        <img src="./logos/dbr-logo.png" alt="D.B.R" class="dbr-logo">
+      </a>
+      <div class="header-meta">
+        <div class="kv"><span class="k">Expediente</span><span class="v" id="fileId">WR-01-DBR-0000</span></div>
+        <div class="kv"><span class="k">Ingreso</span><span class="v" id="ingress">D.O.S · ESCALATED</span></div>
+        <div class="kv"><span class="k">Nivel</span><span class="v">02 / INTERFERENCIA IRREDUCIBLE</span></div>
+        <div class="kv"><span class="k">Custodio</span><span class="v">D.B.R · ACTIVO</span></div>
       </div>
-      <div class="waveform">
-        <div class="wave-bar" style="height:4px"></div>
-        <div class="wave-bar" style="height:8px"></div>
-        <div class="wave-bar" style="height:12px"></div>
-        <div class="wave-bar" style="height:6px"></div>
-        <div class="wave-bar" style="height:14px"></div>
-        <div class="wave-bar" style="height:8px"></div>
-        <div class="wave-bar" style="height:4px"></div>
-      </div>
-      <div class="component-status status-ready" id="status-0">LISTO</div>
-      <button class="play-btn" id="btn-0" onclick="playComponent(0)">▶ PLAY</button>
     </div>
+    <div class="motto">Gnosis Ultra Veritatem</div>
+  </header>
 
-    <div class="component unlocked" id="comp-1" style="animation-delay: 0.6s">
-      <div class="component-number">02</div>
-      <div class="component-info">
-        <div class="component-name">ESTRUCTURA ARMÓNICA / HARMONIC STRUCTURE</div>
-        <div class="component-desc">Tejido de frecuencias. Resonancia entre capas. / Frequency weave. Inter-layer resonance.</div>
-      </div>
-      <div class="waveform">
-        <div class="wave-bar" style="height:6px"></div>
-        <div class="wave-bar" style="height:10px"></div>
-        <div class="wave-bar" style="height:5px"></div>
-        <div class="wave-bar" style="height:14px"></div>
-        <div class="wave-bar" style="height:7px"></div>
-        <div class="wave-bar" style="height:11px"></div>
-        <div class="wave-bar" style="height:4px"></div>
-      </div>
-      <div class="component-status status-ready" id="status-1">LISTO</div>
-      <button class="play-btn" id="btn-1" onclick="playComponent(1)">▶ PLAY</button>
+  <!-- institutional brief -->
+  <section class="brief">
+    <div class="brief-col">
+      <div class="lang-tag">ES / Informe de Ingreso</div>
+      <p>La División de Observación no pudo traducir esta transmisión. El Testigo del Micelio reportó <strong>interferencia irreducible</strong>. El expediente se eleva a D.B.R para análisis espectral.</p>
+      <p>Método: <em>cancelación por equilibrio de fase</em>. Los cuatro canales aislados contienen fragmentos coherentes de la señal portadora y un componente de ruido superpuesto. El ruido solo desaparece cuando los canales se balancean entre sí. Ninguna cancelación es posible con canales silenciados.</p>
+      <p>Advertencia: <strong>el sujeto puede responder a la observación</strong>. Registre cualquier anomalía en el entorno durante el análisis.</p>
     </div>
+    <div class="brief-col">
+      <div class="lang-tag">EN / Ingress Report</div>
+      <p>The Observation Division could not translate this transmission. The Mycelium Witness reported <strong>irreducible interference</strong>. The file is escalated to D.B.R for spectral analysis.</p>
+      <p>Method: <em>cancellation by phase balance</em>. The four isolated channels contain coherent fragments of the carrier signal and a superimposed noise component. The noise only vanishes when channels balance against each other. No cancellation is possible with any channel silenced.</p>
+      <p>Warning: <strong>the subject may respond to observation</strong>. Record any anomalies in the environment during analysis.</p>
+    </div>
+  </section>
 
-    <div class="component unlocked" id="comp-2" style="animation-delay: 0.7s">
-      <div class="component-number">03</div>
-      <div class="component-info">
-        <div class="component-name">PATRÓN RÍTMICO / RHYTHMIC PATTERN</div>
-        <div class="component-desc">Estructura de tiempo. Impulso de propagación. / Time structure. Propagation impulse.</div>
-      </div>
-      <div class="waveform">
-        <div class="wave-bar" style="height:3px"></div>
-        <div class="wave-bar" style="height:14px"></div>
-        <div class="wave-bar" style="height:3px"></div>
-        <div class="wave-bar" style="height:14px"></div>
-        <div class="wave-bar" style="height:3px"></div>
-        <div class="wave-bar" style="height:14px"></div>
-        <div class="wave-bar" style="height:3px"></div>
-      </div>
-      <div class="component-status status-ready" id="status-2">LISTO</div>
-      <button class="play-btn" id="btn-2" onclick="playComponent(2)">▶ PLAY</button>
-    </div>
-
-    <div class="component unlocked" id="comp-3" style="animation-delay: 0.8s">
-      <div class="component-number">04</div>
-      <div class="component-info">
-        <div class="component-name">FRECUENCIA DE BAJO / BASS FREQUENCY</div>
-        <div class="component-desc">Capa de anclaje. Vibración subterránea. / Anchoring layer. Subterranean vibration.</div>
-      </div>
-      <div class="waveform">
-        <div class="wave-bar" style="height:8px"></div>
-        <div class="wave-bar" style="height:12px"></div>
-        <div class="wave-bar" style="height:16px"></div>
-        <div class="wave-bar" style="height:12px"></div>
-        <div class="wave-bar" style="height:8px"></div>
-        <div class="wave-bar" style="height:12px"></div>
-        <div class="wave-bar" style="height:16px"></div>
-      </div>
-      <div class="component-status status-ready" id="status-3">LISTO</div>
-      <button class="play-btn" id="btn-3" onclick="playComponent(3)">▶ PLAY</button>
-    </div>
-
-  </div>
-
-  <!-- RECONSTRUCTION -->
-  <div class="reconstruction" id="reconstructionSection">
-    <div class="recon-header">
-      <div class="recon-title">WC-002 / RECONSTRUCCIÓN</div>
-      <div class="recon-lock" id="reconLock">ACCESO RESTRINGIDO</div>
-    </div>
-    <div class="recon-body locked-text" id="reconBody">
-      Acceso a la reconstrucción completa requiere análisis previo de todos los componentes aislados.<br>
-      La verdad completa solo es visible una vez que sus partes han sido comprendidas por separado.<br><br>
-      Access to full reconstruction requires prior analysis of all isolated components.<br>
-      Complete truth is only visible once its parts have been understood separately.
-    </div>
-    <button class="recon-btn" id="reconBtn" disabled onclick="playFull()">
-      INICIAR RECONSTRUCCIÓN / BEGIN RECONSTRUCTION
-    </button>
-    <div class="download-section" id="downloadSection">
-      <p>> ANÁLISIS COMPLETO. ARCHIVO DISPONIBLE PARA EXTRACCIÓN.</p>
-      <p>> FULL ANALYSIS COMPLETE. FILE AVAILABLE FOR EXTRACTION.</p>
-      <button class="download-btn" onclick="triggerDownload()">
-        ⬇ DESCARGAR WC-002_WARMTH — [ REEMPLAZAR CON ENLACE REAL ]
+  <!-- initiate (pre-audio) -->
+  <section class="initiate-shell" id="initiateShell">
+    <div class="initiate-body">
+      <div class="pre">Protocolo de Disección · Fase 1</div>
+      <h2>Iniciar Análisis</h2>
+      <p>Al confirmar, los canales aislados se cargarán simultáneamente. La disección es en tiempo real. El operador deberá localizar el nulo espectral por balance auditivo.</p>
+      <button class="initiate-btn" id="initiateBtn">
+        Iniciar Transmisión
+        <span class="mono">Initiate Transmission</span>
       </button>
+      <div class="initiate-status" id="initiateStatus"></div>
     </div>
-  </div>
+  </section>
 
-  <!-- HIDDEN FINDING — appears after full reconstruction -->
-  <div class="hidden-finding" id="hiddenFinding">
-    <p>
-      NOTA DEL ANALISTA — CLASIFICADO / ANALYST NOTE — CLASSIFIED<br><br>
-      Durante el aislamiento de la capa vocal se detectó una frecuencia secundaria no catalogada.<br>
-      La frecuencia no proviene del espécimen. Proviene del sujeto que lo escucha.<br>
-      El fenómeno responde al oyente. El fenómeno está estudiando al oyente.<br><br>
-      During vocal layer isolation a secondary uncatalogued frequency was detected.<br>
-      The frequency does not originate from the specimen. It originates from the subject listening to it.<br>
-      The phenomenon responds to the listener. The phenomenon is studying the listener.<br><br>
-      DERIVAR A SOPPHIAVEL PARA ANÁLISIS DE PROFUNDIDAD. / REFER TO SOPPHIAVEL FOR DEPTH ANALYSIS.<br>
-      — D.B.R // CASO <span id="hiddenCase">███</span>
-    </p>
-  </div>
+  <!-- mixer section (revealed after initiate) -->
+  <section class="mixer-section" id="mixerSection">
 
-  <!-- DBR NOTE -->
-  <div class="dbr-note">
-    <div class="note-label">NOTA DEL DEPARTAMENTO / DEPARTMENT NOTE</div>
-    <p>
-      El D.B.R no entrega espécimenes completos. Entrega comprensión.<br>
-      Si llegaste aquí buscando solo música, no entendiste el experimento.<br><br>
-      The D.B.R does not deliver complete specimens. It delivers understanding.<br>
-      If you arrived here looking only for music, you did not understand the experiment.
-    </p>
-  </div>
+    <div class="section-head">
+      <div>
+        <span class="title title-es">Canales Aislados</span>
+        <span class="title title-en">· Isolated Channels</span>
+      </div>
+      <div class="meta">WR-01 · STEM ARRAY · 4CH · SYNC LOCKED</div>
+    </div>
 
-  <!-- FOOTER -->
-  <div class="doc-footer">
-    ESTE ARCHIVO ES PROPIEDAD EXCLUSIVA DEL D.B.R — C.E.O. CUSTODIOS DEL ORDEN ENTRÓPICO<br>
-    LA EXTRACCIÓN NO AUTORIZADA DE DATOS SERÁ REPORTADA AL D.S.R PER ULTIMATAM RESOLUTIONEM<br>
-    THIS FILE IS THE EXCLUSIVE PROPERTY OF D.B.R — C.E.O. CUSTODIANS OF ENTROPIC ORDER<br>
-    UNAUTHORIZED DATA EXTRACTION WILL BE REPORTED TO D.S.R PER ULTIMATAM RESOLUTIONEM<br><br>
-    GNOSIS ULTRA VERITATEM
-  </div>
+    <div class="mixer-scroll">
+      <div class="mixer-wrap" id="mixerWrap">
+        <!-- channels injected by JS -->
+      </div>
+    </div>
+
+    <!-- output + state -->
+    <div class="output-section">
+      <div class="output-panel">
+        <div class="head">
+          <div>
+            <span class="title title-es">Salida Maestra</span>
+            <span class="title title-en">· Master Output</span>
+          </div>
+          <span class="id mono">SPEC / FFT-2048</span>
+        </div>
+        <div class="spectrum">
+          <canvas id="spectrumCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="output-panel state-panel">
+        <div class="head">
+          <div>
+            <span class="title title-es">Estado de Análisis</span>
+            <span class="title title-en">· Analysis State</span>
+          </div>
+          <span class="id mono" id="stateId">--:--</span>
+        </div>
+
+        <div>
+          <div class="state-line">
+            <span class="k">Portadora</span>
+            <span class="v signal" id="carrierState">DETECTED</span>
+          </div>
+          <div class="state-line">
+            <span class="k">Ruido</span>
+            <span class="v noise" id="noiseState">PRESENT</span>
+          </div>
+          <div class="state-line">
+            <span class="k">Integridad</span>
+            <span class="v warn" id="integrityState">--</span>
+          </div>
+          <div class="state-line">
+            <span class="k">Fase</span>
+            <span class="v" id="phaseState">DESEQUILIBRADA</span>
+          </div>
+        </div>
+
+        <div class="state-big" id="stateBig">
+          <div class="lbl">Estado · State</div>
+          <div class="msg-es" id="stateBigEs">Interferencia Detectada</div>
+          <div class="msg-en" id="stateBigEn">Interference Detected</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- reveal (download + record, post-solve) -->
+    <div class="reveal" id="reveal">
+      <div class="reveal-head">
+        <div class="tag">Señal Aislada · Signal Isolated</div>
+        <h3>Expediente WR-01 · Archivo Liberado</h3>
+        <p class="sub">El material es propiedad del archivo D.B.R. Cualquier copia se registra.</p>
+      </div>
+      <div class="reveal-actions">
+        <a class="reveal-btn" id="downloadBtn" href="./downloads/DBR-INT_WC-002_WARMTH.zip" download>
+          <span class="lbl">Transmisión · Transmission</span>
+          <div class="title-row">
+            <div>
+              <div class="title-es">Descargar Expediente</div>
+              <div class="title-en">Download Record</div>
+            </div>
+            <span class="arrow">↓</span>
+          </div>
+          <div class="file">DBR-INT_WC-002_WARMTH.zip</div>
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      <span>C.E.O · D.B.R · Investigación y Balance</span>
+      <span class="observer-chip"><span class="dot"></span>Monitoreo Activo · Active Monitoring</span>
+    </div>
+    <div class="footer-right">
+      <span>Custodiansofentropicorder.org</span>
+      <span id="buildId" class="mono">BUILD 02.04.26</span>
+    </div>
+  </footer>
 
 </div>
 
 <script>
-  // Simulate a case number from previous session
-  const caseNumber = 'DBR-' + Math.floor(Math.random() * 900 + 100) + '-' + Math.floor(Math.random() * 9000 + 1000);
-  document.getElementById('caseDisplay').textContent = caseNumber;
-  document.getElementById('subjectDisplay').textContent = 'SUJETO ACTIVO';
-  document.getElementById('hiddenCase').textContent = caseNumber;
+/* ============================================================
+   D.B.R INTERFACE · SPECTRAL DISSECTION PROTOCOL
+   ============================================================ */
 
-  const components = [
-    { name: 'VOCAL LAYER', completed: false },
-    { name: 'HARMONIC STRUCTURE', completed: false },
-    { name: 'RHYTHMIC PATTERN', completed: false },
-    { name: 'BASS FREQUENCY', completed: false }
-  ];
+// ------------------ CONFIG ------------------
+const STEMS_CONFIG = [
+  { id: 'drums', name: 'DRUMS', channel: '01', color: '#9c7cff', target:  0, initial: -10, path: './stems/warmth-drums.wav' },
+  { id: 'keys',  name: 'KEYS',  channel: '02', color: '#9c7cff', target: -3, initial:  +5, path: './stems/warmth-keys.wav'  },
+  { id: 'vocal', name: 'VOCAL', channel: '03', color: '#d8d8de', target:  4, initial:  -4, path: './stems/warmth-vocal.wav' },
+  { id: 'bass',  name: 'BASS',  channel: '04', color: '#d8d8de', target:  0, initial:  +2, path: './stems/warmth-bass.wav'  },
+];
 
-  let currentlyPlaying = null;
-  let fullCompleted = false;
+// Tolerance (dBFS) per stem on the NORMALIZED pattern.
+// Solve detects relative balance, not absolute levels. Any uniform offset
+// of all four sliders preserves phase cancellation and counts as valid.
+const TOLERANCE_DBFS     = 1.0;
+const SLIDER_MIN_DBFS    = -18;
+const SLIDER_MAX_DBFS    =  12;
+const SUSTAINED_SOLVE_MS = 800;  // must hold solution this long
 
-  // Placeholder audio - in production replace with real stem file URLs
-  const audioSources = [
-    null, // vocal stem URL
-    null, // harmony stem URL
-    null, // rhythm stem URL
-    null  // bass stem URL
-  ];
+// ------------------ DOM ------------------
+const $ = sel => document.querySelector(sel);
+const mixerWrap    = $('#mixerWrap');
+const initiateBtn  = $('#initiateBtn');
+const initiateShell = $('#initiateShell');
+const initiateStatus = $('#initiateStatus');
+const mixerSection = $('#mixerSection');
+const spectrumCanvas = $('#spectrumCanvas');
+const reveal       = $('#reveal');
+const solveOverlay = $('#solveOverlay');
+const scanH        = $('#scanH');
+const scanV        = $('#scanV');
+const solveText    = $('#solveText');
+const sessionTimeEl = $('#sessionTime');
+const fileIdEl     = $('#fileId');
+const stateIdEl    = $('#stateId');
+const carrierState = $('#carrierState');
+const noiseState   = $('#noiseState');
+const integrityState = $('#integrityState');
+const phaseState   = $('#phaseState');
+const stateBig     = $('#stateBig');
+const stateBigEs   = $('#stateBigEs');
+const stateBigEn   = $('#stateBigEn');
+const buildIdEl    = $('#buildId');
 
-  let audioElements = audioSources.map(src => {
-    if (src) {
-      const audio = new Audio(src);
-      return audio;
+// ------------------ GLOBAL STATE ------------------
+let audioCtx = null;
+let masterGain = null;
+let masterAnalyser = null;
+let stems = [];        // { config, source, gain, analyser, canvas, ctx, uiEls, dbfs, muted }
+let solved = false;
+let lastInTolerance = 0;
+let sessionStart = 0;
+
+// ------------------ UTIL ------------------
+const dbToLinear = db => Math.pow(10, db / 20);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function dbFromY(y, height) {
+  // y=0 (top) = MAX dbfs, y=height (bottom) = MIN dbfs
+  const t = 1 - (y / height);
+  return lerp(SLIDER_MIN_DBFS, SLIDER_MAX_DBFS, t);
+}
+function yFromDb(db, height) {
+  const t = (db - SLIDER_MIN_DBFS) / (SLIDER_MAX_DBFS - SLIDER_MIN_DBFS);
+  return (1 - t) * height;
+}
+
+function randomCaseSuffix() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for (let i = 0; i < 4; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
+fileIdEl.textContent = 'WR-01-DBR-' + randomCaseSuffix();
+
+// build id: today, month-day-year two digits
+(function setBuildId() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  buildIdEl.textContent = 'BUILD ' + pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + String(d.getFullYear()).slice(-2);
+})();
+
+// ------------------ CHANNEL STRIP CONSTRUCTION ------------------
+function buildChannelDom(cfg, idx) {
+  const ch = document.createElement('div');
+  ch.className = 'channel';
+  ch.style.setProperty('--c', cfg.color);
+  ch.dataset.id = cfg.id;
+  ch.innerHTML = `
+    <div class="ch-head">
+      <span class="ch-num">CH${cfg.channel}</span>
+      <span class="ch-name">${cfg.name}</span>
+    </div>
+    <div class="ch-waveform"><canvas></canvas></div>
+    <div class="ch-fader-area">
+      <div class="ch-fader-scale">
+        <span>+12</span><span>+6</span><span>0</span><span>-6</span><span>-12</span><span>-18</span>
+      </div>
+      <div class="ch-fader" data-id="${cfg.id}">
+        <div class="ch-fader-ticks"></div>
+        <div class="ch-fader-fill"></div>
+        <div class="ch-fader-knob"></div>
+      </div>
+      <div class="ch-meter"><div class="ch-meter-fill"></div></div>
+    </div>
+    <div class="ch-readout">
+      <span class="label">dBFS</span>
+      <span class="value">0.0</span>
+    </div>
+    <div class="ch-controls">
+      <button class="ch-btn solo-btn" data-act="solo">Solo</button>
+      <button class="ch-btn mute-btn" data-act="mute">Mute</button>
+    </div>
+  `;
+  return ch;
+}
+
+// ------------------ AUDIO SETUP ------------------
+async function initAudio() {
+  initiateBtn.disabled = true;
+  initiateStatus.textContent = 'Estableciendo Conexión · Establishing Connection';
+
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.85;
+    masterAnalyser = audioCtx.createAnalyser();
+    masterAnalyser.fftSize = 2048;
+    masterAnalyser.smoothingTimeConstant = 0.75;
+    masterGain.connect(masterAnalyser);
+    masterAnalyser.connect(audioCtx.destination);
+
+    initiateStatus.textContent = 'Cargando Canales · Loading Channels';
+
+    // build channel DOM first so user sees structure
+    STEMS_CONFIG.forEach((cfg, idx) => {
+      const dom = buildChannelDom(cfg, idx);
+      mixerWrap.appendChild(dom);
+    });
+
+    // load buffers in parallel
+    const buffers = await Promise.all(STEMS_CONFIG.map(async cfg => {
+      const res = await fetch(cfg.path);
+      if (!res.ok) throw new Error('Missing stem: ' + cfg.path);
+      const arr = await res.arrayBuffer();
+      return await audioCtx.decodeAudioData(arr);
+    }));
+
+    initiateStatus.textContent = 'Sincronizando · Synchronizing';
+
+    // build audio graph for each stem
+    STEMS_CONFIG.forEach((cfg, idx) => {
+      const dom = mixerWrap.children[idx];
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffers[idx];
+      source.loop = true;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = dbToLinear(cfg.initial);
+
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.8;
+
+      source.connect(gain);
+      gain.connect(analyser);
+      analyser.connect(masterGain);
+
+      const canvas = dom.querySelector('.ch-waveform canvas');
+      const meterFill = dom.querySelector('.ch-meter-fill');
+      const fader = dom.querySelector('.ch-fader');
+      const fill = dom.querySelector('.ch-fader-fill');
+      const knob = dom.querySelector('.ch-fader-knob');
+      const valueEl = dom.querySelector('.ch-readout .value');
+      const muteBtn = dom.querySelector('.mute-btn');
+      const soloBtn = dom.querySelector('.solo-btn');
+
+      const stem = {
+        cfg, source, gain, analyser,
+        dom, canvas, ctx: canvas.getContext('2d'),
+        meterFill, fader, fill, knob, valueEl,
+        muteBtn, soloBtn,
+        dbfs: cfg.initial,
+        muted: false,
+        soloed: false,
+      };
+      stems.push(stem);
+
+      setupFader(stem);
+      setupButtons(stem);
+      updateFaderUI(stem);
+    });
+
+    // start all stems in perfect sync
+    const startTime = audioCtx.currentTime + 0.15;
+    stems.forEach(s => s.source.start(startTime));
+
+    // transition UI: hide initiate, show mixer
+    initiateShell.style.transition = 'opacity 0.5s';
+    initiateShell.style.opacity = '0';
+    setTimeout(() => {
+      initiateShell.style.display = 'none';
+      mixerSection.classList.add('active');
+      mixerSection.style.opacity = '0';
+      mixerSection.style.transition = 'opacity 0.7s';
+      requestAnimationFrame(() => {
+        mixerSection.style.opacity = '1';
+        // wait for layout before sizing canvases
+        requestAnimationFrame(() => {
+          resizeAllCanvases();
+        });
+      });
+    }, 520);
+
+    sessionStart = performance.now();
+    startLoops();
+
+  } catch (err) {
+    console.error('[DBR] Audio init failed:', err);
+    initiateStatus.textContent = 'Error de Ingreso · Ingress Error · Archivos no disponibles';
+    initiateBtn.disabled = false;
+  }
+}
+
+// ------------------ FADER INTERACTION ------------------
+function setupFader(stem) {
+  const fader = stem.fader;
+
+  let dragging = false;
+
+  const onDown = (e) => {
+    dragging = true;
+    stem.knob.classList.add('dragging');
+    onMove(e);
+    e.preventDefault();
+  };
+  const onMove = (e) => {
+    if (!dragging) return;
+    const rect = fader.getBoundingClientRect();
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    const clampedY = clamp(y, 0, rect.height);
+    const db = dbFromY(clampedY, rect.height);
+    stem.dbfs = Math.round(db * 10) / 10; // 0.1 dB resolution
+    updateFaderUI(stem);
+    applyGain(stem);
+  };
+  const onUp = () => {
+    dragging = false;
+    stem.knob.classList.remove('dragging');
+  };
+
+  fader.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  fader.addEventListener('touchstart', onDown, { passive: false });
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+
+  // wheel fine-tune
+  fader.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.2 : 0.2;
+    stem.dbfs = clamp(stem.dbfs + delta, SLIDER_MIN_DBFS, SLIDER_MAX_DBFS);
+    stem.dbfs = Math.round(stem.dbfs * 10) / 10;
+    updateFaderUI(stem);
+    applyGain(stem);
+  }, { passive: false });
+}
+
+function updateFaderUI(stem) {
+  const t = (stem.dbfs - SLIDER_MIN_DBFS) / (SLIDER_MAX_DBFS - SLIDER_MIN_DBFS);
+  const topPct = (1 - t) * 100;
+  stem.knob.style.top = topPct + '%';
+  stem.fill.style.height = (100 - topPct) + '%';
+  const sign = stem.dbfs > 0 ? '+' : (stem.dbfs < 0 ? '' : ' ');
+  stem.valueEl.textContent = sign + stem.dbfs.toFixed(1);
+}
+
+function applyGain(stem) {
+  if (!stem.gain) return;
+  const targetLinear = stem.muted ? 0 : dbToLinear(stem.dbfs);
+  stem.gain.gain.setTargetAtTime(targetLinear, audioCtx.currentTime, 0.02);
+}
+
+// ------------------ MUTE / SOLO ------------------
+function setupButtons(stem) {
+  stem.muteBtn.addEventListener('click', () => {
+    stem.muted = !stem.muted;
+    stem.muteBtn.classList.toggle('active', stem.muted);
+    stem.dom.classList.toggle('muted', stem.muted);
+    // unset solo
+    if (stem.muted && stem.soloed) {
+      stem.soloed = false;
+      stem.soloBtn.classList.remove('active');
     }
-    return null;
+    applySoloMuteAll();
+  });
+  stem.soloBtn.addEventListener('click', () => {
+    stem.soloed = !stem.soloed;
+    stem.soloBtn.classList.toggle('active', stem.soloed);
+    if (stem.soloed && stem.muted) {
+      stem.muted = false;
+      stem.muteBtn.classList.remove('active');
+      stem.dom.classList.remove('muted');
+    }
+    applySoloMuteAll();
+  });
+}
+
+function applySoloMuteAll() {
+  const anySolo = stems.some(s => s.soloed);
+  stems.forEach(s => {
+    let audible;
+    if (anySolo) {
+      audible = s.soloed && !s.muted;
+    } else {
+      audible = !s.muted;
+    }
+    const targetLinear = audible ? dbToLinear(s.dbfs) : 0;
+    s.gain.gain.setTargetAtTime(targetLinear, audioCtx.currentTime, 0.02);
+    s.dom.classList.toggle('muted', !audible);
+  });
+}
+
+// ------------------ VISUAL LOOPS ------------------
+function startLoops() {
+  resizeAllCanvases();
+  window.addEventListener('resize', () => {
+    resizeAllCanvases();
+    stems.forEach(updateFaderUI);
+  });
+  drawLoop();
+  stateLoop();
+  sessionClockLoop();
+}
+
+function resizeAllCanvases() {
+  stems.forEach(s => fitCanvas(s.canvas));
+  fitCanvas(spectrumCanvas);
+}
+function fitCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = Math.max(1, Math.floor(rect.width  * dpr));
+  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+  canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function drawLoop() {
+  // per-channel waveforms
+  stems.forEach(drawChannel);
+  // master spectrum
+  drawSpectrum();
+  requestAnimationFrame(drawLoop);
+}
+
+function drawChannel(stem) {
+  const ctx = stem.ctx;
+  const w = stem.canvas.getBoundingClientRect().width;
+  const h = stem.canvas.getBoundingClientRect().height;
+  ctx.clearRect(0, 0, w, h);
+
+  const data = new Uint8Array(stem.analyser.fftSize);
+  stem.analyser.getByteTimeDomainData(data);
+
+  // main waveform
+  ctx.strokeStyle = stem.cfg.color;
+  ctx.globalAlpha = stem.muted ? 0.18 : 0.85;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  const slice = w / data.length;
+  let x = 0;
+  for (let i = 0; i < data.length; i++) {
+    const v = data[i] / 128.0; // 0..2
+    const y = (v * h) / 2;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+    x += slice;
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // soft underglow
+  ctx.globalAlpha = stem.muted ? 0.05 : 0.15;
+  ctx.fillStyle = stem.cfg.color;
+  ctx.beginPath();
+  ctx.moveTo(0, h/2);
+  for (let i = 0, x = 0; i < data.length; i++, x += slice) {
+    const v = data[i] / 128.0;
+    ctx.lineTo(x, (v * h) / 2);
+  }
+  ctx.lineTo(w, h/2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // channel meter (simple RMS-ish from time-domain)
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) {
+    const v = (data[i] - 128) / 128;
+    sum += v * v;
+  }
+  const rms = Math.sqrt(sum / data.length);
+  const pct = clamp(rms * 180, 0, 100);
+  stem.meterFill.style.height = pct + '%';
+}
+
+function drawSpectrum() {
+  const ctx = spectrumCanvas.getContext('2d');
+  const w = spectrumCanvas.getBoundingClientRect().width;
+  const h = spectrumCanvas.getBoundingClientRect().height;
+  ctx.clearRect(0, 0, w, h);
+
+  const bins = masterAnalyser.frequencyBinCount;
+  const data = new Uint8Array(bins);
+  masterAnalyser.getByteFrequencyData(data);
+
+  // background gridlines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const y = (h / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(0, y); ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  // spectrum bars. Log-scale x to emphasize musical range.
+  const useBins = Math.min(bins, 512);
+  const minLog = Math.log10(1);
+  const maxLog = Math.log10(useBins);
+  const barCount = 128;
+  const barGap = 1;
+  const barW = (w - barCount * barGap) / barCount;
+
+  for (let i = 0; i < barCount; i++) {
+    const binStart = Math.floor(Math.pow(10, lerp(minLog, maxLog, i / barCount)));
+    const binEnd   = Math.floor(Math.pow(10, lerp(minLog, maxLog, (i+1) / barCount)));
+    let val = 0;
+    for (let j = binStart; j < Math.max(binStart+1, binEnd); j++) val = Math.max(val, data[j] || 0);
+    const mag = val / 255;
+    const barH = mag * h * 0.92;
+    const x = i * (barW + barGap);
+    // color gradient: DBR violet at top of spectrum, dim violet at base
+    const alpha = 0.3 + mag * 0.6;
+    const col = solved ? `rgba(95, 213, 120, ${alpha})` : `rgba(156, 124, 255, ${alpha})`;
+    ctx.fillStyle = col;
+    ctx.fillRect(x, h - barH, barW, barH);
+  }
+}
+
+// ------------------ STATE / SOLVE DETECTION ------------------
+function computeProximity() {
+  // Measure how close the RELATIVE PATTERN is to target.
+  // Any uniform offset of all sliders preserves phase cancellation,
+  // so we normalize by the mean and compare the shape, not absolute levels.
+  const values  = stems.map(s => s.dbfs);
+  const targets = stems.map(s => s.cfg.target);
+  const meanVal = values.reduce((a,b) => a+b, 0) / values.length;
+  const meanTgt = targets.reduce((a,b) => a+b, 0) / targets.length;
+
+  const maxDev = TOLERANCE_DBFS * 5; // scale for visual feedback
+  let totalDeviation = 0;
+  stems.forEach((s, i) => {
+    const normVal = values[i] - meanVal;
+    const normTgt = targets[i] - meanTgt;
+    const dev = Math.abs(normVal - normTgt);
+    totalDeviation += Math.min(dev, maxDev);
+  });
+  const avg = totalDeviation / stems.length;
+  return 1 - clamp(avg / maxDev, 0, 1);
+}
+
+function allWithinTolerance() {
+  if (stems.some(s => s.muted)) return false;
+  const values  = stems.map(s => s.dbfs);
+  const targets = stems.map(s => s.cfg.target);
+  const meanVal = values.reduce((a,b) => a+b, 0) / values.length;
+  const meanTgt = targets.reduce((a,b) => a+b, 0) / targets.length;
+
+  return stems.every((s, i) => {
+    const normVal = values[i] - meanVal;
+    const normTgt = targets[i] - meanTgt;
+    return Math.abs(normVal - normTgt) <= TOLERANCE_DBFS;
+  });
+}
+
+function stateLoop() {
+  if (!audioCtx) return;
+
+  const prox = computeProximity();
+  const pct  = Math.round(prox * 100);
+  integrityState.textContent = pct + '%';
+
+  // phase / integrity color
+  if (pct >= 90) {
+    integrityState.className = 'v signal';
+    phaseState.textContent = 'APROXIMANDO NULO';
+    phaseState.className = 'v dbr';
+  } else if (pct >= 70) {
+    integrityState.className = 'v warn';
+    phaseState.textContent = 'PARCIAL';
+    phaseState.className = 'v warn';
+  } else {
+    integrityState.className = 'v noise';
+    phaseState.textContent = 'DESEQUILIBRADA';
+    phaseState.className = 'v noise';
+  }
+
+  // carrier / noise readouts
+  const anyMuted = stems.some(s => s.muted);
+  if (anyMuted) {
+    carrierState.textContent = 'FRAGMENTADA';
+    carrierState.className = 'v warn';
+    noiseState.textContent = 'INDETERMINADO';
+    noiseState.className = 'v warn';
+  } else {
+    carrierState.textContent = 'DETECTED';
+    carrierState.className = 'v signal';
+    noiseState.textContent = prox > 0.85 ? 'ATENUANDO' : 'PRESENT';
+    noiseState.className = prox > 0.85 ? 'v warn' : 'v noise';
+  }
+
+  // big state block
+  if (solved) {
+    stateBig.classList.remove('partial','close');
+    stateBig.classList.add('solved');
+    stateBigEs.textContent = 'Nulo Espectral Confirmado';
+    stateBigEn.textContent = 'Spectral Null Confirmed';
+  } else if (prox >= 0.9) {
+    stateBig.classList.remove('partial','solved');
+    stateBig.classList.add('close');
+    stateBigEs.textContent = 'Aproximando Nulo';
+    stateBigEn.textContent = 'Null Approaching';
+  } else if (prox >= 0.7) {
+    stateBig.classList.remove('close','solved');
+    stateBig.classList.add('partial');
+    stateBigEs.textContent = 'Interferencia Parcial';
+    stateBigEn.textContent = 'Partial Interference';
+  } else {
+    stateBig.classList.remove('partial','close','solved');
+    stateBigEs.textContent = anyMuted ? 'Canal Silenciado · Cancelación Imposible' : 'Interferencia Detectada';
+    stateBigEn.textContent = anyMuted ? 'Channel Silenced · Cancellation Impossible' : 'Interference Detected';
+  }
+
+  // state id: sum of normalized deviations, matches puzzle logic (0 at any valid solution)
+  const devVals = stems.map(s => s.dbfs);
+  const devTgts = stems.map(s => s.cfg.target);
+  const devMeanV = devVals.reduce((a,b) => a+b, 0) / devVals.length;
+  const devMeanT = devTgts.reduce((a,b) => a+b, 0) / devTgts.length;
+  const devSum = stems.reduce((sum, s, i) => {
+    return sum + Math.abs((devVals[i] - devMeanV) - (devTgts[i] - devMeanT));
+  }, 0);
+  stateIdEl.textContent = 'Δ ' + devSum.toFixed(1) + ' dBFS';
+
+  // sustained solve check
+  if (!solved) {
+    const now = performance.now();
+    if (allWithinTolerance()) {
+      if (lastInTolerance === 0) lastInTolerance = now;
+      else if (now - lastInTolerance >= SUSTAINED_SOLVE_MS) {
+        triggerSolve();
+      }
+    } else {
+      lastInTolerance = 0;
+    }
+  }
+
+  setTimeout(stateLoop, 60);
+}
+
+function sessionClockLoop() {
+  if (!sessionStart) return;
+  const elapsed = Math.floor((performance.now() - sessionStart) / 1000);
+  const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+  const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+  const s = String(elapsed % 60).padStart(2, '0');
+  sessionTimeEl.textContent = `${h}:${m}:${s}`;
+  setTimeout(sessionClockLoop, 500);
+}
+
+// ------------------ SOLVE CINEMATIC ------------------
+function triggerSolve() {
+  if (solved) return;
+  solved = true;
+
+  // activate overlay
+  solveOverlay.classList.add('active');
+
+  // phase 1: horizontal scan
+  scanH.classList.add('run');
+
+  // flash key elements as scan passes (approximate timing)
+  const elementsToFlash = [
+    document.querySelector('.header'),
+    document.querySelector('.brief'),
+    document.querySelector('.mixer-wrap'),
+    document.querySelector('.output-section'),
+  ];
+  elementsToFlash.forEach((el, i) => {
+    if (!el) return;
+    setTimeout(() => el.classList.add('scan-flash'), 200 + i * 450);
+    setTimeout(() => el.classList.remove('scan-flash'), 200 + i * 450 + 700);
   });
 
-  function playComponent(index) {
-    // Stop anything currently playing
-    if (currentlyPlaying !== null && currentlyPlaying !== index) {
-      stopComponent(currentlyPlaying);
-    }
+  // show text after horizontal scan
+  setTimeout(() => {
+    solveText.classList.add('visible');
+  }, 2200);
 
-    const btn = document.getElementById('btn-' + index);
-    const comp = document.getElementById('comp-' + index);
-    const status = document.getElementById('status-' + index);
+  // swap text before vertical scan (phase 2)
+  setTimeout(() => {
+    document.getElementById('solveMainEs').textContent = 'Señal Aislada';
+    document.getElementById('solveMainEn').textContent = 'Signal Isolated';
+  }, 3600);
 
-    if (comp.classList.contains('playing')) {
-      // Pause
-      stopComponent(index);
-      if (audioElements[index]) audioElements[index].pause();
-      return;
-    }
+  // phase 2: vertical scan
+  setTimeout(() => {
+    scanV.classList.add('run');
+  }, 3800);
 
-    // Play
-    comp.classList.add('playing');
-    comp.classList.remove('unlocked');
-    btn.textContent = '⏸ STOP';
-    btn.classList.add('playing-state');
-    status.textContent = 'ANALIZANDO...';
-    status.className = 'component-status status-playing';
-    currentlyPlaying = index;
+  // reveal the download + record panel
+  setTimeout(() => {
+    reveal.classList.add('active');
+    reveal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 5400);
 
-    if (audioElements[index]) {
-      audioElements[index].play();
-      audioElements[index].onended = () => completeComponent(index);
-    } else {
-      // Simulate analysis duration for prototype
-      setTimeout(() => completeComponent(index), 4000);
-    }
+  // fade overlay out
+  setTimeout(() => {
+    solveText.classList.remove('visible');
+    solveOverlay.classList.remove('active');
+  }, 6400);
+}
+
+// ------------------ INIT ------------------
+initiateBtn.addEventListener('click', initAudio);
+
+// keyboard shortcut: space = play/pause master (dev comfort)
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && audioCtx && !e.target.matches('input, button, textarea')) {
+    e.preventDefault();
+    if (audioCtx.state === 'running') audioCtx.suspend();
+    else audioCtx.resume();
   }
+});
 
-  function stopComponent(index) {
-    const btn = document.getElementById('btn-' + index);
-    const comp = document.getElementById('comp-' + index);
-
-    if (components[index].completed) {
-      comp.classList.remove('playing');
-      comp.classList.add('completed');
-      document.getElementById('status-' + index).textContent = 'COMPLETO';
-      document.getElementById('status-' + index).className = 'component-status status-complete';
-      btn.textContent = '▶ REPLAY';
-      btn.classList.remove('playing-state');
-    } else {
-      comp.classList.remove('playing');
-      comp.classList.add('unlocked');
-      document.getElementById('status-' + index).textContent = 'LISTO';
-      document.getElementById('status-' + index).className = 'component-status status-ready';
-      btn.textContent = '▶ PLAY';
-      btn.classList.remove('playing-state');
-    }
-    currentlyPlaying = null;
-  }
-
-  function completeComponent(index) {
-    components[index].completed = true;
-    const comp = document.getElementById('comp-' + index);
-    const btn = document.getElementById('btn-' + index);
-    const status = document.getElementById('status-' + index);
-
-    comp.classList.remove('playing');
-    comp.classList.add('completed');
-    status.textContent = 'COMPLETO';
-    status.className = 'component-status status-complete';
-    btn.textContent = '▶ REPLAY';
-    btn.classList.remove('playing-state');
-    currentlyPlaying = null;
-
-    updateProgress();
-    checkUnlock();
-  }
-
-  function updateProgress() {
-    const completed = components.filter(c => c.completed).length;
-    const pct = (completed / 4) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressText').textContent =
-      completed + ' DE 4 COMPONENTES ANALIZADOS / ' + completed + ' OF 4 COMPONENTS ANALYZED';
-  }
-
-  function checkUnlock() {
-    const allDone = components.every(c => c.completed);
-    if (allDone && !fullCompleted) {
-      const section = document.getElementById('reconstructionSection');
-      const btn = document.getElementById('reconBtn');
-      const lock = document.getElementById('reconLock');
-      const body = document.getElementById('reconBody');
-
-      setTimeout(() => {
-        section.classList.add('unlocked');
-        btn.classList.add('active');
-        btn.disabled = false;
-        lock.classList.add('hidden');
-        body.classList.remove('locked-text');
-        document.getElementById('specimenStatus').textContent = 'RECONSTRUCCIÓN DISPONIBLE';
-      }, 600);
-    }
-  }
-
-  function playFull() {
-    if (fullCompleted) return;
-
-    const btn = document.getElementById('reconBtn');
-    btn.textContent = 'RECONSTRUYENDO... / RECONSTRUCTING...';
-    btn.classList.add('playing-full');
-    btn.disabled = true;
-
-    // Play full mix if available
-    // const fullAudio = new Audio('full_mix_url_here');
-    // fullAudio.play();
-    // fullAudio.onended = () => finishFull();
-
-    // Simulate for prototype
-    setTimeout(() => finishFull(), 5000);
-  }
-
-  function finishFull() {
-    fullCompleted = true;
-    const btn = document.getElementById('reconBtn');
-    btn.textContent = '▶ REPRODUCIR DE NUEVO / PLAY AGAIN';
-    btn.disabled = false;
-    btn.onclick = () => {
-      // replay full
-    };
-
-    document.getElementById('downloadSection').style.display = 'block';
-    document.getElementById('hiddenFinding').style.display = 'block';
-    document.getElementById('specimenStatus').textContent = 'ANÁLISIS COMPLETO';
-  }
-
-  function triggerDownload() {
-    // Replace with actual file URL
-    alert('[ REEMPLAZAR CON ENLACE DE DESCARGA REAL / REPLACE WITH REAL DOWNLOAD LINK ]');
-  }
+// ------------------ DEV HELPER ------------------
+// Call window.__solve() from console to test solve without balancing.
+window.__solve = () => {
+  if (!stems.length) return console.log('Audio not initialized.');
+  stems.forEach(s => {
+    s.dbfs = s.cfg.target;
+    updateFaderUI(s);
+    applyGain(s);
+  });
+  console.log('[DBR DEV] Sliders set to target values.');
+};
 </script>
+
 </body>
 </html>
