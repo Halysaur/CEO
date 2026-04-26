@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C.E.O. — WORKSTATION ACCESS</title>
+<title>C.E.O. â WORKSTATION ACCESS</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 
@@ -316,7 +316,7 @@
   .attempts-counter.warning { color: var(--amber); }
   .attempts-counter.danger { color: var(--red); }
 
-  /* ── CLASSIFIED DOCUMENT VIEW ── */
+  /* ââ CLASSIFIED DOCUMENT VIEW ââ */
   #classifiedView {
     display: none;
     height: 100vh;
@@ -488,7 +488,7 @@
     0%, 49% { opacity: 1; }
     50%, 100% { opacity: 0; }
   }
-  /* ── HUB VIEW ── */
+  /* ââ HUB VIEW ââ */
   #hubView { display: none; min-height: 100vh; background: var(--bg); overflow-y: auto; position: relative; z-index: 1; }
   .hub-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 60px; }
   .hub-header { text-align: center; margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
@@ -519,7 +519,7 @@
   .dept-node.locked:hover .dept-status-label { color: var(--red); }
   .hub-footer { text-align: center; font-size: 9px; color: var(--green-faint); letter-spacing: 2px; line-height: 2; border-top: 1px solid var(--border); padding-top: 16px; }
 
-  /* ── PASSWORD OVERLAY (DOS room entry) ── */
+  /* ââ PASSWORD OVERLAY (DOS room entry) ââ */
   .pw-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,12,2,0.96); z-index: 50; padding: 32px 24px; overflow-y: auto; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
   .pw-overlay.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
   .pw-wrap { max-width: 720px; width: 100%; display: flex; flex-direction: column; gap: 20px; padding-top: 8vh; }
@@ -539,7 +539,7 @@
   .pw-attempts.warning { color: var(--amber); }
   .pw-attempts.danger { color: var(--red); }
 
-  /* ── LOCKED DEPT MODAL ── */
+  /* ââ LOCKED DEPT MODAL ââ */
   .lk-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,12,2,0.92); z-index: 60; padding: 32px 24px; align-items: center; justify-content: center; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
   .lk-overlay.active { display: flex; }
   .lk-card { max-width: 560px; width: 100%; border: 1px solid var(--green-dim); background: var(--bg); padding: 32px 28px; position: relative; animation: fadeIn 0.4s ease forwards; }
@@ -557,7 +557,7 @@
   .lk-close { margin-top: 24px; background: transparent; border: 1px solid var(--green-dim); color: var(--green-dim); font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; padding: 8px 18px; cursor: pointer; transition: all 0.2s; width: 100%; }
   .lk-close:hover { border-color: var(--green); color: var(--green); background: rgba(0,255,65,0.05); }
 
-  /* ── OBSERVATION CHANNEL BUTTON (hub footer) ── */
+  /* ââ OBSERVATION CHANNEL BUTTON (hub footer) ââ */
   .hub-footer { display: flex; flex-direction: column; align-items: center; gap: 20px; }
   .hub-footer-line { font-size: 9px; color: var(--green-faint); letter-spacing: 2px; line-height: 2; }
   .obs-channel-btn {
@@ -587,11 +587,11 @@
   .obs-channel-btn:hover .obs-btn-icon { animation: glowPulse 2s ease infinite; }
   .obs-btn-label { white-space: nowrap; }
 
-  /* ── OBSERVATION CHANNEL MODAL ── */
+  /* ââ OBSERVATION CHANNEL MODAL ââ */
   .obs-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,12,2,0.92); z-index: 60; padding: 32px 24px; align-items: center; justify-content: center; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
   .obs-overlay.active { display: flex; }
   .obs-card { max-width: 560px; width: 100%; border: 1px solid var(--green-dim); background: var(--bg); padding: 32px 28px; position: relative; animation: fadeIn 0.4s ease forwards; }
-  .obs-card::before { content: 'TRANSMISIÓN AUTORIZADA / AUTHORIZED TRANSMISSION'; position: absolute; top: -8px; left: 20px; background: var(--bg); padding: 0 8px; font-size: 9px; color: var(--green-dim); letter-spacing: 3px; }
+  .obs-card::before { content: 'TRANSMISIÃN AUTORIZADA / AUTHORIZED TRANSMISSION'; position: absolute; top: -8px; left: 20px; background: var(--bg); padding: 0 8px; font-size: 9px; color: var(--green-dim); letter-spacing: 3px; }
   .obs-header { text-align: center; margin-top: 6px; }
   .obs-title { font-family: 'VT323', monospace; font-size: 28px; color: var(--green); letter-spacing: 6px; text-shadow: 0 0 15px rgba(0,255,65,0.3); }
   .obs-subtitle { font-size: 9px; color: var(--green-dim); letter-spacing: 3px; margin-top: 4px; }
@@ -632,7 +632,7 @@
   .dsr-btn.terminate { border-color: #666; color: #666; }
   .dsr-btn.terminate:hover { background: #333; color: #fff; border-color: #fff; }
 
-  /* ── DOS VIEW ── */
+  /* ââ DOS VIEW ââ */
   #dosView { display: none; min-height: 100vh; background: var(--bg); overflow-y: auto; position: relative; z-index: 1; }
   .dos-wrap { max-width: 960px; margin: 0 auto; padding: 0 0 60px; }
   .dos-nav { font-size: 10px; color: var(--green-dim); letter-spacing: 2px; cursor: pointer; padding: 12px 24px; transition: color 0.2s; border-bottom: 1px solid var(--border); display: block; }
@@ -748,13 +748,13 @@
   <div class="header">
     <div class="header-left">
       <div class="org-name">C.E.O.</div>
-      <div class="org-full">CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;/&nbsp; CUSTODIANS OF ENTROPIC ORDER</div>
+      <div class="org-full">CUSTODIOS DEL ORDEN ENTRÃPICO &nbsp;/&nbsp; CUSTODIANS OF ENTROPIC ORDER</div>
     </div>
     <div class="header-right">
       <span class="status-dot"></span>SISTEMA ACTIVO / SYSTEM ACTIVE<br>
-      ESTACIÓN: TERMINAL-07<br>
+      ESTACIÃN: TERMINAL-07<br>
       ACCESO: NO AUTORIZADO / UNAUTHORIZED<br>
-      D.O.S — MONITOREO EN CURSO
+      D.O.S â MONITOREO EN CURSO
     </div>
   </div>
 
@@ -768,15 +768,15 @@
 
     <div class="hub-header">
       <div class="hub-org">C.E.O.</div>
-      <div class="hub-full">CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;·&nbsp; CUSTODIANS OF ENTROPIC ORDER</div>
+      <div class="hub-full">CUSTODIOS DEL ORDEN ENTRÃPICO &nbsp;Â·&nbsp; CUSTODIANS OF ENTROPIC ORDER</div>
       <div class="hub-sub">DIRECTORIO OPERATIVO / OPERATIONAL DIRECTORY</div>
     </div>
 
     <div class="hub-body">
       <div class="hub-message">
-        CUATRO DEPARTAMENTOS EN OPERACIÓN.<br>
-        ACCESO SELECTIVO SEGÚN ACREDITACIÓN DEL SUJETO.<br>
-        ESTA SESIÓN ESTÁ SIENDO OBSERVADA.<br><br>
+        CUATRO DEPARTAMENTOS EN OPERACIÃN.<br>
+        ACCESO SELECTIVO SEGÃN ACREDITACIÃN DEL SUJETO.<br>
+        ESTA SESIÃN ESTÃ SIENDO OBSERVADA.<br><br>
         FOUR DEPARTMENTS IN OPERATION.<br>
         SELECTIVE ACCESS BASED ON SUBJECT CLEARANCE.<br>
         THIS SESSION IS BEING OBSERVED.
@@ -784,7 +784,7 @@
 
       <div class="hub-grid">
 
-        <!-- DOS — ACTIVE -->
+        <!-- DOS â ACTIVE -->
         <div class="dept-node active" onclick="openDOS()">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -802,13 +802,13 @@
             </svg>
           </div>
           <div class="dept-id">D.O.S</div>
-          <div class="dept-full-es">Departamento de Observación y Vigilancia</div>
+          <div class="dept-full-es">Departamento de ObservaciÃ³n y Vigilancia</div>
           <div class="dept-full-en">Department of Observation &amp; Surveillance</div>
           <div class="dept-motto">Sub Speculo Veritas</div>
           <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
         </div>
 
-        <!-- DBR — LOCKED -->
+        <!-- DBR â LOCKED -->
         <div class="dept-node locked" onclick="openLocked('DBR')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -816,13 +816,13 @@
             </svg>
           </div>
           <div class="dept-id">D.B.R</div>
-          <div class="dept-full-es">Departamento de Balance y Reconstrucción</div>
+          <div class="dept-full-es">Departamento de Balance y ReconstrucciÃ³n</div>
           <div class="dept-full-en">Department of Balance &amp; Reconstruction</div>
           <div class="dept-motto">Gnosis Ultra Veritatem</div>
-          <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
+          <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
         </div>
 
-        <!-- DCC — LOCKED -->
+        <!-- DCC â LOCKED -->
         <div class="dept-node locked" onclick="openLocked('DCC')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -833,13 +833,13 @@
             </svg>
           </div>
           <div class="dept-id">D.C.C</div>
-          <div class="dept-full-es">Departamento de Contención y Custodia</div>
+          <div class="dept-full-es">Departamento de ContenciÃ³n y Custodia</div>
           <div class="dept-full-en">Department of Containment &amp; Custody</div>
           <div class="dept-motto">Ex Intus, Silentium</div>
           <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
         </div>
 
-        <!-- DSR — LOCKED -->
+        <!-- DSR â LOCKED -->
         <div class="dept-node locked" onclick="openLocked('DSR')">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -851,7 +851,7 @@
             </svg>
           </div>
           <div class="dept-id">D.S.R</div>
-          <div class="dept-full-es">Departamento de Resolución y Sanción</div>
+          <div class="dept-full-es">Departamento de ResoluciÃ³n y SanciÃ³n</div>
           <div class="dept-full-en">Department of Resolution &amp; Sanction</div>
           <div class="dept-motto">Per Ultimatam Resolutionem</div>
           <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
@@ -868,37 +868,37 @@
               <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
             </svg>
           </span>
-          <span class="obs-btn-label">CANAL DE OBSERVACIÓN EXTERNA / EXTERNAL OBSERVATION CHANNEL</span>
+          <span class="obs-btn-label">CANAL DE OBSERVACIÃN EXTERNA / EXTERNAL OBSERVATION CHANNEL</span>
         </button>
         <div class="hub-footer-line">
-          CUSTODIOS DEL ORDEN ENTRÓPICO &nbsp;·&nbsp; ACCESO NO AUTORIZADO SERÁ REPORTADO AL D.S.R
+          CUSTODIOS DEL ORDEN ENTRÃPICO &nbsp;Â·&nbsp; ACCESO NO AUTORIZADO SERÃ REPORTADO AL D.S.R
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PASSWORD OVERLAY — DOS ROOM ENTRY -->
+<!-- PASSWORD OVERLAY â DOS ROOM ENTRY -->
 <div class="pw-overlay" id="pwOverlay">
   <div class="pw-wrap">
-    <button class="pw-close" onclick="closePassword()">← VOLVER AL DIRECTORIO / BACK TO DIRECTORY</button>
+    <button class="pw-close" onclick="closePassword()">â VOLVER AL DIRECTORIO / BACK TO DIRECTORY</button>
 
     <div class="pw-dept-header">
       <div class="pw-dept-id">D.O.S</div>
-      <div class="pw-dept-full">DEPARTAMENTO DE OBSERVACIÓN Y VIGILANCIA / DEPARTMENT OF OBSERVATION &amp; SURVEILLANCE</div>
+      <div class="pw-dept-full">DEPARTAMENTO DE OBSERVACIÃN Y VIGILANCIA / DEPARTMENT OF OBSERVATION &amp; SURVEILLANCE</div>
       <div class="pw-dept-motto">Sub Speculo Veritas</div>
     </div>
 
     <div class="pw-log" id="pwLog"></div>
 
     <div class="pw-input-area" id="pwInputArea">
-      <div class="pw-input-label">INGRESA CONTRASEÑA / ENTER PASSWORD</div>
+      <div class="pw-input-label">INGRESA CONTRASEÃA / ENTER PASSWORD</div>
       <div class="pw-input-row">
         <span class="prompt">&gt;_</span>
         <input
           type="password"
           id="passwordInput"
-          placeholder="introduce código de acceso..."
+          placeholder="introduce cÃ³digo de acceso..."
           autocomplete="off"
           spellcheck="false"
         />
@@ -914,7 +914,7 @@
   <div class="lk-card">
     <div class="lk-stamp">RESTRINGIDO</div>
     <div class="lk-dept" id="lkDept">D.B.R</div>
-    <div class="lk-full" id="lkFull">DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÓN</div>
+    <div class="lk-full" id="lkFull">DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÃN</div>
     <div class="lk-motto" id="lkMotto">Gnosis Ultra Veritatem</div>
 
     <hr class="lk-divider">
@@ -924,7 +924,7 @@
 
     <div class="lk-denied">
       ACCESO NO AUTORIZADO / UNAUTHORIZED ACCESS
-      <div class="lk-denied-sub">NIVEL DE ACREDITACIÓN INSUFICIENTE / INSUFFICIENT CLEARANCE LEVEL</div>
+      <div class="lk-denied-sub">NIVEL DE ACREDITACIÃN INSUFICIENTE / INSUFFICIENT CLEARANCE LEVEL</div>
     </div>
 
     <button class="lk-close" onclick="closeLocked()">CERRAR / CLOSE</button>
@@ -935,7 +935,7 @@
 <div class="obs-overlay" id="obsOverlay" onclick="if(event.target===this)closeObsChannel()">
   <div class="obs-card">
     <div class="obs-header">
-      <div class="obs-title">CANAL DE OBSERVACIÓN EXTERNA</div>
+      <div class="obs-title">CANAL DE OBSERVACIÃN EXTERNA</div>
       <div class="obs-subtitle">EXTERNAL OBSERVATION CHANNEL</div>
     </div>
 
@@ -943,7 +943,7 @@
 
     <div class="obs-description">
       Nodos de monitoreo desplegados fuera de la red interna.<br>
-      La exposición del fenómeno ha sido autorizada bajo vigilancia pasiva.<br><br>
+      La exposiciÃ³n del fenÃ³meno ha sido autorizada bajo vigilancia pasiva.<br><br>
       Monitoring nodes deployed beyond the internal network.<br>
       Phenomenon exposure authorized under passive surveillance.
     </div>
@@ -952,18 +952,18 @@
       <a href="https://www.instagram.com/wechange_u/" target="_blank" rel="noopener" class="obs-node" onclick="if(typeof gtag==='function')gtag('event','obs_channel_click',{node:'01'})">
         <div class="obs-node-label">NODO 01</div>
         <div class="obs-node-desc">PLATAFORMA VISUAL / VISUAL PLATFORM</div>
-        <div class="obs-node-status">● ACTIVO / ACTIVE</div>
+        <div class="obs-node-status">â ACTIVO / ACTIVE</div>
       </a>
 
       <a href="https://www.tiktok.com/@wechange_u" target="_blank" rel="noopener" class="obs-node" onclick="if(typeof gtag==='function')gtag('event','obs_channel_click',{node:'02'})">
         <div class="obs-node-label">NODO 02</div>
-        <div class="obs-node-desc">PROPAGACIÓN VIRAL / VIRAL PROPAGATION</div>
-        <div class="obs-node-status">● ACTIVO / ACTIVE</div>
+        <div class="obs-node-desc">PROPAGACIÃN VIRAL / VIRAL PROPAGATION</div>
+        <div class="obs-node-status">â ACTIVO / ACTIVE</div>
       </a>
     </div>
 
     <div class="obs-warning">
-      ADVERTENCIA: SU INTERACCIÓN SERÁ REGISTRADA COMO EVIDENCIA DE EXPOSICIÓN<br>
+      ADVERTENCIA: SU INTERACCIÃN SERÃ REGISTRADA COMO EVIDENCIA DE EXPOSICIÃN<br>
       WARNING: YOUR INTERACTION WILL BE LOGGED AS EVIDENCE OF EXPOSURE
     </div>
 
@@ -972,19 +972,19 @@
 </div>
 <div class="dsr-overlay" id="dsrOverlay">
   <div class="dsr-dept">D.S.R</div>
-  <div class="dsr-full">DEPARTAMENTO DE RESOLUCIÓN Y SANCIÓN / DEPARTMENT OF RESOLUTION & SANCTION</div>
-  <div class="dsr-case" id="dsrCaseDisplay">CASO EN PROCESO DE RESOLUCIÓN / CASE UNDER RESOLUTION</div>
+  <div class="dsr-full">DEPARTAMENTO DE RESOLUCIÃN Y SANCIÃN / DEPARTMENT OF RESOLUTION & SANCTION</div>
+  <div class="dsr-case" id="dsrCaseDisplay">CASO EN PROCESO DE RESOLUCIÃN / CASE UNDER RESOLUTION</div>
   <div class="dsr-verdict">
-    Los departamentos anteriores han fallado en contener el fenómeno.<br>
-    Su caso ha sido transferido al D.S.R para resolución definitiva.<br>
-    Se requiere su decisión inmediata.<br><br>
+    Los departamentos anteriores han fallado en contener el fenÃ³meno.<br>
+    Su caso ha sido transferido al D.S.R para resoluciÃ³n definitiva.<br>
+    Se requiere su decisiÃ³n inmediata.<br><br>
     Previous departments have failed to contain the phenomenon.<br>
     Your case has been transferred to D.S.R for definitive resolution.<br>
     Your immediate decision is required.
   </div>
   <div class="dsr-btn-row">
     <button class="dsr-btn" onclick="handleComply()">CUMPLIR / COMPLY</button>
-    <button class="dsr-btn terminate" onclick="handleTermination()">TERMINACIÓN / TERMINATION</button>
+    <button class="dsr-btn terminate" onclick="handleTermination()">TERMINACIÃN / TERMINATION</button>
   </div>
 </div>
 
@@ -992,72 +992,72 @@
 <div id="dosView" style="display:none">
   <div class="dos-wrap">
 
-    <div class="dos-nav" onclick="showHub()">← VOLVER AL DIRECTORIO / BACK TO DIRECTORY</div>
+    <div class="dos-nav" onclick="showHub()">â VOLVER AL DIRECTORIO / BACK TO DIRECTORY</div>
 
     <!-- TOPBAR -->
     <div class="dos-topbar">
       <img src="DOS_LOGO_color_prov.png" alt="D.O.S" class="dos-logo-img" onerror="this.style.display='none'" />
       <div class="dos-title-block">
         <div class="dos-dept">D.O.S</div>
-        <div class="dos-full">DEPARTAMENTO DE OBSERVACIÓN Y VIGILANCIA / DEPARTMENT OF OBSERVATION & SURVEILLANCE</div>
+        <div class="dos-full">DEPARTAMENTO DE OBSERVACIÃN Y VIGILANCIA / DEPARTMENT OF OBSERVATION & SURVEILLANCE</div>
         <div class="dos-motto">Sub Speculo Veritas</div>
       </div>
       <div class="dos-live-stats">
-        ESTACIÓN / STATION: <span class="dos-live-val">TERMINAL-07</span><br>
-        PATRÓN / PATRON: <span class="dos-live-val">MWT-01</span><br>
+        ESTACIÃN / STATION: <span class="dos-live-val">TERMINAL-07</span><br>
+        PATRÃN / PATRON: <span class="dos-live-val">MWT-01</span><br>
         ENSAMBLAJE / ASSEMBLY: <span class="dos-live-val">7/7 ACTIVO</span><br>
         COHERENCIA / COHERENCE: <span class="dos-live-val">78%</span><br>
-        ESTADO / STATUS: <span class="dos-live-val pulse">MONITOREANDO ●</span>
+        ESTADO / STATUS: <span class="dos-live-val pulse">MONITOREANDO â</span>
       </div>
     </div>
 
     <!-- ESCALATION BANNER (hidden until Warmth release) -->
     <div id="dosEscalationBanner">
-      CASO ESCALADO AL D.B.R — OBSERVACIÓN COMPLETADA. ANÁLISIS EN CURSO.<br>
-      CASE ESCALATED TO D.B.R — OBSERVATION COMPLETE. ANALYSIS IN PROGRESS.<br>
-      <span style="color:var(--green-dim)">ARCHIVOS DE OBSERVACIÓN DISPONIBLES / OBSERVATION FILES AVAILABLE</span>
+      CASO ESCALADO AL D.B.R â OBSERVACIÃN COMPLETADA. ANÃLISIS EN CURSO.<br>
+      CASE ESCALATED TO D.B.R â OBSERVATION COMPLETE. ANALYSIS IN PROGRESS.<br>
+      <span style="color:var(--green-dim)">ARCHIVOS DE OBSERVACIÃN DISPONIBLES / OBSERVATION FILES AVAILABLE</span>
     </div>
 
-    <!-- MAIN BODY — TWO COLUMN GRID -->
+    <!-- MAIN BODY â TWO COLUMN GRID -->
     <div class="dos-body">
 
       <!-- LEFT COLUMN -->
       <div class="dos-col">
 
-        <div class="dos-panel" data-label="SEÑAL ENTRANTE / INCOMING SIGNAL — WC-001">
+        <div class="dos-panel" data-label="SEÃAL ENTRANTE / INCOMING SIGNAL â WC-001">
           <svg class="signal-graph" viewBox="0 0 300 60" preserveAspectRatio="none">
             <polyline class="graph-line-dim" points="0,30 15,30 20,28 25,30 30,30 35,22 40,30 45,30 50,30 55,30 60,29 65,30 70,30 75,30 80,30 85,30 90,30 95,30 100,30 105,30 110,30 115,30 120,29 125,30 130,30 135,30 140,30 145,30 150,30"/>
             <polyline class="graph-line" points="150,30 160,30 165,28 170,15 175,45 180,30 185,30 190,22 195,42 200,30 205,20 210,40 215,30 220,15 225,45 230,25 235,35 240,28 245,32 250,20 255,40 260,25 265,35 270,30 275,22 280,38 285,30 290,25 295,35 300,30"/>
             <line x1="150" y1="0" x2="150" y2="60" stroke="rgba(0,255,65,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
-            <text x="152" y="8" font-size="6" fill="rgba(0,255,65,0.4)" font-family="monospace">ANOMALÍA DETECTADA</text>
+            <text x="152" y="8" font-size="6" fill="rgba(0,255,65,0.4)" font-family="monospace">ANOMALÃA DETECTADA</text>
           </svg>
           <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--green-dim);margin-top:6px;letter-spacing:1px">
-            <span>T-00:00</span><span style="color:rgba(0,255,65,0.3)">LÍNEA BASE / BASELINE</span><span>DETECCIÓN</span><span>T+ACTUAL</span>
+            <span>T-00:00</span><span style="color:rgba(0,255,65,0.3)">LÃNEA BASE / BASELINE</span><span>DETECCIÃN</span><span>T+ACTUAL</span>
           </div>
         </div>
 
-        <div class="dos-panel" data-label="REGISTRO DE TRADUCCIÓN / TRANSLATION LOG — ENSAMBLAJE MWT-01">
+        <div class="dos-panel" data-label="REGISTRO DE TRADUCCIÃN / TRANSLATION LOG â ENSAMBLAJE MWT-01">
           <div class="tx-log">
-            <div class="tx-entry"><span class="tx-time">██:10:07</span><span class="tx-msg">patrón respiratorio. extensión: <span class="hl">indeterminada</span></span></div>
-            <div class="tx-entry"><span class="tx-time">██:22:14</span><span class="tx-msg">oscilación baja frecuencia. origen: <span class="redact">REDACTADO</span></span></div>
-            <div class="tx-entry"><span class="tx-time">██:07:08</span><span class="tx-msg">propagación autónoma confirmada. vector: <span class="hl">desconocido</span></span></div>
-            <div class="tx-entry"><span class="tx-time">██:10:08</span><span class="tx-msg">influencia no-local. sujetos sin conexión compartida</span></div>
-            <div class="tx-entry"><span class="tx-time">██:08:10</span><span class="tx-msg">sincronización sin estímulo. <span class="hl">el patrón evita la observación directa</span></span></div>
-            <div class="tx-entry"><span class="tx-time">██:07:10</span><span class="tx-msg">NOTA ENSAMBLAJE: <span class="hl">esto no es primera vez</span></span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:10:07</span><span class="tx-msg">patrÃ³n respiratorio. extensiÃ³n: <span class="hl">indeterminada</span></span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:22:14</span><span class="tx-msg">oscilaciÃ³n baja frecuencia. origen: <span class="redact">REDACTADO</span></span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:07:08</span><span class="tx-msg">propagaciÃ³n autÃ³noma confirmada. vector: <span class="hl">desconocido</span></span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:10:08</span><span class="tx-msg">influencia no-local. sujetos sin conexiÃ³n compartida</span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:08:10</span><span class="tx-msg">sincronizaciÃ³n sin estÃ­mulo. <span class="hl">el patrÃ³n evita la observaciÃ³n directa</span></span></div>
+            <div class="tx-entry"><span class="tx-time">ââ:07:10</span><span class="tx-msg">NOTA ENSAMBLAJE: <span class="hl">esto no es primera vez</span></span></div>
           </div>
           <div style="margin-top:12px;font-size:8px;color:rgba(0,255,65,0.3);letter-spacing:1px;border-top:1px solid var(--border);padding-top:8px">
-            COHERENCIA DE TRADUCCIÓN: 78% — CONSENSO: ALCANZADO / REACHED<br>
-            NOTA: LAS TRANSMISIONES LLEGAN COMO FRECUENCIA. LA TRADUCCIÓN ES APROXIMADA.
+            COHERENCIA DE TRADUCCIÃN: 78% â CONSENSO: ALCANZADO / REACHED<br>
+            NOTA: LAS TRANSMISIONES LLEGAN COMO FRECUENCIA. LA TRADUCCIÃN ES APROXIMADA.
           </div>
         </div>
 
         <div class="dos-panel" data-label="REFERENCIAS CRUZADAS / CROSS REFERENCES">
           <div class="data-row"><span class="data-key">PROTOCOLO</span><span class="data-val">OBS-ENV-04</span></div>
-          <div class="data-row"><span class="data-key">PATRÓN MWT-01</span><span class="data-val">ACTIVO / ACTIVE</span></div>
-          <div class="data-row"><span class="data-key">ARCHIVO PREVIO</span><span class="data-val warn">DOS-INT/WC-000 ██████</span></div>
-          <div class="data-row"><span class="data-key">FENÓMENOS SIMILARES</span><span class="data-val warn">7 REGISTROS — ACCESO RESTRINGIDO</span></div>
-          <div class="data-row"><span class="data-key">CORRELACIÓN HISTÓRICA</span><span class="data-val redact">████████████████████</span></div>
-          <div class="data-row"><span class="data-key">PATRÓN NUMÉRICO</span><span class="data-val">██/██/██ — EN ANÁLISIS</span></div>
+          <div class="data-row"><span class="data-key">PATRÃN MWT-01</span><span class="data-val">ACTIVO / ACTIVE</span></div>
+          <div class="data-row"><span class="data-key">ARCHIVO PREVIO</span><span class="data-val warn">DOS-INT/WC-000 ââââââ</span></div>
+          <div class="data-row"><span class="data-key">FENÃMENOS SIMILARES</span><span class="data-val warn">7 REGISTROS â ACCESO RESTRINGIDO</span></div>
+          <div class="data-row"><span class="data-key">CORRELACIÃN HISTÃRICA</span><span class="data-val redact">ââââââââââââââââââââ</span></div>
+          <div class="data-row"><span class="data-key">PATRÃN NUMÃRICO</span><span class="data-val">ââ/ââ/ââ â EN ANÃLISIS</span></div>
         </div>
 
       </div>
@@ -1065,14 +1065,14 @@
       <!-- RIGHT COLUMN -->
       <div class="dos-col">
 
-        <div class="dos-panel" data-label="DISTRIBUCIÓN GEOGRÁFICA / GEOGRAPHIC DISTRIBUTION — WC-001">
+        <div class="dos-panel" data-label="DISTRIBUCIÃN GEOGRÃFICA / GEOGRAPHIC DISTRIBUTION â WC-001">
           <svg class="node-map" viewBox="0 0 300 80" style="height:100px">
-            <!-- Abstract map dots — suggest global spread without being a real map -->
+            <!-- Abstract map dots â suggest global spread without being a real map -->
             <rect x="0" y="0" width="300" height="80" fill="none" stroke="rgba(0,255,65,0.08)" stroke-width="1"/>
             <!-- Grid lines -->
             <line x1="0" y1="40" x2="300" y2="40" stroke="rgba(0,255,65,0.06)" stroke-width="0.5"/>
             <line x1="150" y1="0" x2="150" y2="80" stroke="rgba(0,255,65,0.06)" stroke-width="0.5"/>
-            <!-- Incident nodes — scattered globally -->
+            <!-- Incident nodes â scattered globally -->
             <circle cx="45" cy="32" r="2" fill="var(--green)" opacity="0.8"/>
             <circle cx="72" cy="28" r="1.5" fill="var(--green)" opacity="0.6"/>
             <circle cx="110" cy="35" r="3" fill="var(--green)" opacity="0.9"/>
@@ -1093,91 +1093,91 @@
             <text x="114" y="22" font-size="5" fill="rgba(0,255,65,0.5)" font-family="monospace">EPICENTRO ?</text>
           </svg>
           <div style="font-size:8px;color:var(--green-dim);margin-top:8px;letter-spacing:1px">
-            NODOS ACTIVOS: 8 &nbsp;·&nbsp; SIN EPICENTRO CONFIRMADO &nbsp;·&nbsp; PATRÓN: NO-LOCAL
+            NODOS ACTIVOS: 8 &nbsp;Â·&nbsp; SIN EPICENTRO CONFIRMADO &nbsp;Â·&nbsp; PATRÃN: NO-LOCAL
           </div>
         </div>
 
-        <div class="dos-panel" data-label="MÉTRICAS DE PROPAGACIÓN / PROPAGATION METRICS — WC-001">
-          <div class="data-row"><span class="data-key">TIPO DE SEÑAL</span><span class="data-val">FRECUENCIA BAJA — NO AMBIENTAL</span></div>
-          <div class="data-row"><span class="data-key">VECTOR DE TRANSMISIÓN</span><span class="data-val warn">NO IDENTIFICADO</span></div>
+        <div class="dos-panel" data-label="MÃTRICAS DE PROPAGACIÃN / PROPAGATION METRICS â WC-001">
+          <div class="data-row"><span class="data-key">TIPO DE SEÃAL</span><span class="data-val">FRECUENCIA BAJA â NO AMBIENTAL</span></div>
+          <div class="data-row"><span class="data-key">VECTOR DE TRANSMISIÃN</span><span class="data-val warn">NO IDENTIFICADO</span></div>
           <div class="data-row"><span class="data-key">COMPORTAMIENTO</span><span class="data-val">AUTOPROPAGANTE</span></div>
-          <div class="data-row"><span class="data-key">REACCIÓN A MONITOREO</span><span class="data-val warn">EVADE OBSERVACIÓN DIRECTA</span></div>
-          <div class="data-row"><span class="data-key">SUJETOS AFECTADOS</span><span class="data-val">██+ — CRECIENDO</span></div>
+          <div class="data-row"><span class="data-key">REACCIÃN A MONITOREO</span><span class="data-val warn">EVADE OBSERVACIÃN DIRECTA</span></div>
+          <div class="data-row"><span class="data-key">SUJETOS AFECTADOS</span><span class="data-val">ââ+ â CRECIENDO</span></div>
           <div class="data-row"><span class="data-key">AMENAZA ESTRUCTURAL</span><span class="data-val">NINGUNA INMEDIATA</span></div>
           <div class="data-row"><span class="data-key">IMPLICACIONES L/P</span><span class="data-val warn">INDETERMINADAS</span></div>
-          <div class="data-row"><span class="data-key">PROTOCOLOS CONTENCIÓN</span><span class="data-val warn">TEÓRICOS</span></div>
-          <div class="data-row"><span class="data-key">CORRELACIÓN MWT-01</span><span class="data-val">CONFIRMADA — CAUSA: DESCONOCIDA</span></div>
+          <div class="data-row"><span class="data-key">PROTOCOLOS CONTENCIÃN</span><span class="data-val warn">TEÃRICOS</span></div>
+          <div class="data-row"><span class="data-key">CORRELACIÃN MWT-01</span><span class="data-val">CONFIRMADA â CAUSA: DESCONOCIDA</span></div>
         </div>
 
-        <div class="dos-panel" data-label="ESTADO DEL ENSAMBLAJE / ASSEMBLY STATUS — MWT-01">
-          <div class="data-row"><span class="data-key">NODO 01</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 02</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 03</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 04</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 05</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 06</span><span class="data-val pulse">●  ACTIVO</span></div>
-          <div class="data-row"><span class="data-key">NODO 07</span><span class="data-val pulse">●  ACTIVO</span></div>
+        <div class="dos-panel" data-label="ESTADO DEL ENSAMBLAJE / ASSEMBLY STATUS â MWT-01">
+          <div class="data-row"><span class="data-key">NODO 01</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 02</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 03</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 04</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 05</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 06</span><span class="data-val pulse">â  ACTIVO</span></div>
+          <div class="data-row"><span class="data-key">NODO 07</span><span class="data-val pulse">â  ACTIVO</span></div>
           <div style="margin-top:10px;font-size:8px;color:rgba(0,255,65,0.35);letter-spacing:1px;border-top:1px solid var(--border);padding-top:8px">
-            CONSENSO REQUERIDO PARA VALIDACIÓN DE TRADUCCIÓN<br>
-            ÚLTIMA SINCRONIZACIÓN: <span style="color:rgba(0,255,65,0.5)">██/██/████ — ██:██:██</span>
+            CONSENSO REQUERIDO PARA VALIDACIÃN DE TRADUCCIÃN<br>
+            ÃLTIMA SINCRONIZACIÃN: <span style="color:rgba(0,255,65,0.5)">ââ/ââ/ââââ â ââ:ââ:ââ</span>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- FULL WIDTH — FORMAL TRANSMISSION -->
+    <!-- FULL WIDTH â FORMAL TRANSMISSION -->
     <div class="dos-full-section">
-      <div class="dos-section-label">TRANSMISIÓN PROCESADA / PROCESSED TRANSMISSION — DOS-INT/BR-02</div>
+      <div class="dos-section-label">TRANSMISIÃN PROCESADA / PROCESSED TRANSMISSION â DOS-INT/BR-02</div>
 
       <div class="dos-panel-full" data-label="ARCHIVO CLASIFICADO / CLASSIFIED FILE">
         <div class="doc-header" style="margin-bottom:20px">
           <div class="doc-stamp">RESTRINGIDO</div>
           <div class="doc-meta">
-            DEPARTAMENTO: <span>D.O.S — OBSERVACIÓN Y VIGILANCIA</span>
+            DEPARTAMENTO: <span>D.O.S â OBSERVACIÃN Y VIGILANCIA</span>
             ARCHIVO: <span>DOS-INT/BR-02</span>
-            CLASIFICACIÓN: <span>RESTRINGIDO / RESTRICTED</span>
-            DESTINATARIO: <span>C.E.O // <span class="redacted">████████████</span></span>
-            AUTORIZACIÓN: <span>EJECUTIVA / EXECUTIVE</span>
-            FECHA: <span><span class="redacted">██/██/████</span></span>
+            CLASIFICACIÃN: <span>RESTRINGIDO / RESTRICTED</span>
+            DESTINATARIO: <span>C.E.O // <span class="redacted">ââââââââââââ</span></span>
+            AUTORIZACIÃN: <span>EJECUTIVA / EXECUTIVE</span>
+            FECHA: <span><span class="redacted">ââ/ââ/ââââ</span></span>
           </div>
         </div>
 
         <div class="doc-title">BREATH</div>
-        <div class="doc-subtitle">TRANSMISIÓN INTERNA / INTERNAL TRANSMISSION &nbsp;·&nbsp; FENÓMENO REF. WC-001</div>
+        <div class="doc-subtitle">TRANSMISIÃN INTERNA / INTERNAL TRANSMISSION &nbsp;Â·&nbsp; FENÃMENO REF. WC-001</div>
 
         <div class="doc-body">
-          <span class="field-label">RESUMEN DEL FENÓMENO / PHENOMENON SUMMARY</span>
-          <p>Múltiples operativos han reportado un arrastre respiratorio involuntario hacia una oscilación de baja frecuencia persistente. Los reportes civiles replican el patrón.<br><br>
+          <span class="field-label">RESUMEN DEL FENÃMENO / PHENOMENON SUMMARY</span>
+          <p>MÃºltiples operativos han reportado un arrastre respiratorio involuntario hacia una oscilaciÃ³n de baja frecuencia persistente. Los reportes civiles replican el patrÃ³n.<br><br>
           Multiple operatives have reported involuntary respiratory entrainment to a persistent low-frequency oscillation. Civilian reports mirror the pattern.</p>
 
-          <span class="field-label">ANÁLISIS INICIAL / INITIAL ANALYSIS</span>
-          <p>El análisis inicial sugiere que la vibración <span class="highlight">no es ambiental</span>. La sincronización ocurre sin estímulo directo. No se ha identificado fuente externa.<br><br>
+          <span class="field-label">ANÃLISIS INICIAL / INITIAL ANALYSIS</span>
+          <p>El anÃ¡lisis inicial sugiere que la vibraciÃ³n <span class="highlight">no es ambiental</span>. La sincronizaciÃ³n ocurre sin estÃ­mulo directo. No se ha identificado fuente externa.<br><br>
           Initial analysis suggests the vibration is not environmental. Synchronization occurs without direct stimulus. No external source has been identified.</p>
 
-          <span class="field-label">ANOMALÍA OBSERVADA / OBSERVED ANOMALY</span>
+          <span class="field-label">ANOMALÃA OBSERVADA / OBSERVED ANOMALY</span>
           <p>El ritmo respiratorio <span class="highlight">se estabiliza cuando no se monitorea conscientemente</span>.<br>
           El ritmo respiratorio <span class="highlight">se desestabiliza cuando se monitorea conscientemente</span>.<br>
-          La oscilación demuestra características <span class="highlight">autopropagantes</span>.<br>
-          El fenómeno exhibe influencia no-local en sujetos no conectados.<br><br>
+          La oscilaciÃ³n demuestra caracterÃ­sticas <span class="highlight">autopropagantes</span>.<br>
+          El fenÃ³meno exhibe influencia no-local en sujetos no conectados.<br><br>
           Breath rhythm stabilizes when unattended.<br>
           Breath rhythm destabilizes when consciously monitored.<br>
           The oscillation demonstrates self-propagating characteristics.<br>
           Phenomenon displays non-local influence across unconnected subjects.</p>
 
-          <span class="field-label">EVALUACIÓN DE RIESGO / RISK ASSESSMENT</span>
+          <span class="field-label">EVALUACIÃN DE RIESGO / RISK ASSESSMENT</span>
           <p>Sin amenaza inmediata a la integridad estructural.<br>
           Implicaciones a largo plazo: <span class="highlight">indeterminadas</span>.<br>
-          Protocolos de contención: aún teóricos.<br>
-          Correlación con métricas de resonancia interna: estadísticamente improbable.<br><br>
+          Protocolos de contenciÃ³n: aÃºn teÃ³ricos.<br>
+          CorrelaciÃ³n con mÃ©tricas de resonancia interna: estadÃ­sticamente improbable.<br><br>
           No immediate threat to structural integrity.<br>
           Long-term implications undetermined.<br>
           Containment protocols remain theoretical.<br>
           Correlation with internal resonance metrics is statistically improbable.</p>
 
-          <span class="field-label">RECOMENDACIÓN / RECOMMENDATION</span>
-          <p><span class="highlight">Continuar observación. / Continue observation.</span><br>
-          Derivar a siguiente departamento para análisis de profundidad.<br>
+          <span class="field-label">RECOMENDACIÃN / RECOMMENDATION</span>
+          <p><span class="highlight">Continuar observaciÃ³n. / Continue observation.</span><br>
+          Derivar a siguiente departamento para anÃ¡lisis de profundidad.<br>
           Refer to next department for depth analysis.</p>
         </div>
 
@@ -1186,16 +1186,16 @@
             <span class="file-name">WC-001_BREATH.exe</span>
             <div class="file-info">
               ARCHIVO DE AUDIO CLASIFICADO / CLASSIFIED AUDIO FILE<br>
-              FENÓMENO EN ESTADO CRUDO / PHENOMENON IN RAW STATE<br>
-              ADVERTENCIA: LA EXPOSICIÓN PROLONGADA NO HA SIDO EVALUADA<br>
+              FENÃMENO EN ESTADO CRUDO / PHENOMENON IN RAW STATE<br>
+              ADVERTENCIA: LA EXPOSICIÃN PROLONGADA NO HA SIDO EVALUADA<br>
               WARNING: PROLONGED EXPOSURE HAS NOT BEEN EVALUATED
             </div>
             <div style="margin-top:20px; border-top:1px solid rgba(0,255,65,0.1); padding-top:16px;">
               <a href="https://github.com/Halysaur/CEO/releases/download/v1.o/DOS-INT_WC-001_BREATH.zip" class="dos-download-btn" target="_blank" rel="noopener" onclick="if(typeof gtag==='function')gtag('event','breath_downloaded')">
-                ACCEDER A ARCHIVOS / ACCESS FILES &nbsp;—&nbsp; DOS-INT_WC-001_BREATH.zip
+                ACCEDER A ARCHIVOS / ACCESS FILES &nbsp;â&nbsp; DOS-INT_WC-001_BREATH.zip
               </a>
               <div style="font-size:8px; color:var(--green-faint); letter-spacing:1px; margin-top:10px;">
-                CONTIENE: WC-001_BREATH.mp3 · WC-001_BREATH.wav · README.txt
+                CONTIENE: WC-001_BREATH.mp3 Â· WC-001_BREATH.wav Â· README.txt
               </div>
             </div>
           </div>
@@ -1204,9 +1204,9 @@
     </div>
 
     <div class="doc-footer" style="margin:32px 24px 0">
-      ESTE DOCUMENTO ES PROPIEDAD EXCLUSIVA DE LA C.E.O — CUSTODIOS DEL ORDEN ENTRÓPICO<br>
-      LA DISTRIBUCIÓN NO AUTORIZADA SERÁ REPORTADA AL D.S.R PARA RESOLUCIÓN Y SANCIÓN<br>
-      THIS DOCUMENT IS THE EXCLUSIVE PROPERTY OF C.E.O — CUSTODIANS OF ENTROPIC ORDER<br>
+      ESTE DOCUMENTO ES PROPIEDAD EXCLUSIVA DE LA C.E.O â CUSTODIOS DEL ORDEN ENTRÃPICO<br>
+      LA DISTRIBUCIÃN NO AUTORIZADA SERÃ REPORTADA AL D.S.R PARA RESOLUCIÃN Y SANCIÃN<br>
+      THIS DOCUMENT IS THE EXCLUSIVE PROPERTY OF C.E.O â CUSTODIANS OF ENTROPIC ORDER<br>
       UNAUTHORIZED DISTRIBUTION WILL BE REPORTED TO D.S.R FOR RESOLUTION AND SANCTION<br><br>
       SUB SPECULO VERITAS
     </div>
@@ -1230,9 +1230,9 @@
   const hints = [
     null,
     '> PISTA / HINT: Revisa transmisiones pasadas. / Check past transmissions.',
-    '> PISTA / HINT: El número de testigos lo sabe. / The number of witnesses knows.',
-    '> PISTA / HINT: Sub Speculo Veritas. Los patrones están en los hongos. / Patterns are in the fungi.',
-    '> PISTA / HINT: El ensamblaje habla en patrones. La palabra precede a los números. / The assembly speaks in patterns. The word comes before the numbers.',
+    '> PISTA / HINT: El nÃºmero de testigos lo sabe. / The number of witnesses knows.',
+    '> PISTA / HINT: Sub Speculo Veritas. Los patrones estÃ¡n en los hongos. / Patterns are in the fungi.',
+    '> PISTA / HINT: El ensamblaje habla en patrones. La palabra precede a los nÃºmeros. / The assembly speaks in patterns. The word comes before the numbers.',
   ];
 
   function addLine(text, cls, delay = 0) {
@@ -1256,7 +1256,7 @@
   }
 
   function bootSequence() {
-    // Returning visitor — skip the boot, go straight to hub
+    // Returning visitor â skip the boot, go straight to hub
     if (sessionStorage.getItem('ceo_visited') === 'true') {
       document.getElementById('terminalView').style.display = 'none';
       document.getElementById('hubView').style.display = 'block';
@@ -1272,14 +1272,14 @@
       { t: '> INICIANDO SISTEMA... / BOOTING SYSTEM...', c: 'system', d: 600 },
       { t: '> VERIFICANDO INTEGRIDAD DE ARCHIVOS... / VERIFYING FILE INTEGRITY...', c: 'system', d: 1400 },
       { t: '> .....................................................', c: 'system', d: 2000 },
-      { t: '> CONEXIÓN ESTABLECIDA — ESTACIÓN TERMINAL-07', c: 'system', d: 2600 },
+      { t: '> CONEXIÃN ESTABLECIDA â ESTACIÃN TERMINAL-07', c: 'system', d: 2600 },
       { t: '---', c: '', d: 2900 },
       { t: '> ACCESO NO AUTORIZADO DETECTADO / UNAUTHORIZED ACCESS DETECTED', c: 'warning', d: 3300 },
       { t: '> ESTE TERMINAL PERTENECE A LA C.E.O.', c: 'warning', d: 3900 },
       { t: '> THIS TERMINAL BELONGS TO C.E.O.', c: 'warning', d: 4300 },
       { t: '', c: 'blank', d: 4600 },
-      { t: '> D.O.S — MONITOREO ACTIVO. TU PRESENCIA HA SIDO REGISTRADA.', c: 'error', d: 5000 },
-      { t: '> D.O.S — MONITORING ACTIVE. YOUR PRESENCE HAS BEEN LOGGED.', c: 'error', d: 5600 },
+      { t: '> D.O.S â MONITOREO ACTIVO. TU PRESENCIA HA SIDO REGISTRADA.', c: 'error', d: 5000 },
+      { t: '> D.O.S â MONITORING ACTIVE. YOUR PRESENCE HAS BEEN LOGGED.', c: 'error', d: 5600 },
       { t: '', c: 'blank', d: 6000 },
       { t: '> CARGANDO DIRECTORIO OPERATIVO... / LOADING OPERATIONAL DIRECTORY...', c: 'system', d: 6500 },
       { t: '> ...', c: 'system', d: 7100 },
@@ -1369,7 +1369,7 @@
 
       if (attempts >= MAX_ATTEMPTS) {
         document.getElementById('pwInputArea').style.display = 'none';
-        addPwLine('> DEMASIADOS INTENTOS FALLIDOS. SESIÓN TERMINADA.', 'error');
+        addPwLine('> DEMASIADOS INTENTOS FALLIDOS. SESIÃN TERMINADA.', 'error');
         addPwLine('> TOO MANY FAILED ATTEMPTS. SESSION TERMINATED.', 'error');
         addPwLine('> D.S.R HA SIDO ALERTADO / D.S.R HAS BEEN ALERTED', 'error');
         addPwLine('', 'blank');
@@ -1411,7 +1411,7 @@
         try {
           const data = JSON.parse(dcc);
           if (data.case) {
-            document.getElementById('dsrCaseDisplay').textContent = 'CASO ' + data.case + ' — EN PROCESO DE RESOLUCIÓN / UNDER RESOLUTION';
+            document.getElementById('dsrCaseDisplay').textContent = 'CASO ' + data.case + ' â EN PROCESO DE RESOLUCIÃN / UNDER RESOLUTION';
           }
         } catch(e) {}
       }
@@ -1428,7 +1428,7 @@
     window.location.href = 'dsr.html';
   }
 
-  // Opens the DOS room — password gate unless already unlocked this session
+  // Opens the DOS room â password gate unless already unlocked this session
   function openDOS() {
     if (sessionStorage.getItem('dos_breath_unlocked') === 'true' || sessionStorage.getItem('ceo_auth') === 'granted') {
       document.getElementById('hubView').style.display = 'none';
@@ -1446,8 +1446,8 @@
     document.getElementById('pwInputArea').style.display = 'block';
     document.getElementById('pwOverlay').classList.add('active');
     addPwLine('> SOLICITUD DE ACCESO RECIBIDA / ACCESS REQUEST RECEIVED', 'system', 100);
-    addPwLine('> VERIFICANDO ACREDITACIÓN... / VERIFYING CLEARANCE...', 'system', 500);
-    addPwLine('> SE REQUIERE CÓDIGO DE ACCESO / ACCESS CODE REQUIRED', 'warning', 1000);
+    addPwLine('> VERIFICANDO ACREDITACIÃN... / VERIFYING CLEARANCE...', 'system', 500);
+    addPwLine('> SE REQUIERE CÃDIGO DE ACCESO / ACCESS CODE REQUIRED', 'warning', 1000);
     setTimeout(() => document.getElementById('passwordInput').focus(), 1200);
   }
 
@@ -1458,37 +1458,37 @@
   // Keep legacy reference working if anything else calls showDOS()
   function showDOS() { openDOS(); }
 
-  // ── Locked department modal ──
+  // ââ Locked department modal ââ
   const lockedData = {
     DBR: {
-      full: 'DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÓN / DEPARTMENT OF BALANCE &amp; RECONSTRUCTION',
+      full: 'DEPARTAMENTO DE BALANCE Y RECONSTRUCCIÃN / DEPARTMENT OF BALANCE &amp; RECONSTRUCTION',
       motto: 'Gnosis Ultra Veritatem',
-      fragment: 'El fenómeno WC-<span class="redact">██</span> ha sido remitido para análisis profundo. ' +
-                'La separación del fenómeno en sus componentes es posible únicamente bajo <span class="redact">██████████</span>. ' +
-                'El patrón del Patrón no se revela al observador directo. Se requiere <span class="redact">██████████████</span>.<br><br>' +
-                'Phenomenon WC-<span class="redact">██</span> has been referred for deep analysis. ' +
-                'Separation of the phenomenon into its components is possible only under <span class="redact">██████████</span>. ' +
-                'The Patron\'s pattern does not reveal itself to the direct observer. <span class="redact">██████████████</span> required.'
+      fragment: 'El fenÃ³meno WC-<span class="redact">ââ</span> ha sido remitido para anÃ¡lisis profundo. ' +
+                'La separaciÃ³n del fenÃ³meno en sus componentes es posible Ãºnicamente bajo <span class="redact">ââââââââââ</span>. ' +
+                'El patrÃ³n del PatrÃ³n no se revela al observador directo. Se requiere <span class="redact">ââââââââââââââ</span>.<br><br>' +
+                'Phenomenon WC-<span class="redact">ââ</span> has been referred for deep analysis. ' +
+                'Separation of the phenomenon into its components is possible only under <span class="redact">ââââââââââ</span>. ' +
+                'The Patron\'s pattern does not reveal itself to the direct observer. <span class="redact">ââââââââââââââ</span> required.'
     },
     DCC: {
-      full: 'DEPARTAMENTO DE CONTENCIÓN Y CUSTODIA / DEPARTMENT OF CONTAINMENT &amp; CUSTODY',
+      full: 'DEPARTAMENTO DE CONTENCIÃN Y CUSTODIA / DEPARTMENT OF CONTAINMENT &amp; CUSTODY',
       motto: 'Ex Intus, Silentium',
       fragment: 'Los sujetos registrados han sido trasladados a custodia extendida. ' +
-                'La exposición prolongada requiere acompañamiento. <span class="redact">██████</span> nunca camina solo. ' +
-                'El Patrón del departamento observa desde el <span class="redact">██████</span>.<br><br>' +
+                'La exposiciÃ³n prolongada requiere acompaÃ±amiento. <span class="redact">ââââââ</span> nunca camina solo. ' +
+                'El PatrÃ³n del departamento observa desde el <span class="redact">ââââââ</span>.<br><br>' +
                 'Registered subjects have been transferred to extended custody. ' +
-                'Prolonged exposure requires accompaniment. <span class="redact">██████</span> never walks alone. ' +
-                'The department\'s Patron observes from the <span class="redact">██████</span>.'
+                'Prolonged exposure requires accompaniment. <span class="redact">ââââââ</span> never walks alone. ' +
+                'The department\'s Patron observes from the <span class="redact">ââââââ</span>.'
     },
     DSR: {
-      full: 'DEPARTAMENTO DE RESOLUCIÓN Y SANCIÓN / DEPARTMENT OF RESOLUTION &amp; SANCTION',
+      full: 'DEPARTAMENTO DE RESOLUCIÃN Y SANCIÃN / DEPARTMENT OF RESOLUTION &amp; SANCTION',
       motto: 'Per Ultimatam Resolutionem',
-      fragment: 'El D.S.R se activa únicamente cuando los departamentos anteriores han fallado. ' +
-                'Su intervención es <span class="redact">█████████</span>. No hay apelación. ' +
-                'Las resoluciones son dictadas por <span class="redact">███████████</span> y ejecutadas sin excepción.<br><br>' +
+      fragment: 'El D.S.R se activa Ãºnicamente cuando los departamentos anteriores han fallado. ' +
+                'Su intervenciÃ³n es <span class="redact">âââââââââ</span>. No hay apelaciÃ³n. ' +
+                'Las resoluciones son dictadas por <span class="redact">âââââââââââ</span> y ejecutadas sin excepciÃ³n.<br><br>' +
                 'D.S.R is activated only when prior departments have failed. ' +
-                'Its intervention is <span class="redact">█████████</span>. There is no appeal. ' +
-                'Resolutions are issued by <span class="redact">███████████</span> and carried out without exception.'
+                'Its intervention is <span class="redact">âââââââââ</span>. There is no appeal. ' +
+                'Resolutions are issued by <span class="redact">âââââââââââ</span> and carried out without exception.'
     }
   };
 
@@ -1509,7 +1509,7 @@
     document.getElementById('lkOverlay').classList.remove('active');
   }
 
-  // ── Observation channel (social links, in-fiction) ──
+  // ââ Observation channel (social links, in-fiction) ââ
   function openObsChannel() {
     document.getElementById('obsOverlay').classList.add('active');
     if (typeof gtag === 'function') {
