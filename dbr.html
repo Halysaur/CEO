@@ -3,18 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>D.B.R / Protocolo de Disección Espectral / WR-01</title>
-<meta name="description" content="División de Balance y Reconstrucción. Custodios del Orden Entrópico.">
+<title>D.B.R / Protocolo de Disecci&#243;n Espectral / WR-01</title>
+<meta name="description" content="Divisi&#243;n de Balance y Reconstrucci&#243;n. Custodios del Orden Entr&#243;pico.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<!-- Preload stem audio so it begins downloading immediately on page load,
+     not when the user clicks Initiate. Massively cuts perceived load time. -->
+<link rel="preload" href="./stems/warmth-drums.wav" as="fetch" type="audio/wav" crossorigin>
+<link rel="preload" href="./stems/warmth-keys.wav"  as="fetch" type="audio/wav" crossorigin>
+<link rel="preload" href="./stems/warmth-vocal.wav" as="fetch" type="audio/wav" crossorigin>
+<link rel="preload" href="./stems/warmth-bass.wav"  as="fetch" type="audio/wav" crossorigin>
+
 <style>
 /* ============================================================
    D.B.R INTERFACE
-   Custodios del Orden Entrópico
-   Protocolo de Disección Espectral / WR-01
+   Custodios del Orden Entr&#243;pico
+   Protocolo de Disecci&#243;n Espectral / WR-01
    ============================================================ */
 
 :root {
@@ -461,6 +468,67 @@ body::before {
   text-transform: uppercase;
   min-height: 14px;
 }
+
+/* ---- per-stem loading progress UI ---- */
+.load-progress {
+  margin-top: 22px;
+  display: none;
+  width: 100%;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.load-progress.active { display: block; }
+.load-progress .lp-header {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--dbr);
+  margin-bottom: 12px;
+  opacity: 0.85;
+  text-align: center;
+}
+.lp-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 56px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.lp-label {
+  color: var(--text);
+  opacity: 0.85;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.lp-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(156, 124, 255, 0.10);
+  border: 1px solid rgba(156, 124, 255, 0.25);
+  overflow: hidden;
+}
+.lp-bar-fill {
+  position: absolute;
+  inset: 0 100% 0 0;
+  background: var(--dbr);
+  transition: right 0.18s linear;
+  opacity: 0.85;
+}
+.lp-bar.done .lp-bar-fill { background: #d8d8de; opacity: 0.7; }
+.lp-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+.lp-row.done .lp-pct::after { content: ' OK'; color: var(--dbr); opacity: 0.8; }
 
 /* ============================================================
    MIXER SECTION
@@ -1238,8 +1306,8 @@ body::before {
   <div class="scan-h" id="scanH"></div>
   <div class="scan-v" id="scanV"></div>
   <div class="solve-text" id="solveText">
-    <div class="pre">D.B.R / Análisis Terminado · Analysis Complete</div>
-    <div class="main-es" id="solveMainEs">Patrón Reconocido</div>
+    <div class="pre">D.B.R / An&#225;lisis Terminado &#183; Analysis Complete</div>
+    <div class="main-es" id="solveMainEs">Patr&#243;n Reconocido</div>
     <div class="main-en" id="solveMainEn">Pattern Recognized</div>
     <div class="motto-end">Gnosis Ultra Veritatem</div>
   </div>
@@ -1250,15 +1318,15 @@ body::before {
   <!-- top crosshead -->
   <div class="crosshead">
     <div class="crosshead-left">
-      <a href="./" class="back-link" aria-label="Volver al Hub · Return to Hub">
+      <a href="./" class="back-link" aria-label="Volver al Hub &#183; Return to Hub">
         <span class="back-arrow">&larr;</span>
-        <span>Hub · Return</span>
+        <span>Hub &#183; Return</span>
       </a>
-      <span class="crest"><span class="crest-mark"></span>Custodios del Orden Entrópico</span>
-      <span>División de Balance y Reconstrucción</span>
+      <span class="crest"><span class="crest-mark"></span>Custodios del Orden Entr&#243;pico</span>
+      <span>Divisi&#243;n de Balance y Reconstrucci&#243;n</span>
     </div>
     <div class="crosshead-right">
-      <span>Sesión <span class="num" id="sessionTime">00:00:00</span></span>
+      <span>Sesi&#243;n <span class="num" id="sessionTime">00:00:00</span></span>
       <span class="live-dot"></span>
     </div>
   </div>
@@ -1266,19 +1334,19 @@ body::before {
   <!-- header -->
   <header class="header">
     <div class="header-left">
-      <div class="eyebrow">Interfaz D.B.R · D.B.R Interface</div>
-      <h1>Protocolo de Disección Espectral</h1>
-      <p class="subtitle">Spectral Dissection Protocol · Subject WR-01</p>
+      <div class="eyebrow">Interfaz D.B.R &#183; D.B.R Interface</div>
+      <h1>Protocolo de Disecci&#243;n Espectral</h1>
+      <p class="subtitle">Spectral Dissection Protocol &#183; Subject WR-01</p>
     </div>
     <div class="header-right">
-      <a href="./" class="dbr-logo-wrap" aria-label="D.B.R · Investigación y Balance">
+      <a href="./" class="dbr-logo-wrap" aria-label="D.B.R &#183; Investigaci&#243;n y Balance">
         <img src="./logos/dbr-logo.png" alt="D.B.R" class="dbr-logo">
       </a>
       <div class="header-meta">
         <div class="kv"><span class="k">Expediente</span><span class="v" id="fileId">WR-01-DBR-0000</span></div>
-        <div class="kv"><span class="k">Ingreso</span><span class="v" id="ingress">D.O.S · ESCALATED</span></div>
+        <div class="kv"><span class="k">Ingreso</span><span class="v" id="ingress">D.O.S &#183; ESCALATED</span></div>
         <div class="kv"><span class="k">Nivel</span><span class="v">02 / INTERFERENCIA IRREDUCIBLE</span></div>
-        <div class="kv"><span class="k">Custodio</span><span class="v">D.B.R · ACTIVO</span></div>
+        <div class="kv"><span class="k">Custodio</span><span class="v">D.B.R &#183; ACTIVO</span></div>
       </div>
     </div>
     <div class="motto">Gnosis Ultra Veritatem</div>
@@ -1288,9 +1356,9 @@ body::before {
   <section class="brief">
     <div class="brief-col">
       <div class="lang-tag">ES / Informe de Ingreso</div>
-      <p>La División de Observación no pudo traducir esta transmisión. El Testigo del Micelio reportó <strong>interferencia irreducible</strong>. El expediente se eleva a D.B.R para análisis espectral.</p>
-      <p>Método: <em>cancelación por equilibrio de fase</em>. Los cuatro canales aislados contienen fragmentos coherentes de la señal portadora y un componente de ruido superpuesto. El ruido solo desaparece cuando los canales se balancean entre sí. Ninguna cancelación es posible con canales silenciados.</p>
-      <p>Advertencia: <strong>el sujeto puede responder a la observación</strong>. Registre cualquier anomalía en el entorno durante el análisis.</p>
+      <p>La Divisi&#243;n de Observaci&#243;n no pudo traducir esta transmisi&#243;n. El Testigo del Micelio report&#243; <strong>interferencia irreducible</strong>. El expediente se eleva a D.B.R para an&#225;lisis espectral.</p>
+      <p>M&#233;todo: <em>cancelaci&#243;n por equilibrio de fase</em>. Los cuatro canales aislados contienen fragmentos coherentes de la se&#241;al portadora y un componente de ruido superpuesto. El ruido solo desaparece cuando los canales se balancean entre s&#237;. Ninguna cancelaci&#243;n es posible con canales silenciados.</p>
+      <p>Advertencia: <strong>el sujeto puede responder a la observaci&#243;n</strong>. Registre cualquier anomal&#237;a en el entorno durante el an&#225;lisis.</p>
     </div>
     <div class="brief-col">
       <div class="lang-tag">EN / Ingress Report</div>
@@ -1303,14 +1371,39 @@ body::before {
   <!-- initiate (pre-audio) -->
   <section class="initiate-shell" id="initiateShell">
     <div class="initiate-body">
-      <div class="pre">Protocolo de Disección · Fase 1</div>
-      <h2>Iniciar Análisis</h2>
-      <p>Al confirmar, los canales aislados se cargarán simultáneamente. La disección es en tiempo real. El operador deberá localizar el nulo espectral por balance auditivo.</p>
+      <div class="pre">Protocolo de Disecci&#243;n &#183; Fase 1</div>
+      <h2>Iniciar An&#225;lisis</h2>
+      <p>Al confirmar, los canales aislados se cargar&#225;n simult&#225;neamente. La disecci&#243;n es en tiempo real. El operador deber&#225; localizar el nulo espectral por balance auditivo.</p>
       <button class="initiate-btn" id="initiateBtn">
-        Iniciar Transmisión
+        Iniciar Transmisi&#243;n
         <span class="mono">Initiate Transmission</span>
       </button>
       <div class="initiate-status" id="initiateStatus"></div>
+
+      <!-- per-stem load progress (hidden until initiate is clicked) -->
+      <div class="load-progress" id="loadProgress">
+        <div class="lp-header">Decodificando Frecuencias &#183; Decoding Frequencies</div>
+        <div class="lp-row" data-stem="drums">
+          <div class="lp-label">01 / DRUMS</div>
+          <div class="lp-bar"><div class="lp-bar-fill"></div></div>
+          <div class="lp-pct">0%</div>
+        </div>
+        <div class="lp-row" data-stem="keys">
+          <div class="lp-label">02 / KEYS</div>
+          <div class="lp-bar"><div class="lp-bar-fill"></div></div>
+          <div class="lp-pct">0%</div>
+        </div>
+        <div class="lp-row" data-stem="vocal">
+          <div class="lp-label">03 / VOCAL</div>
+          <div class="lp-bar"><div class="lp-bar-fill"></div></div>
+          <div class="lp-pct">0%</div>
+        </div>
+        <div class="lp-row" data-stem="bass">
+          <div class="lp-label">04 / BASS</div>
+          <div class="lp-bar"><div class="lp-bar-fill"></div></div>
+          <div class="lp-pct">0%</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1320,9 +1413,9 @@ body::before {
     <div class="section-head">
       <div>
         <span class="title title-es">Canales Aislados</span>
-        <span class="title title-en">· Isolated Channels</span>
+        <span class="title title-en">&#183; Isolated Channels</span>
       </div>
-      <div class="meta">WR-01 · STEM ARRAY · 4CH · SYNC LOCKED</div>
+      <div class="meta">WR-01 &#183; STEM ARRAY &#183; 4CH &#183; SYNC LOCKED</div>
     </div>
 
     <div class="mixer-scroll">
@@ -1337,7 +1430,7 @@ body::before {
         <div class="head">
           <div>
             <span class="title title-es">Salida Maestra</span>
-            <span class="title title-en">· Master Output</span>
+            <span class="title title-en">&#183; Master Output</span>
           </div>
           <span class="id mono">SPEC / FFT-2048</span>
         </div>
@@ -1349,8 +1442,8 @@ body::before {
       <div class="output-panel state-panel">
         <div class="head">
           <div>
-            <span class="title title-es">Estado de Análisis</span>
-            <span class="title title-en">· Analysis State</span>
+            <span class="title title-es">Estado de An&#225;lisis</span>
+            <span class="title title-en">&#183; Analysis State</span>
           </div>
           <span class="id mono" id="stateId">--:--</span>
         </div>
@@ -1375,7 +1468,7 @@ body::before {
         </div>
 
         <div class="state-big" id="stateBig">
-          <div class="lbl">Estado · State</div>
+          <div class="lbl">Estado &#183; State</div>
           <div class="msg-es" id="stateBigEs">Interferencia Detectada</div>
           <div class="msg-en" id="stateBigEn">Interference Detected</div>
         </div>
@@ -1385,19 +1478,19 @@ body::before {
     <!-- reveal (download + record, post-solve) -->
     <div class="reveal" id="reveal">
       <div class="reveal-head">
-        <div class="tag">Señal Aislada · Signal Isolated</div>
-        <h3>Expediente WR-01 · Archivo Liberado</h3>
+        <div class="tag">Se&#241;al Aislada &#183; Signal Isolated</div>
+        <h3>Expediente WR-01 &#183; Archivo Liberado</h3>
         <p class="sub">El material es propiedad del archivo D.B.R. Cualquier copia se registra.</p>
       </div>
       <div class="reveal-actions">
         <a class="reveal-btn" id="downloadBtn" href="https://github.com/Halysaur/CEO/releases/download/warmth_v1/DBR-INT_WC-002_WARMTH.zip" download>
-          <span class="lbl">Transmisión · Transmission</span>
+          <span class="lbl">Transmisi&#243;n &#183; Transmission</span>
           <div class="title-row">
             <div>
               <div class="title-es">Descargar Expediente</div>
               <div class="title-en">Download Record</div>
             </div>
-            <span class="arrow">↓</span>
+            <span class="arrow">&#8595;</span>
           </div>
           <div class="file">DBR-INT_WC-002_WARMTH.zip</div>
         </a>
@@ -1409,8 +1502,8 @@ body::before {
   <!-- footer -->
   <footer class="footer">
     <div class="footer-left">
-      <span>C.E.O · D.B.R · Investigación y Balance</span>
-      <span class="observer-chip"><span class="dot"></span>Monitoreo Activo · Active Monitoring</span>
+      <span>C.E.O &#183; D.B.R &#183; Investigaci&#243;n y Balance</span>
+      <span class="observer-chip"><span class="dot"></span>Monitoreo Activo &#183; Active Monitoring</span>
     </div>
     <div class="footer-right">
       <span>Custodiansofentropicorder.org</span>
@@ -1422,7 +1515,7 @@ body::before {
 
 <script>
 /* ============================================================
-   D.B.R INTERFACE · SPECTRAL DISSECTION PROTOCOL
+   D.B.R INTERFACE \u00B7 SPECTRAL DISSECTION PROTOCOL
    ============================================================ */
 
 // ------------------ CONFIG ------------------
@@ -1543,7 +1636,7 @@ function buildChannelDom(cfg, idx) {
 // ------------------ AUDIO SETUP ------------------
 async function initAudio() {
   initiateBtn.disabled = true;
-  initiateStatus.textContent = 'Estableciendo Conexión · Establishing Connection';
+  initiateStatus.textContent = 'Estableciendo Conexi\u00F3n \u00B7 Establishing Connection';
 
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1555,7 +1648,11 @@ async function initAudio() {
     masterGain.connect(masterAnalyser);
     masterAnalyser.connect(audioCtx.destination);
 
-    initiateStatus.textContent = 'Cargando Canales · Loading Channels';
+    initiateStatus.textContent = 'Cargando Canales \u00B7 Loading Channels';
+
+    // Show the per-stem progress UI
+    const loadProgress = document.getElementById('loadProgress');
+    loadProgress.classList.add('active');
 
     // build channel DOM first so user sees structure
     STEMS_CONFIG.forEach((cfg, idx) => {
@@ -1563,15 +1660,94 @@ async function initAudio() {
       mixerWrap.appendChild(dom);
     });
 
-    // load buffers in parallel
-    const buffers = await Promise.all(STEMS_CONFIG.map(async cfg => {
-      const res = await fetch(cfg.path);
-      if (!res.ok) throw new Error('Missing stem: ' + cfg.path);
-      const arr = await res.arrayBuffer();
+    // Streaming fetch helper -- reads response in chunks, calls onProgress(received, total)
+    // for every chunk, and returns the assembled ArrayBuffer at the end.
+    async function fetchWithProgress(url, onProgress) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Missing stem: ' + url);
+      const totalHeader = res.headers.get('Content-Length');
+      const total = totalHeader ? parseInt(totalHeader, 10) : 0;
+      const reader = res.body.getReader();
+      const chunks = [];
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+        onProgress(received, total);
+      }
+      // Concatenate chunks into a single ArrayBuffer
+      const buf = new Uint8Array(received);
+      let offset = 0;
+      for (const c of chunks) { buf.set(c, offset); offset += c.length; }
+      return buf.buffer;
+    }
+
+    // Helper to update one progress row
+    function updateRow(stemId, received, total) {
+      const row = loadProgress.querySelector(`.lp-row[data-stem="${stemId}"]`);
+      if (!row) return;
+      const fill = row.querySelector('.lp-bar-fill');
+      const pctEl = row.querySelector('.lp-pct');
+      if (total > 0) {
+        const pct = Math.min(100, Math.round((received / total) * 100));
+        fill.style.right = (100 - pct) + '%';
+        pctEl.textContent = pct + '%';
+      } else {
+        // Unknown total -- show indeterminate-ish state via received bytes (KB)
+        pctEl.textContent = (received / 1024 | 0) + 'K';
+      }
+    }
+    function markRowDone(stemId) {
+      const row = loadProgress.querySelector(`.lp-row[data-stem="${stemId}"]`);
+      if (!row) return;
+      row.classList.add('done');
+      row.querySelector('.lp-bar').classList.add('done');
+      const fill = row.querySelector('.lp-bar-fill');
+      fill.style.right = '0%';
+      row.querySelector('.lp-pct').textContent = '100%';
+    }
+
+    // Load buffers in parallel. Audio loads run independently of the UI --
+    // the progress bars animate on a fixed 4-second ceremony timer regardless
+    // of how fast the data actually arrives. This guarantees the user always
+    // sees the decoding sequence, even when stems are already cached.
+    const audioPromise = Promise.all(STEMS_CONFIG.map(async cfg => {
+      const arr = await fetchWithProgress(cfg.path, () => { /* time-based UI */ });
       return await audioCtx.decodeAudioData(arr);
     }));
 
-    initiateStatus.textContent = 'Sincronizando · Synchronizing';
+    // Run the visual ceremony: 4 seconds total, with each stem staggered slightly
+    // so they don't all finish at the same instant. Feels more clinical / deliberate.
+    const CEREMONY_MS = 4000;
+    const STEM_STAGGER = { drums: 0, keys: 200, vocal: 400, bass: 600 };
+    const ceremonyStart = performance.now();
+
+    await new Promise(resolve => {
+      function frame() {
+        const elapsed = performance.now() - ceremonyStart;
+        STEMS_CONFIG.forEach(cfg => {
+          const delay = STEM_STAGGER[cfg.id] || 0;
+          const dur = CEREMONY_MS - delay;
+          const stemElapsed = Math.max(0, elapsed - delay);
+          const pct = Math.min(100, (stemElapsed / dur) * 100);
+          // updateRow(id, received, total) -> visualPct = received/total*100, so pass (pct, 100)
+          updateRow(cfg.id, pct, 100);
+        });
+        if (elapsed < CEREMONY_MS) requestAnimationFrame(frame);
+        else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+
+    // Mark every row visually complete with the OK suffix
+    STEMS_CONFIG.forEach(cfg => markRowDone(cfg.id));
+
+    // If audio is somehow still loading (very slow connection), hold here
+    const buffers = await audioPromise;
+
+    initiateStatus.textContent = 'Sincronizando \u00B7 Synchronizing';
 
     // build audio graph for each stem
     STEMS_CONFIG.forEach((cfg, idx) => {
@@ -1642,7 +1818,9 @@ async function initAudio() {
 
   } catch (err) {
     console.error('[DBR] Audio init failed:', err);
-    initiateStatus.textContent = 'Error de Ingreso · Ingress Error · Archivos no disponibles';
+    initiateStatus.textContent = 'Error de Ingreso \u00B7 Ingress Error \u00B7 Archivos no disponibles';
+    const lp = document.getElementById('loadProgress');
+    if (lp) lp.classList.remove('active');
     initiateBtn.disabled = false;
   }
 }
@@ -1964,8 +2142,8 @@ function stateLoop() {
     stateBigEn.textContent = 'Partial Interference';
   } else {
     stateBig.classList.remove('partial','close','solved');
-    stateBigEs.textContent = anyMuted ? 'Canal Silenciado · Cancelación Imposible' : 'Interferencia Detectada';
-    stateBigEn.textContent = anyMuted ? 'Channel Silenced · Cancellation Impossible' : 'Interference Detected';
+    stateBigEs.textContent = anyMuted ? 'Canal Silenciado \u00B7 Cancelaci\u00F3n Imposible' : 'Interferencia Detectada';
+    stateBigEn.textContent = anyMuted ? 'Channel Silenced \u00B7 Cancellation Impossible' : 'Interference Detected';
   }
 
   // state id: sum of normalized deviations, matches puzzle logic (0 at any valid solution)
@@ -1976,7 +2154,7 @@ function stateLoop() {
   const devSum = stems.reduce((sum, s, i) => {
     return sum + Math.abs((devVals[i] - devMeanV) - (devTgts[i] - devMeanT));
   }, 0);
-  stateIdEl.textContent = 'Δ ' + devSum.toFixed(1) + ' dBFS';
+  stateIdEl.textContent = '\u0394 ' + devSum.toFixed(1) + ' dBFS';
 
   // sustained solve check
   if (!solved) {
@@ -2035,7 +2213,7 @@ function triggerSolve() {
 
   // swap text before vertical scan (phase 2)
   setTimeout(() => {
-    document.getElementById('solveMainEs').textContent = 'Señal Aislada';
+    document.getElementById('solveMainEs').textContent = 'Se\u00F1al Aislada';
     document.getElementById('solveMainEn').textContent = 'Signal Isolated';
   }, 3600);
 
