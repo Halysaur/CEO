@@ -814,7 +814,7 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
 
 .ph {
   border-bottom: 2px solid var(--border-bright);
-  padding: 0 28px 0 0;
+  padding: 0 28px 0 28px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -824,7 +824,7 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   min-height: 200px;
 }
 .ph-logo { width: auto; height: 200px; max-height: 200px; object-fit: contain; transition: filter 1s ease; display: block; }
-.ph-center { display: flex; flex-direction: column; gap: 6px; }
+.ph-center { display: flex; flex-direction: column; gap: 6px; padding-left: 40px; }
 .ph-l .ph-dept { font-family: 'Roboto Slab', serif; font-size: 32px; color: var(--accent); letter-spacing: 12px; text-shadow: 0 0 30px var(--accent-glow); transition: all 0.5s ease; }
 .ph-l .ph-motto { font-size: 12px; color: var(--accent-dim); letter-spacing: 3px; font-family: 'Roboto Slab', serif; font-style: italic; }
 .ph-r { text-align: right; font-family: 'Roboto Slab', serif; font-size: 11px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; white-space: nowrap; }
@@ -5059,7 +5059,7 @@ body.theme-dsr #bgSalamander svg {
      ============================================================ -->
 <div id="portalView">
   <div class="ph">
-    <img src="dcc-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" />
+    <img src="dcc-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="const c=document.querySelector('.ph-center');if(c)c.style.paddingLeft='0';" />
     <div class="ph-l ph-center">
       <div class="ph-dept">D.C.C</div>
       <div class="ph-motto">Ex Intus, Silentium</div>
@@ -6540,6 +6540,10 @@ function applyTheme(h, s, l) {
 function updateLogoFilter() {
   const logo = document.getElementById('dccLogo');
   if (!logo) return;
+  // If logo loaded successfully, remove the centering padding compensation
+  if (logo.complete && logo.naturalWidth > 0) {
+    document.querySelector('.ph-center').style.paddingLeft = '0';
+  }
   const ah = ud.ah || 32;
   const t = (ud.custody || 0) / 100;
   const hueRotate = ah - 35;
@@ -6864,7 +6868,7 @@ Responde siempre como el D.C.C. Mensajes cortos a medianos (2-4 párrafos máxim
     : hist.slice(-12);
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
