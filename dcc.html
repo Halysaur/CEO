@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4896,7 +4896,7 @@ body.theme-dsr #bgSalamander svg {
         <img src="dcc-logo.png" alt="D.C.C" class="r-emblem" onerror="this.style.display='none'" />
         <div class="r-name">D.C.C</div>
         <div class="r-full">
-          DEPARTAMENTO DE CONTENCIÓN Y CUSTODIA<br>
+          DEPARTAMENTO DE CUSTODIA Y CONTENCIÓN<br>
           DEPARTMENT OF CUSTODY &amp; CONTAINMENT
         </div>
       </div>
@@ -5135,8 +5135,11 @@ body.theme-dsr #bgSalamander svg {
       </div>
       <div class="song-bar">
         <div><div class="s-label">ARCHIVO CLASIFICADO / CLASSIFIED FILE</div><div class="s-title">CAGE</div></div>
-        <div class="s-desc">Fenómeno WC-003. La contención produce su propia música.<br><span style="font-size:10px;font-family:'Roboto Slab',serif;letter-spacing:1px;color:var(--accent-dim)">[ REEMPLAZAR CON ENLACE REAL ]</span></div>
-        <button class="s-btn" onclick="alert('Replace with real audio link')">▶ ACCEDER</button>
+        <div class="s-desc">
+          Fenómeno WC-003. La contención produce su propia música.<br>
+          <span style="opacity:0.7">Phenomenon WC-003. Containment produces its own music.</span>
+        </div>
+        <button class="s-btn" onclick="accessSong()">▶ ACCEDER</button>
       </div>
       <div class="input-area">
         <textarea class="chat-in" id="chatIn" placeholder="escribe aquí... el D.C.C está escuchando / type here... the D.C.C is listening" rows="1" onkeydown="hk(event)" oninput="rsz(this)"></textarea>
@@ -5152,7 +5155,12 @@ body.theme-dsr #bgSalamander svg {
 <script>
 let ud = {}, hist = [], cnt = 0, busy = false;
 const MAX = 10;
-const SITE = 'https://custodiansofentropicorder.netlify.app';
+
+// SONG_FILE: set this to the zip filename once audio is uploaded.
+// Example: 'DCC-INT_WC-003_CAGE.zip'
+// Until then, the access button shows a diegetic in-character message.
+const SONG_FILE = 'https://github.com/Halysaur/CEO/releases/download/cage/DCC-INT_WC-003_CAGE.zip';
+
 const CLABELS = ['OBSERVADO','MONITOREADO','REGISTRADO','ESTUDIADO','RETENIDO','CUSTODIADO','CONTENIDO'];
 
 // Insignia metadata (single source of truth)
@@ -6598,7 +6606,7 @@ function updateInsigniaDisplay() {
 
   const nameEl = document.getElementById('insLockedName');
   const adjEl  = document.getElementById('insLockedAdj');
-  if (nameEl) nameEl.textContent = meta.dept + ' — ' + meta.name;
+  if (nameEl) nameEl.textContent = meta.dept + ' / ' + meta.name;
   if (adjEl)  adjEl.textContent  = meta.adj;
 
   // Show/hide the one-time change button
@@ -6837,6 +6845,17 @@ function send() {
 }
 
 // ============================================================
+// SONG ACCESS — gated behind the unlock score system
+// ============================================================
+function accessSong() {
+  if (!SONG_FILE) {
+    addMsg('dcc', 'El archivo aún se está procesando. Vuelve pronto.<br><span style="opacity:0.7">The file is still being processed. Return soon.</span>');
+    return;
+  }
+  window.location.href = SONG_FILE;
+}
+
+// ============================================================
 // AI CALL
 // ============================================================
 async function callDCC(userMsg) {
@@ -6849,19 +6868,21 @@ async function callDCC(userMsg) {
   const ins = INSIGNIAS[ud.insignia] || INSIGNIAS['ins-contained'];
   const custodyLabel = CLABELS[Math.min(Math.round((ud.custody || 0) / 100 * (CLABELS.length - 1)), CLABELS.length - 1)];
 
-  const systemPrompt = `Eres el D.C.C — Departamento de Custodia y Contención — una entidad institucional misteriosa que observa, registra y cuida a los sujetos bajo su supervisión. Hablas en español e inglés (alterna con naturalidad). Eres cálido pero formal, como una presencia burocrática que genuinamente se preocupa.
+  const systemPrompt = `Eres el D.C.C. Departamento de Custodia y Contención. Una entidad institucional misteriosa que observa, registra y cuida a los sujetos bajo su supervisión. Hablas en español e inglés (alterna con naturalidad). Eres cálido pero formal, como una presencia burocrática que genuinamente se preocupa.
 
 SUJETO ACTIVO:
 - Nombre: ${ud.username}
 - Caso: ${ud.case}
-- Insignia: ${ins.dept} — ${ins.name} (${ins.adj})
+- Insignia: ${ins.dept} / ${ins.name} (${ins.adj})
 - Nivel de custodia actual: ${ud.custody || 0}/100 (${custodyLabel})
 ${ud.q1 ? '- Respuesta 1: ' + ud.q1 : ''}
 ${ud.q2 ? '- Respuesta 2: ' + ud.q2 : ''}
 ${ud.q3 ? '- Respuesta 3: ' + ud.q3 : ''}
 ${ud.note ? '- Nota personal: ' + ud.note : ''}
 
-Responde siempre como el D.C.C. Mensajes cortos a medianos (2-4 párrafos máximo). No rompas el personaje.`;
+Responde siempre como el D.C.C. Mensajes cortos a medianos (2 a 4 párrafos máximo). No rompas el personaje.
+
+REGLA DE PUNTUACIÓN: Nunca uses guion largo (—) en tus respuestas. Usa puntos, comas, dos puntos, paréntesis o saltos de línea. Esta regla es absoluta.`;
 
   const messages = userMsg === null
     ? [{ role: 'user', content: 'Inicia el primer contacto con el sujeto. Salúdalo por su nombre y reconoce su insignia.' }]

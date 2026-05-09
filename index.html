@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -730,6 +730,108 @@
     .dept-symbol { width: 60px; height: 60px; }
   }
 
+  /* ============================================================
+     DCC TAKEOVER — Hub re-skinned in amber.
+     The general directory has been absorbed by D.C.C.
+     Locally redefines the green palette inside #hubView so all
+     existing rules using var(--green*) cascade to amber values.
+     Hardcoded rgba(0,255,65,...) glows are overridden per-selector.
+     ============================================================ */
+
+  #hubView {
+    /* Local palette overrides */
+    --green:       #f0a040;
+    --green-dim:   #a06820;
+    --green-faint: #3a1e08;
+    --amber:       #ffc070;
+    --border:      #3a1e08;
+    --bg:          #100800;
+    --text:        #e8d4a0;
+
+    background: #100800;
+    position: relative;
+  }
+
+  /* Warm vignette layered over the hub to deepen the gold takeover */
+  #hubView::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(240,160,64,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse at center, transparent 30%, rgba(20,8,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #hubView .hub-wrap { position: relative; z-index: 1; }
+
+  /* Hub title and headers */
+  #hubView .hub-org {
+    color: #f0a040;
+    text-shadow: 0 0 30px rgba(240,160,64,0.4);
+  }
+  #hubView .hub-header { border-bottom-color: #3a1e08; }
+  #hubView .hub-message {
+    border-left-color: #3a1e08;
+    border-right-color: #3a1e08;
+  }
+
+  /* Active dept-node hover glow (amber) */
+  #hubView .dept-node.active:hover {
+    background: rgba(240,160,64,0.04);
+    box-shadow: 0 0 30px rgba(240,160,64,0.10);
+  }
+  #hubView .dept-node.active:hover .dept-symbol {
+    filter: drop-shadow(0 0 12px rgba(240,160,64,0.65));
+  }
+
+  /* Override the green keyframes locally with amber glow.
+     We can't redefine the keyframe inline, so we swap the animation
+     reference on the active symbol to a hub-specific amber pulse. */
+  @keyframes hubAmberGlow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(240,160,64,0.35)); }
+    50%      { filter: drop-shadow(0 0 16px rgba(240,160,64,0.75)); }
+  }
+  #hubView .dept-node.active .dept-symbol {
+    animation: hubAmberGlow 4s ease infinite;
+  }
+
+  /* DCC node gets a slightly stronger glow as the seat of the takeover */
+  #hubView .dcc-node {
+    border-color: #a06820;
+    background: rgba(240,160,64,0.025);
+  }
+  #hubView .dcc-node .dept-symbol {
+    color: #ffc070;
+  }
+  #hubView .dcc-node .dept-id {
+    text-shadow: 0 0 12px rgba(240,160,64,0.4);
+  }
+
+  /* Status labels and motto retune */
+  #hubView .dept-node.active .dept-status-label { color: #ffc070; }
+  #hubView .dept-motto { color: #f0a040; }
+
+  /* Locked node retains its dimmed character but in warmer tones */
+  #hubView .dept-node.locked .dept-id,
+  #hubView .dept-node.locked .dept-motto,
+  #hubView .dept-node.locked .dept-status-label {
+    color: #a06820;
+  }
+
+  /* Observation channel button warmed up */
+  #hubView .obs-channel-btn:hover {
+    background: rgba(240,160,64,0.03);
+    box-shadow: 0 0 12px rgba(240,160,64,0.10);
+  }
+  #hubView .obs-channel-btn:hover .obs-btn-icon {
+    animation: hubAmberGlow 2s ease infinite;
+  }
+
+  /* Footer line warmed */
+  #hubView .hub-footer-line { color: #5a3a18; }
+
 </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-55QRHCLQP7"></script>
@@ -822,8 +924,8 @@
           <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
         </div>
 
-        <!-- DCC &#8212; LOCKED -->
-        <div class="dept-node locked" onclick="openLocked('DCC')">
+        <!-- DCC &#8212; ACTIVE -->
+        <div class="dept-node active dcc-node" onclick="window.location.href='dcc.html'">
           <div class="dept-symbol">
             <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <rect x="3" y="3" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5" rx="1"/>
@@ -833,10 +935,10 @@
             </svg>
           </div>
           <div class="dept-id">D.C.C</div>
-          <div class="dept-full-es">Departamento de Contenci&#243;n y Custodia</div>
-          <div class="dept-full-en">Department of Containment &amp; Custody</div>
+          <div class="dept-full-es">Departamento de Custodia y Contenci&#243;n</div>
+          <div class="dept-full-en">Department of Custody &amp; Containment</div>
           <div class="dept-motto">Ex Intus, Silentium</div>
-          <div class="dept-status-label">CLASIFICADO / CLASSIFIED</div>
+          <div class="dept-status-label">ACCESO DISPONIBLE / ACCESS AVAILABLE</div>
         </div>
 
         <!-- DSR &#8212; LOCKED -->
@@ -1471,7 +1573,7 @@
                 'The Patron\'s pattern does not reveal itself to the direct observer. <span class="redact">\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588</span> required.'
     },
     DCC: {
-      full: 'DEPARTAMENTO DE CONTENCI\u00D3N Y CUSTODIA / DEPARTMENT OF CONTAINMENT &amp; CUSTODY',
+      full: 'DEPARTAMENTO DE CUSTODIA Y CONTENCI\u00D3N / DEPARTMENT OF CUSTODY &amp; CONTAINMENT',
       motto: 'Ex Intus, Silentium',
       fragment: 'Los sujetos registrados han sido trasladados a custodia extendida. ' +
                 'La exposici\u00F3n prolongada requiere acompa\u00F1amiento. <span class="redact">\u2588\u2588\u2588\u2588\u2588\u2588</span> nunca camina solo. ' +
