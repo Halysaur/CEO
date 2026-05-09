@@ -804,10 +804,15 @@ html, body {
   #regView { padding: 30px 12px 50px; }
   .reg-frame { padding: 36px 22px 28px; }
   .r-name { font-size: 36px; letter-spacing: 8px; }
-  .r-emblem { width: 100px; height: 100px; }
+  .r-emblem { width: min(320px, 80vw); height: min(320px, 80vw); margin-bottom: 8px; }
   .insignia-grid { grid-template-columns: 1fr; gap: 12px; }
   .insignia-card { padding: 20px 16px; }
   .ins-card-icon { width: 48px; height: 48px; }
+  /* Chat page: bigger logo on mobile, scale ph header proportionally */
+  .ph { min-height: auto; padding: 14px 16px 18px; }
+  .ph-logo { width: min(280px, 70vw); height: min(280px, 70vw); margin-top: 4px; }
+  .ph-r { font-size: 11px; }
+  .ph-name { font-size: 13px; }
 }
 
 /* ============================================================
@@ -848,9 +853,11 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   display: block;
   flex-shrink: 0;
 }
-body.theme-dos .ph-logo { background-color: var(--dos-paper); }
-body.theme-dbr .ph-logo { background-color: var(--dbr-acc-bright); }
-body.theme-dsr .ph-logo { background-color: var(--dsr-ink); }
+/* Chat logo color follows the user's chosen swatch within each theme.
+   Uses --ah/--as set by applyTheme() so color changes track swatches. */
+body.theme-dos .ph-logo { background-color: hsl(var(--ah), var(--as), 65%); }
+body.theme-dbr .ph-logo { background-color: hsl(var(--ah), var(--as), 65%); }
+body.theme-dsr .ph-logo { background-color: hsl(var(--ah), var(--as), 65%); }
 .ph-r { text-align: center; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; }
 .ph-name { color: var(--cream); font-size: 12px; transition: font-size 0.5s ease; }
 .ph-ins { display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-left: 6px; }
@@ -1805,6 +1812,45 @@ body.theme-dsr .modal-btn-primary:hover {
 @media (max-width: 768px) {
   .pb { flex-direction: column; }
   .lp { width: 100% !important; min-width: 100% !important; border-right: none; border-bottom: 2px solid var(--border-bright); }
+
+  /* ============================================================
+     MOBILE PET — floating, draggable, no blue tap highlight.
+     The pet host floats over the page, follows scroll, and can
+     be dragged anywhere on screen so the user can peek at info
+     under it. Reset on each portal entry.
+     ============================================================ */
+  .pet, .pet *, #petHost, #petHost *,
+  .ph-logo, .reg-footer-mark, .r-emblem,
+  .insignia-card, .sw, .s-btn, .sub-btn {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  #petHost {
+    position: fixed !important;
+    right: 12px;
+    bottom: 16px;
+    left: auto;
+    top: auto;
+    z-index: 200;
+    width: auto !important;
+    height: auto !important;
+    padding: 6px 8px 4px !important;
+    margin: 0 !important;
+    background: radial-gradient(ellipse at center, hsla(0, 0%, 0%, 0.6) 0%, hsla(0, 0%, 0%, 0.25) 60%, transparent 85%);
+    border-radius: 16px;
+    touch-action: none;
+    cursor: grab;
+    transition: opacity 0.3s ease;
+  }
+  #petHost.dragging { cursor: grabbing; opacity: 0.85; }
+  #petHost .pet-caption { font-size: 9px; letter-spacing: 1px; margin-top: 2px; }
+  body.theme-dcc #petHost,
+  body.theme-dos #petHost,
+  body.theme-dbr #petHost,
+  body.theme-dsr #petHost {
+    height: auto !important;
+  }
 }
 
 /* ============================================================
@@ -3180,19 +3226,20 @@ body.theme-dos .dos-ring-spore {
 }
 
 /* Each spore lights up when --unlock crosses its activation threshold.
-   12 spores: spore N activates at unlock >= N/12 */
-body.theme-dos .dos-ring-spore:nth-child(1)  { --activate: 0.000; }
-body.theme-dos .dos-ring-spore:nth-child(2)  { --activate: 0.083; }
-body.theme-dos .dos-ring-spore:nth-child(3)  { --activate: 0.167; }
-body.theme-dos .dos-ring-spore:nth-child(4)  { --activate: 0.250; }
-body.theme-dos .dos-ring-spore:nth-child(5)  { --activate: 0.333; }
-body.theme-dos .dos-ring-spore:nth-child(6)  { --activate: 0.417; }
-body.theme-dos .dos-ring-spore:nth-child(7)  { --activate: 0.500; }
-body.theme-dos .dos-ring-spore:nth-child(8)  { --activate: 0.583; }
-body.theme-dos .dos-ring-spore:nth-child(9)  { --activate: 0.667; }
-body.theme-dos .dos-ring-spore:nth-child(10) { --activate: 0.750; }
-body.theme-dos .dos-ring-spore:nth-child(11) { --activate: 0.833; }
-body.theme-dos .dos-ring-spore:nth-child(12) { --activate: 0.917; }
+   12 spores: spore N activates at unlock >= N/12 — so the 12th spore
+   only lights at 100% (true unlock), giving an honest visual signal. */
+body.theme-dos .dos-ring-spore:nth-child(1)  { --activate: 0.083; }
+body.theme-dos .dos-ring-spore:nth-child(2)  { --activate: 0.167; }
+body.theme-dos .dos-ring-spore:nth-child(3)  { --activate: 0.250; }
+body.theme-dos .dos-ring-spore:nth-child(4)  { --activate: 0.333; }
+body.theme-dos .dos-ring-spore:nth-child(5)  { --activate: 0.417; }
+body.theme-dos .dos-ring-spore:nth-child(6)  { --activate: 0.500; }
+body.theme-dos .dos-ring-spore:nth-child(7)  { --activate: 0.583; }
+body.theme-dos .dos-ring-spore:nth-child(8)  { --activate: 0.667; }
+body.theme-dos .dos-ring-spore:nth-child(9)  { --activate: 0.750; }
+body.theme-dos .dos-ring-spore:nth-child(10) { --activate: 0.833; }
+body.theme-dos .dos-ring-spore:nth-child(11) { --activate: 0.917; }
+body.theme-dos .dos-ring-spore:nth-child(12) { --activate: 1.000; }
 
 /* Use a CSS trick: when --unlock >= --activate, a sign() calc gives 1, else 0.
    We multiply colors/alpha by that. Fallback for browsers without sign(): the
@@ -5326,6 +5373,8 @@ function dccInit() {
     clearTimeout(bgSalamanderTimer);
     bgSalamanderTimer = null;
   }
+
+  initMobilePetDrag();
 }
 
 function dccCleanup() {
@@ -5545,7 +5594,79 @@ function scoreOnMessageSent() {
   refreshUnlock();
 }
 
+// ============================================================
+// MOBILE PET DRAG
+// On mobile (<= 768px), the pet host floats fixed at bottom-right
+// and can be dragged anywhere on screen so the user can peek at
+// content underneath. Position resets each portal entry (not
+// persisted) — keeps layout predictable on next open.
+// ============================================================
+let _petDrag = { active: false, dx: 0, dy: 0, moved: 0, sx: 0, sy: 0 };
+
+function initMobilePetDrag() {
+  if (window.innerWidth > 768) return;
+  const host = document.getElementById('petHost');
+  if (!host) return;
+  // Reset position each portal entry — predictable on next open.
+  host.style.left = '';
+  host.style.top = '';
+  host.style.right = '';
+  host.style.bottom = '';
+  if (host.dataset.dragInit) return;
+  host.dataset.dragInit = '1';
+
+  const onStart = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    _petDrag.active = true;
+    _petDrag.moved = 0;
+    _petDrag.sx = touch.clientX;
+    _petDrag.sy = touch.clientY;
+    const rect = host.getBoundingClientRect();
+    _petDrag.dx = touch.clientX - rect.left;
+    _petDrag.dy = touch.clientY - rect.top;
+    host.classList.add('dragging');
+  };
+  const onMove = (e) => {
+    if (!_petDrag.active) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const distX = touch.clientX - _petDrag.sx;
+    const distY = touch.clientY - _petDrag.sy;
+    _petDrag.moved = Math.max(_petDrag.moved, Math.hypot(distX, distY));
+    if (_petDrag.moved > 4 && e.cancelable) e.preventDefault();
+    let nx = touch.clientX - _petDrag.dx;
+    let ny = touch.clientY - _petDrag.dy;
+    // clamp to viewport
+    const w = host.offsetWidth, h = host.offsetHeight;
+    nx = Math.max(4, Math.min(window.innerWidth - w - 4, nx));
+    ny = Math.max(4, Math.min(window.innerHeight - h - 4, ny));
+    host.style.left = nx + 'px';
+    host.style.top = ny + 'px';
+    host.style.right = 'auto';
+    host.style.bottom = 'auto';
+  };
+  const onEnd = () => {
+    if (!_petDrag.active) return;
+    _petDrag.active = false;
+    host.classList.remove('dragging');
+  };
+
+  host.addEventListener('touchstart', onStart, { passive: true });
+  host.addEventListener('touchmove', onMove, { passive: false });
+  host.addEventListener('touchend', onEnd);
+  host.addEventListener('touchcancel', onEnd);
+  host.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+}
+
+// Was the most recent pointer interaction a drag (not a tap)?
+function _petWasDragged() {
+  return _petDrag.moved > 4;
+}
+
 function tapPet() {
+  // If the user just dragged the pet (mobile), don't treat as a tap.
+  if (_petWasDragged()) { _petDrag.moved = 0; return; }
   // DEBUG: log every tap so we can see in the browser console
   // whether the handler is being invoked at all.
   console.log('[tapPet] fired. custody=' + (ud.custody || 0) + ' petClicks=' + petClicks);
@@ -5741,6 +5862,8 @@ function dosInit() {
     clearTimeout(bgSalamanderTimer);
     bgSalamanderTimer = null;
   }
+
+  initMobilePetDrag();
 }
 
 function dosCleanup() {
@@ -5990,6 +6113,8 @@ function dbrInit() {
   }
 
   dbrEnableEyeTracking();
+
+  initMobilePetDrag();
 }
 
 function dbrCleanup() {
@@ -6233,6 +6358,8 @@ function dsrInit() {
   if (ud._dsr_committed) {
     document.body.classList.add('dsr-committed');
   }
+
+  initMobilePetDrag();
 }
 
 function dsrCleanup() {
