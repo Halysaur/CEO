@@ -178,8 +178,8 @@ html, body {
 }
 
 .r-emblem {
-  width: 260px;
-  height: 260px;
+  width: 340px;
+  height: 340px;
   margin: 0 auto 22px;
   background-color: var(--reg-amber-bright);
   -webkit-mask-image: url('DCC-logo.png');
@@ -829,13 +829,13 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   gap: 10px;
   background: hsla(var(--ah), 60%, 4%, 0.92);
   transition: background 1s ease, border-color 1s ease;
-  min-height: 130px;
+  min-height: 300px;
   position: relative;
 }
 .ph-logo {
-  width: 160px;
-  height: 160px;
-  background-color: var(--accent-bright);
+  width: 260px;
+  height: 260px;
+  background-color: hsl(var(--ah), 70%, 65%);
   -webkit-mask-image: url('DCC-logo.png');
   mask-image: url('DCC-logo.png');
   -webkit-mask-size: contain;
@@ -848,6 +848,9 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   display: block;
   flex-shrink: 0;
 }
+body.theme-dos .ph-logo { background-color: var(--dos-paper); }
+body.theme-dbr .ph-logo { background-color: var(--dbr-acc-bright); }
+body.theme-dsr .ph-logo { background-color: var(--dsr-ink); }
 .ph-r { text-align: center; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; }
 .ph-name { color: var(--cream); font-size: 12px; transition: font-size 0.5s ease; }
 .ph-ins { display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-left: 6px; }
