@@ -178,10 +178,10 @@ html, body {
 }
 
 .r-emblem {
-  width: 130px;
-  height: 130px;
+  width: 180px;
+  height: 180px;
   margin: 0 auto 22px;
-  filter: invert(1) sepia(1) saturate(5) hue-rotate(-3deg) brightness(1.05);
+  filter: invert(1) sepia(1) saturate(6) hue-rotate(-8deg) brightness(1.1);
   animation: emblemGlow 6s ease infinite;
   display: block;
   object-fit: contain;
@@ -821,9 +821,9 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   gap: 28px;
   background: hsla(var(--ah), 60%, 4%, 0.92);
   transition: background 1s ease, border-color 1s ease;
-  min-height: 200px;
+  min-height: 130px;
 }
-.ph-logo { width: auto; height: 200px; max-height: 200px; object-fit: contain; transition: filter 1s ease; display: block; }
+.ph-logo { width: auto; height: 120px; max-height: 120px; object-fit: contain; transition: filter 1s ease; display: block; margin: auto 0; }
 .ph-center { display: flex; flex-direction: column; gap: 6px; padding-left: 40px; }
 .ph-l .ph-dept { font-family: 'Roboto Slab', serif; font-size: 32px; color: var(--accent); letter-spacing: 12px; text-shadow: 0 0 30px var(--accent-glow); transition: all 0.5s ease; }
 .ph-l .ph-motto { font-size: 12px; color: var(--accent-dim); letter-spacing: 3px; font-family: 'Roboto Slab', serif; font-style: italic; }
@@ -6548,17 +6548,22 @@ function applyTheme(h, s, l) {
 function updateLogoFilter() {
   const logo = document.getElementById('dccLogo');
   if (!logo) return;
-  // If logo loaded successfully, remove the centering padding compensation
   if (logo.complete && logo.naturalWidth > 0) {
-    document.querySelector('.ph-center').style.paddingLeft = '0';
+    const pc = document.querySelector('.ph-center');
+    if (pc) pc.style.paddingLeft = '0';
   }
-  const ah = ud.ah || 32;
+  const ah = ud.ah !== undefined ? ud.ah : 32;
+  const as = ud.as !== undefined ? ud.as : 90;
+  const al = ud.al !== undefined ? ud.al : 42;
   const t = (ud.custody || 0) / 100;
-  const hueRotate = ah - 35;
   const glowPx = Math.round(t * 40);
-  const glowColor = `hsla(${ah}, 90%, 55%, ${0.3 + t * 0.5})`;
-  const brightness = 0.9 + t * 0.4;
-  logo.style.filter = `invert(1) sepia(1) saturate(4) hue-rotate(${hueRotate}deg) brightness(${brightness.toFixed(2)})`;
+  const glowColor = `hsla(${ah}, ${as}%, ${Math.min(al + 20, 80)}%, ${0.3 + t * 0.5})`;
+  const brightness = 0.9 + t * 0.3;
+  // hue-rotate is relative to the sepia base (~35deg amber), so offset by user hue
+  const hueRotate = ah - 35;
+  const saturate = Math.round((as / 90) * 5);
+  const lightness = al > 60 ? 1.3 : al > 40 ? 1.1 : 0.9;
+  logo.style.filter = `invert(1) sepia(1) saturate(${saturate}) hue-rotate(${hueRotate}deg) brightness(${(brightness * lightness).toFixed(2)})`;
   if (glowPx > 0) {
     logo.style.filter += ` drop-shadow(0 0 ${glowPx}px ${glowColor})`;
   }
