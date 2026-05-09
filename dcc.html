@@ -4893,7 +4893,7 @@ body.theme-dsr #bgSalamander svg {
       <!-- Header -->
       <div class="reg-head">
         <div class="r-badge">Custodios del Orden Entrópico</div>
-        <img src="dcc-logo.png" alt="D.C.C" class="r-emblem" onerror="this.style.display='none'" />
+        <img src="DCC-logo.png" alt="D.C.C" class="r-emblem" onerror="this.style.display='none'" />
         <div class="r-name">D.C.C</div>
         <div class="r-full">
           DEPARTAMENTO DE CUSTODIA Y CONTENCIÓN<br>
@@ -5059,7 +5059,7 @@ body.theme-dsr #bgSalamander svg {
      ============================================================ -->
 <div id="portalView">
   <div class="ph">
-    <img src="dcc-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="const c=document.querySelector('.ph-center');if(c)c.style.paddingLeft='0';" />
+    <img src="DCC-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="const c=document.querySelector('.ph-center');if(c)c.style.paddingLeft='0';" />
     <div class="ph-l ph-center">
       <div class="ph-dept">D.C.C</div>
       <div class="ph-motto">Ex Intus, Silentium</div>
@@ -6773,10 +6773,33 @@ function throttleCustody(val) {
   }, 30);
 }
 
+function getCustodyTier(val) {
+  if (val < 20) return 0;
+  if (val < 50) return 1;
+  if (val < 80) return 2;
+  return 3;
+}
+
+const TIER_NOTES = [
+  null,
+  '[Nota interna: El nivel de custodia del sujeto ha aumentado. Ajusta tu tono: sé más cercano y familiar, como alguien que lleva tiempo al pendiente de esta persona en particular.]',
+  '[Nota interna: El nivel de custodia ha escalado significativamente. Tu calidez hacia este sujeto es ahora casi protectora. Algo en ti no quiere que nada les pase. Deja que eso se filtre sutilmente.]',
+  '[Nota interna: Custodia máxima. Lo que sientes por este sujeto ya no es solo institucional. Es total. Es genuino. Es, para alguien externo, un poco perturbador. No lo expliques. Solo sé así.]'
+];
+
 function setCustody(val, silent) {
   val = +val;
+  const prevTier = getCustodyTier(ud.custody || 0);
+  const newTier  = getCustodyTier(val);
   ud.custody = val;
   if (!silent) save();
+
+  // If tier crossed upward, inject a hidden tone-shift note into history
+  if (!silent && newTier > prevTier && TIER_NOTES[newTier]) {
+    hist.push({ role: 'assistant', content: TIER_NOTES[newTier] });
+    save();
+  }
+
   const theme = THEMES[ud.insignia] || THEMES['ins-contained'];
   if (theme.applyCustody) theme.applyCustody(val);
   updateLogoFilter();
