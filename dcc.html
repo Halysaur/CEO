@@ -178,10 +178,10 @@ html, body {
 }
 
 .r-emblem {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   margin: 0 auto 22px;
-  filter: invert(1) sepia(1) saturate(6) hue-rotate(-8deg) brightness(1.1);
+  filter: invert(1) sepia(1) saturate(8) hue-rotate(-8deg) brightness(1.15);
   animation: emblemGlow 6s ease infinite;
   display: block;
   object-fit: contain;
@@ -814,21 +814,20 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
 
 .ph {
   border-bottom: 2px solid var(--border-bright);
-  padding: 0 28px 0 28px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 28px;
+  justify-content: center;
+  gap: 10px;
   background: hsla(var(--ah), 60%, 4%, 0.92);
   transition: background 1s ease, border-color 1s ease;
   min-height: 130px;
+  position: relative;
 }
-.ph-logo { width: auto; height: 120px; max-height: 120px; object-fit: contain; transition: filter 1s ease; display: block; margin: auto 0; }
-.ph-center { display: flex; flex-direction: column; gap: 6px; padding-left: 40px; }
-.ph-l .ph-dept { font-family: 'Roboto Slab', serif; font-size: 32px; color: var(--accent); letter-spacing: 12px; text-shadow: 0 0 30px var(--accent-glow); transition: all 0.5s ease; }
-.ph-l .ph-motto { font-size: 12px; color: var(--accent-dim); letter-spacing: 3px; font-family: 'Roboto Slab', serif; font-style: italic; }
-.ph-r { text-align: right; font-family: 'Roboto Slab', serif; font-size: 11px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; white-space: nowrap; }
-.ph-name { color: var(--cream); font-size: 13px; transition: font-size 0.5s ease; }
+.ph-logo { width: auto; height: 100px; max-height: 100px; object-fit: contain; transition: filter 1s ease; display: block; }
+.ph-r { text-align: center; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; }
+.ph-name { color: var(--cream); font-size: 12px; transition: font-size 0.5s ease; }
 .ph-ins { display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-left: 6px; }
 .pb { display: flex; flex: 1; min-height: calc(100vh - 200px); }
 
@@ -4089,9 +4088,6 @@ body.theme-dsr.dsr-committed .rp {
 body.theme-dsr.dsr-committed .ph-r {
   display: none !important;
 }
-body.theme-dsr.dsr-committed .ph-l .ph-motto {
-  display: none !important;
-}
 body.theme-dsr.dsr-committed .song-bar {
   border-top: 1px solid hsla(0, 0%, 20%, 0.3) !important;
 }
@@ -4117,24 +4113,18 @@ body.theme-dsr.dsr-committed.portal-mode {
 }
 
 /* CENTER THE HEADER when committed.
-   Original .ph is a 3-column grid (logo / center / metadata).
-   When committed we hide logo + metadata and center the dept name. */
+   .ph is now flex-column centered. When committed we hide logo + metadata,
+   leaving just a clean centered minimal header. */
 body.theme-dsr.dsr-committed .ph {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  min-height: 120px !important;
-  padding: 0 !important;
+  min-height: 80px !important;
+  padding: 16px 0 !important;
+  gap: 4px !important;
 }
 body.theme-dsr.dsr-committed .ph-logo {
   display: none !important;
 }
-body.theme-dsr.dsr-committed .ph-l {
-  text-align: center !important;
-  align-items: center !important;
-}
-body.theme-dsr.dsr-committed .ph-l.ph-center {
-  align-items: center !important;
+body.theme-dsr.dsr-committed .ph-r {
+  display: none !important;
 }
 
 /* Center the chat header text */
@@ -5059,11 +5049,7 @@ body.theme-dsr #bgSalamander svg {
      ============================================================ -->
 <div id="portalView">
   <div class="ph">
-    <img src="DCC-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="const c=document.querySelector('.ph-center');if(c)c.style.paddingLeft='0';" />
-    <div class="ph-l ph-center">
-      <div class="ph-dept">D.C.C</div>
-      <div class="ph-motto">Ex Intus, Silentium</div>
-    </div>
+    <img src="DCC-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="updateLogoFilter();" />
     <div class="ph-r">
       SUJETO / SUBJECT: <span class="ph-name" id="hUser"></span>
       <svg class="ph-ins" id="hIns" style="display:none"><use id="hInsUse" href=""/></svg><br>
