@@ -178,13 +178,20 @@ html, body {
 }
 
 .r-emblem {
-  width: 200px;
-  height: 200px;
+  width: 260px;
+  height: 260px;
   margin: 0 auto 22px;
-  filter: invert(1) sepia(1) saturate(8) hue-rotate(-8deg) brightness(1.15);
+  background-color: var(--reg-amber-bright);
+  -webkit-mask-image: url('DCC-logo.png');
+  mask-image: url('DCC-logo.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
   animation: emblemGlow 6s ease infinite;
   display: block;
-  object-fit: contain;
 }
 
 .r-name {
@@ -825,7 +832,22 @@ body.portal-mode::after { content: ''; position: fixed; top: 0; left: 0; right: 
   min-height: 130px;
   position: relative;
 }
-.ph-logo { width: auto; height: 100px; max-height: 100px; object-fit: contain; transition: filter 1s ease; display: block; }
+.ph-logo {
+  width: 160px;
+  height: 160px;
+  background-color: var(--accent-bright);
+  -webkit-mask-image: url('DCC-logo.png');
+  mask-image: url('DCC-logo.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: background-color 1s ease;
+  display: block;
+  flex-shrink: 0;
+}
 .ph-r { text-align: center; font-family: 'Roboto Slab', serif; font-size: 10px; color: var(--accent-dim); letter-spacing: 1px; line-height: 2; }
 .ph-name { color: var(--cream); font-size: 12px; transition: font-size 0.5s ease; }
 .ph-ins { display: inline-block; width: 18px; height: 18px; vertical-align: middle; margin-left: 6px; }
@@ -4883,7 +4905,7 @@ body.theme-dsr #bgSalamander svg {
       <!-- Header -->
       <div class="reg-head">
         <div class="r-badge">Custodios del Orden Entrópico</div>
-        <img src="DCC-logo.png" alt="D.C.C" class="r-emblem" onerror="this.style.display='none'" />
+        <div class="r-emblem" role="img" aria-label="D.C.C emblem"></div>
         <div class="r-name">D.C.C</div>
         <div class="r-full">
           DEPARTAMENTO DE CUSTODIA Y CONTENCIÓN<br>
@@ -5049,7 +5071,7 @@ body.theme-dsr #bgSalamander svg {
      ============================================================ -->
 <div id="portalView">
   <div class="ph">
-    <img src="DCC-logo.png" alt="D.C.C" id="dccLogo" class="ph-logo" onerror="this.style.display='none'" onload="updateLogoFilter();" />
+    <div id="dccLogo" class="ph-logo" role="img" aria-label="D.C.C"></div>
     <div class="ph-r">
       SUJETO / SUBJECT: <span class="ph-name" id="hUser"></span>
       <svg class="ph-ins" id="hIns" style="display:none"><use id="hInsUse" href=""/></svg><br>
@@ -6532,27 +6554,8 @@ function applyTheme(h, s, l) {
 }
 
 function updateLogoFilter() {
-  const logo = document.getElementById('dccLogo');
-  if (!logo) return;
-  if (logo.complete && logo.naturalWidth > 0) {
-    const pc = document.querySelector('.ph-center');
-    if (pc) pc.style.paddingLeft = '0';
-  }
-  const ah = ud.ah !== undefined ? ud.ah : 32;
-  const as = ud.as !== undefined ? ud.as : 90;
-  const al = ud.al !== undefined ? ud.al : 42;
-  const t = (ud.custody || 0) / 100;
-  const glowPx = Math.round(t * 40);
-  const glowColor = `hsla(${ah}, ${as}%, ${Math.min(al + 20, 80)}%, ${0.3 + t * 0.5})`;
-  const brightness = 0.9 + t * 0.3;
-  // hue-rotate is relative to the sepia base (~35deg amber), so offset by user hue
-  const hueRotate = ah - 35;
-  const saturate = Math.round((as / 90) * 5);
-  const lightness = al > 60 ? 1.3 : al > 40 ? 1.1 : 0.9;
-  logo.style.filter = `invert(1) sepia(1) saturate(${saturate}) hue-rotate(${hueRotate}deg) brightness(${(brightness * lightness).toFixed(2)})`;
-  if (glowPx > 0) {
-    logo.style.filter += ` drop-shadow(0 0 ${glowPx}px ${glowColor})`;
-  }
+  // Logo color is now handled entirely via CSS mask + var(--accent-bright).
+  // No JS filter needed.
 }
 
 function pickColor(sw) {
