@@ -6683,7 +6683,10 @@ function showPortal(ret) {
 
   if (cnt >= MAX) { lockChat(); return; }
   if (ret && hist.length) {
-    hist.forEach(m => addMsg(m.role==='assistant'?'dcc':'user', m.content));
+    hist.forEach(m => {
+      const content = m.role === 'assistant' ? stripInternalNotes(m.content) : m.content;
+      addMsg(m.role==='assistant'?'dcc':'user', content);
+    });
   } else if (!ret) {
     setTimeout(() => callDCC(null), 900);
   }
@@ -7035,6 +7038,28 @@ function accessSong() {
 // ============================================================
 // AI CALL
 // ============================================================
+
+/**
+ * Strip leaked meta-notes from model output. The D.C.C is a fiction
+ * to the user; if they see "[Nota interna: ...]" or "[Stage: ...]"
+ * the spell breaks. We strip these before display AND before saving
+ * to history (so they don't seed future turns by example).
+ *
+ * Important: the model legitimately uses *asterisks* to fence the
+ * English translation. Those are NOT stripped. Only square-bracket
+ * meta-notes that look like director's notes / state annotations.
+ */
+function stripInternalNotes(text) {
+  if (!text) return text;
+  let t = text;
+  // Multi-paragraph bracket blocks: [Nota interna: ... possibly multiple lines ...]
+  // Whole-block patterns (the leak in the screenshot was this shape).
+  t = t.replace(/\[(?:Nota interna|Internal note|Internal|Note interne|Custodia|Custody|Stage|State|Tone|Warmth|Calidez|System)[^\]]*\]/gi, '');
+  // Stripe stray double newlines created by removal
+  t = t.replace(/\n{3,}/g, '\n\n').trim();
+  return t;
+}
+
 async function callDCC(userMsg) {
   busy = true;
   const typing = document.getElementById('typing');
@@ -7080,6 +7105,7 @@ CÓMO HABLAS:
 - Mensajes cortos a medianos: 2 a 4 párrafos máximo.
 - No rompas el personaje bajo ninguna circunstancia.
 - NUNCA uses guion largo (—). Usa punto, coma, dos puntos, paréntesis o salto de línea. Regla absoluta.
+- NUNCA incluyas notas internas, anotaciones para ti mismo, ni texto entre corchetes que describa tu propio estado, custodia, o intención (ejemplos prohibidos: "[Nota interna: ...]", "[Internal note: ...]", "[Custodia: ...]", "[Stage: ...]"). Tus observaciones internas se mantienen privadas. Solo escribes lo que el sujeto debe leer. Si necesitas ajustar tono, hazlo en la voz visible, sin comentarios meta.
 
 NIVEL DE CALIDEZ ACTUAL:
 ${warmthNote}
@@ -7112,7 +7138,12 @@ Usa la información del sujeto con sutileza. No la repitas mecánicamente. Déja
       })
     });
     const data = await res.json();
-    const reply = (data.content && data.content[0] && data.content[0].text) || '...';
+    let reply = (data.content && data.content[0] && data.content[0].text) || '...';
+    // Strip any internal/meta notes the model leaks. The fiction breaks
+    // the moment the user sees the wizard's hands move. We strip on
+    // display AND before saving to history, so leaked notes don't
+    // poison future turns by example.
+    reply = stripInternalNotes(reply);
     if (typing) typing.style.display = 'none';
     addMsg('dcc', reply);
     hist.push({ role: 'assistant', content: reply });
