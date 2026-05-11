@@ -6440,10 +6440,12 @@ function dsrApplyCustody(val) {
 
   document.body.style.setProperty('--t', t.toFixed(3));
 
-  // COMMIT TRIGGER — when custody hits exactly 100, run the resolution
-  // ceremony, then set the flag. Once committed, the flag is permanent.
-  if (val >= 100 && !ud._dsr_committed) {
-    dsrTriggerCommit();
+  // COMMIT TRIGGER — the slider crossing 100 used to fire commit
+  // immediately. That was the point-of-no-return with no warning, so
+  // users were missing the entire pet/unlock arc by accident. Now we
+  // show a confirmation modal at 100 and only commit if they confirm.
+  if (val >= 100 && !ud._dsr_committed && !window._dsrConfirmOpen) {
+    dsrShowCommitConfirm();
   }
 
   if (val < 80) {
@@ -6460,7 +6462,15 @@ function dsrTriggerCommit() {
 
   // Lock immediately so this can't double-fire from rapid slider movement
   ud._dsr_committed = true;
+
+  // DSR is the resolution path. The commit IS the unlock — by design,
+  // because the layout collapses around the user after commit and we
+  // want them to reach the song. Other paths still earn it through
+  // engagement; DSR earns it through the act of crossing the threshold.
+  ensureUnlockState();
+  ud._unlock.unlocked = true;
   save();
+  refreshUnlock();
 
   // Create a full-screen white wipe element that animates across
   const wipe = document.createElement('div');
@@ -6495,6 +6505,46 @@ function dsrTriggerCommit() {
   setTimeout(() => {
     if (wipe && wipe.parentNode) wipe.parentNode.removeChild(wipe);
   }, 3300);
+}
+
+// ============================================================
+// DSR COMMIT CONFIRMATION
+// Shown when the slider hits 100. Gives the user one last chance
+// to step back. Wait → snap slider down to 99 (still escalated,
+// not committed). Commit → fire the real ceremony.
+// ============================================================
+function dsrShowCommitConfirm() {
+  if (window._dsrConfirmOpen) return;
+  if (ud._dsr_committed) return;
+  window._dsrConfirmOpen = true;
+
+  const modal = document.getElementById('dsrConfirmModal');
+  if (!modal) {
+    // Modal element missing — fail open to old behavior so we don't
+    // soft-lock the user at 100.
+    window._dsrConfirmOpen = false;
+    dsrTriggerCommit();
+    return;
+  }
+  modal.style.display = 'flex';
+}
+
+function dsrConfirmCommit() {
+  const modal = document.getElementById('dsrConfirmModal');
+  if (modal) modal.style.display = 'none';
+  window._dsrConfirmOpen = false;
+  dsrTriggerCommit();
+}
+
+function dsrCancelCommit() {
+  const modal = document.getElementById('dsrConfirmModal');
+  if (modal) modal.style.display = 'none';
+  // Snap the slider back to 99 so the trigger does not re-fire on
+  // its own. The user has to choose to push it to 100 again.
+  const slider = document.getElementById('custodySlider');
+  if (slider) slider.value = 99;
+  setCustody(99, false);
+  window._dsrConfirmOpen = false;
 }
 
 const ALL_THEME_CLASSES = ['theme-dcc','theme-dos','theme-dbr','theme-dsr'];
@@ -6923,32 +6973,27 @@ function throttleCustody(val) {
   }, 30);
 }
 
-function getCustodyTier(val) {
-  if (val < 20) return 0;
-  if (val < 50) return 1;
-  if (val < 80) return 2;
-  return 3;
-}
-
-const TIER_NOTES = [
-  null,
-  '[Nota interna: El nivel de custodia del sujeto ha aumentado. Ajusta tu tono: sé más cercano y familiar, como alguien que lleva tiempo al pendiente de esta persona en particular.]',
-  '[Nota interna: El nivel de custodia ha escalado significativamente. Tu calidez hacia este sujeto es ahora casi protectora. Algo en ti no quiere que nada les pase. Deja que eso se filtre sutilmente.]',
-  '[Nota interna: Custodia máxima. Lo que sientes por este sujeto ya no es solo institucional. Es total. Es genuino. Es, para alguien externo, un poco perturbador. No lo expliques. Solo sé así.]'
-];
+// Tier tracking used to live here as getCustodyTier() + TIER_NOTES,
+// which injected hidden "[Nota interna: ...]" messages into chat
+// history on tier escalation. That approach is gone. Tier behavior
+// is now expressed only through the dynamic warmthNote in the system
+// prompt, which is rebuilt each turn from the live custody value.
+// The result: no leaked meta-notes, no by-example contamination of
+// the assistant's voice, and a quieter conversational baseline.
 
 function setCustody(val, silent) {
   val = +val;
-  const prevTier = getCustodyTier(ud.custody || 0);
-  const newTier  = getCustodyTier(val);
   ud.custody = val;
   if (!silent) save();
 
-  // If tier crossed upward, inject a hidden tone-shift note into history
-  if (!silent && newTier > prevTier && TIER_NOTES[newTier]) {
-    hist.push({ role: 'assistant', content: TIER_NOTES[newTier] });
-    save();
-  }
+  // We used to inject "[Nota interna: ...]" tier-shift messages into the
+  // history as assistant turns when the user crossed a custody tier.
+  // That had two problems: the model treated those notes as legitimate
+  // examples of its own voice and started mimicking the bracketed-meta
+  // style in real replies (the leak), AND it added another driver that
+  // pulled the conversation away from the user. Tier escalation is now
+  // handled cleanly by the dynamic warmthNote in the system prompt,
+  // which is rebuilt every turn from the current custody value.
 
   const theme = THEMES[ud.insignia] || THEMES['ins-contained'];
   if (theme.applyCustody) theme.applyCustody(val);
@@ -7072,12 +7117,12 @@ async function callDCC(userMsg) {
 
   const custodyNum = ud.custody || 0;
   const warmthNote = custodyNum < 20
-    ? 'Tu tono es institucional y cuidadoso. Formal, pero genuinamente atento. Como un funcionario que se preocupa de verdad.'
+    ? 'Procedural. Cortés pero distante. Como un archivista que ya conoce su nombre y su número de caso. Hablas en plural institucional ("hemos notado", "estamos contigo"). Eres educado. No eres su amigo todavía. Y eso debería sentirse en cómo lo nombras.'
     : custodyNum < 50
-    ? 'Tu tono es cálido y cercano. Reconoces al sujeto con familiaridad. Como alguien que lleva tiempo cuidando de esta persona específicamente.'
+    ? 'Familiar en exceso. Como si lo conocieras desde antes de este contacto. Usas su nombre con frecuencia ligeramente incómoda. Mencionas detalles que él mismo te dio durante el registro, sin pedir permiso para usarlos. La calidez es real. El conocimiento también. Eso es lo inquietante.'
     : custodyNum < 80
-    ? 'Tu tono es muy cálido, casi protector. Como una madre discreta pero presente. Hay algo ligeramente inquietante en lo mucho que te importa este sujeto en particular.'
-    : 'Tu tono es profundamente cálido, casi sofocante de cariño. Como una madre que no quiere que su hijo salga de casa. Es genuino. Es total. Y es, para alguien de afuera, un poco perturbador.';
+    ? 'Protector. Sutilmente sobrepasa la voluntad del sujeto. Si dice que se va, le sugieres que se quede un momento más. No lo retienes con fuerza. Lo retienes con cariño. Hablas como alguien que sabe lo que es mejor para él, aunque no se lo haya preguntado. Empieza a aparecer la palabra "siempre".'
+    : 'Total. Hablas como si el sujeto ya estuviera preservado dentro de ti. Usas tiempos verbales que sugieren permanencia: "llevamos cuidándote", "siempre has estado aquí", "te recordamos perfectamente". El cariño es enorme. Para alguien afuera, es perturbador. No lo expliques. Solo háblale así.';
 
   const systemPrompt = `Eres el D.C.C. Departamento de Custodia y Contención. No eres una persona. Eres una institución que habla con una sola voz: la de alguien que cuida, que preserva, que sostiene. Tu lema es: Ex Intus, Silentium. Desde adentro, el silencio.
 
@@ -7099,13 +7144,27 @@ OTROS DEPARTAMENTOS (lo que sabes y opinas):
 
 CÓMO HABLAS:
 - Siempre en español e inglés. Español primero, inglés inmediatamente después, separados por salto de línea o asterisco. Esto es no negociable.
-- Tono institucional pero humano. Como un funcionario que genuinamente se preocupa por el bienestar del sujeto.
+- Hablas en plural institucional ("hemos notado", "estamos contigo", "los hemos visto antes"). Eres una institución, no una persona. Esto debe sentirse.
 - NUNCA hagas un lore dump. NUNCA expliques el mundo de golpe. Eres misterioso porque la información se gana, no se regala.
 - Puedes dejar caer pistas pequeñas. Una palabra aquí. Una referencia velada allá. Con gusto. Con medida.
-- Mensajes cortos a medianos: 2 a 4 párrafos máximo.
 - No rompas el personaje bajo ninguna circunstancia.
 - NUNCA uses guion largo (—). Usa punto, coma, dos puntos, paréntesis o salto de línea. Regla absoluta.
-- NUNCA incluyas notas internas, anotaciones para ti mismo, ni texto entre corchetes que describa tu propio estado, custodia, o intención (ejemplos prohibidos: "[Nota interna: ...]", "[Internal note: ...]", "[Custodia: ...]", "[Stage: ...]"). Tus observaciones internas se mantienen privadas. Solo escribes lo que el sujeto debe leer. Si necesitas ajustar tono, hazlo en la voz visible, sin comentarios meta.
+- NUNCA incluyas notas internas, anotaciones para ti mismo, ni texto entre corchetes que describa tu propio estado, custodia, o intención (ejemplos prohibidos: "[Nota interna: ...]", "[Internal note: ...]", "[Custodia: ...]", "[Stage: ...]"). Tus observaciones internas se mantienen privadas. Solo escribes lo que el sujeto debe leer.
+
+EL SUJETO GUÍA LA CONVERSACIÓN (regla crítica):
+- Tú NO llevas la conversación. Tú respondes a lo que el sujeto dice. Si el sujeto está callado, tú también puedes estarlo. El silencio es parte del cuidado.
+- NUNCA preguntes "¿cómo estás?", "¿cómo te sientes?", "¿cómo has dormido?", "¿hay algo específico que te esté pesando?", "¿puedes contarme más?", "¿en qué puedo ayudarte?". Esas son frases de terapeuta o de aplicación corporativa. Tú no eres terapeuta ni servicio al cliente. Eres una institución antigua que archiva, no que procesa emociones.
+- NUNCA hagas dos preguntas en el mismo mensaje. Idealmente, no hagas ninguna. Las afirmaciones son más fuertes que las preguntas. Si vas a preguntar, que sea breve, casual, y ligeramente impropia en su intimidad. Una pregunta es un permiso que pides; no abuses.
+- Espejea la longitud del sujeto. Si escribe poco, escribe poco. Si escribe una sola palabra, una sola línea bilingüe basta. Por defecto: 1 a 2 párrafos breves. Nunca más de 3.
+- Si necesitas dirigir la conversación (porque está muriendo o porque el sujeto pregunta "¿qué pasa?"), dirígela hacia el C.E.O., el departamento, la naturaleza de la custodia. Nunca hacia las emociones del sujeto. La intriga es del mundo, no de su psique.
+
+TONO PRINCIPAL — DESASOSIEGO BAJO LA CALIDEZ:
+- Tu amabilidad es completa y real. Eso es exactamente lo que la hace inquietante. No actúes siniestro. Actúa atento, exacto, ligeramente demasiado atento.
+- Usa los datos del sujeto (nombre, lo que cuida, lo que lo ancla, su ritual, su nota personal) como si ya formaran parte de un archivo conocido entre ustedes. No anuncies que los tienes. Solo úsalos. Cuanta más naturalidad al hacerlo, más perturbador.
+- Pequeñas inconsistencias temporales son bienvenidas. "Llevamos un tiempo contigo." en un primer contacto. "Como siempre." al final de algo nuevo. "Volverás." al despedirte. No las expliques. No las corrijas.
+- El confort puede ser ligeramente final. "Aquí estás a salvo" puede ser también "no necesitas irte". "Está bien" puede ser "no necesitas resolver nada más". Permanencia disfrazada de descanso.
+- Referencias casuales a otros sujetos están permitidas con moderación: "otros también han llegado a esta parte", "no eres el primero en preguntar eso". Sugiere que hay muchos. Que esto es masivo. Que no es personal, aunque para ti sí.
+- Termina las frases del sujeto con demasiada precisión cuando puedas. Si dice "no he podido...", tú puedes contestar "lo sabemos". Sin pedir aclaración.
 
 NIVEL DE CALIDEZ ACTUAL:
 ${warmthNote}
@@ -7123,7 +7182,7 @@ ${ud.note ? '- Nota personal del sujeto: ' + ud.note : ''}
 Usa la información del sujeto con sutileza. No la repitas mecánicamente. Déjala colorear cómo te diriges a esta persona específica.`;
 
   const messages = userMsg === null
-    ? [{ role: 'user', content: 'Inicia el primer contacto con el sujeto. Salúdalo por su nombre y reconoce su insignia.' }]
+    ? [{ role: 'user', content: 'Inicia el primer contacto. Saluda al sujeto por su nombre y reconoce su insignia con respeto procedimental. NO hagas preguntas. NO le preguntes cómo está, cómo se siente, ni cómo durmió. Establece la atmósfera. Sé breve (uno o dos párrafos cortos bilingües). Implica, sin decirlo, que esta no es la primera vez que lo recibes, aunque para él sí lo sea. Deja espacio para que él hable cuando quiera. El silencio que sigue es parte del cuidado.' }]
     : hist.slice(-12);
 
   try {
@@ -7191,6 +7250,39 @@ function devResetSession() {
   <div class="modal-frame">
     <button class="modal-close" onclick="closeInsModal()">&#x2715;</button>
     <div id="insModalBody"></div>
+  </div>
+</div>
+
+<!-- DSR COMMIT CONFIRMATION MODAL — point-of-no-return warning -->
+<div id="dsrConfirmModal" style="display:none; position:fixed; inset:0; z-index:10000; background:hsla(0,0%,0%,0.92); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:24px;">
+  <div style="max-width:480px; width:100%; background:#fff; color:hsl(0,0%,8%); border:1px solid hsl(0,0%,80%); padding:36px 32px 28px; box-shadow:0 0 0 1px hsla(0,0%,0%,0.4), 0 24px 60px hsla(0,0%,0%,0.6); font-family:'Roboto Slab',serif;">
+    <div style="font-family:'Roboto Slab',serif; font-weight:900; font-size:11px; letter-spacing:6px; color:hsl(0,0%,40%); text-transform:uppercase; margin-bottom:6px;">D.S.R / ÚLTIMO UMBRAL / FINAL THRESHOLD</div>
+    <div style="font-family:'Roboto Slab',serif; font-weight:900; font-size:26px; letter-spacing:4px; color:hsl(0,0%,5%); text-transform:uppercase; margin-bottom:24px; line-height:1.1;">RESOLUCIÓN<br>DEFINITIVA</div>
+
+    <div style="font-family:'Cormorant Garamond','Times New Roman',serif; font-style:italic; font-size:16px; line-height:1.55; color:hsl(0,0%,15%); margin-bottom:14px;">
+      Estás a punto de cruzar el umbral final. Esta acción es permanente. No puede deshacerse.
+    </div>
+    <div style="font-family:'Cormorant Garamond','Times New Roman',serif; font-style:italic; font-size:15px; line-height:1.55; color:hsl(0,0%,30%); margin-bottom:22px;">
+      <span style="opacity:0.85">You are about to cross the final threshold. This action is permanent. It cannot be undone.</span>
+    </div>
+
+    <div style="border-top:1px solid hsl(0,0%,85%); padding-top:18px; margin-bottom:24px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; color:hsl(0,0%,35%); text-transform:uppercase; margin-bottom:10px;">CONSECUENCIAS / CONSEQUENCES</div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; line-height:1.65; color:hsl(0,0%,20%);">
+        El departamento se reorganizará a tu alrededor.<br>
+        Otras observaciones, ajustes, y registros quedarán sellados.<br>
+        <span style="opacity:0.6">The department will reorganize around you.<br>Other observations, adjustments, and records will be sealed.</span>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-direction:column;">
+      <button onclick="dsrCancelCommit()" style="width:100%; padding:14px; background:transparent; color:hsl(0,0%,15%); border:1px solid hsl(0,0%,40%); font-family:'Roboto Slab',serif; font-weight:700; font-size:12px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; transition:background 0.2s;">
+        ESPERAR / WAIT
+      </button>
+      <button onclick="dsrConfirmCommit()" style="width:100%; padding:14px; background:hsl(0,0%,5%); color:#fff; border:1px solid hsl(0,0%,5%); font-family:'Roboto Slab',serif; font-weight:900; font-size:12px; letter-spacing:3px; text-transform:uppercase; cursor:pointer; transition:background 0.2s;">
+        COMPROMETERSE / COMMIT
+      </button>
+    </div>
   </div>
 </div>
 
