@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.C.C / CUSTODIA EXTENDIDA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Roboto+Slab:wght@300;400;500;600;700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  height: 100%;
+  background: #3a1a04;
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes textureDrift {
+  0%   { transform: scale(1.08) translate(0%, 0%); }
+  25%  { transform: scale(1.10) translate(-1.5%, 1%); }
+  50%  { transform: scale(1.09) translate(1%, -1%); }
+  75%  { transform: scale(1.10) translate(-0.5%, -1.5%); }
+  100% { transform: scale(1.08) translate(0%, 0%); }
+}
+
+@keyframes hotSpotPulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.75; }
+}
+
+@keyframes sealGlow {
+  0%, 100% { filter: invert(1) drop-shadow(0 0 12px hsla(38, 95%, 50%, 0.35)); }
+  50%      { filter: invert(1) drop-shadow(0 0 18px hsla(42, 100%, 60%, 0.55)); }
+}
+
+@keyframes insertBreathing {
+  0%, 100% { transform: translateX(-50%) rotate(-1.4deg) scale(1); }
+  50%      { transform: translateX(-50%) rotate(-1.4deg) scale(1.004); }
+}
+
+@keyframes paperGrainShift {
+  0%, 100% { background-position: 0 0; }
+  50%      { background-position: 4px 6px; }
+}
+
+@keyframes verdictStamp {
+  0%   { opacity: 0; transform: translateX(-50%) rotate(-2deg) scale(2.4); filter: blur(8px); }
+  60%  { opacity: 1; transform: translateX(-50%) rotate(-2deg) scale(1); filter: blur(0); }
+  100% { opacity: 1; transform: translateX(-50%) rotate(-2deg) scale(1); filter: blur(0); }
+}
+
+@keyframes verdictBreathe {
+  0%, 100% { text-shadow: 0 0 30px hsla(42, 100%, 50%, 0.45), 0 0 60px hsla(38, 95%, 45%, 0.25); }
+  50%      { text-shadow: 0 0 40px hsla(45, 100%, 60%, 0.65), 0 0 80px hsla(40, 100%, 55%, 0.4); }
+}
+
+/* ============================================================
+   LAYER 0 — frozen DCC behind everything
+   ============================================================ */
+.frozen-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border: none;
+  width: 100%;
+  height: 100%;
+  opacity: 0.95;
+}
+.frozen-portal.hidden { display: none; }
+
+.no-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: #3a1a04;
+  display: none;
+}
+.no-portal.show { display: block; }
+
+/* ============================================================
+   LAYER 1 — organic amber texture
+   This is the main visual treatment. Real photo, slowly drifting.
+   Screen blend so the texture LIGHTENS into amber rather than
+   muddying the iframe with multiply-darkening.
+   ============================================================ */
+.amber-texture {
+  position: fixed;
+  inset: -10%;
+  z-index: 5;
+  background-image: url('textures/amber-texture.jpg');
+  background-size: cover;
+  background-position: center;
+  animation: textureDrift 90s ease-in-out infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  filter: blur(4px);
+}
+
+/* Warm overlay — lifts the saturation and pushes everything toward honey/gold.
+   Soft-light keeps the texture's organic detail visible without flattening it. */
+.amber-warm {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  background: radial-gradient(ellipse at 50% 45%,
+    hsla(42, 100%, 58%, 0.45) 0%,
+    hsla(36, 95%, 48%, 0.45) 35%,
+    hsla(30, 90%, 32%, 0.5) 70%,
+    hsla(26, 85%, 18%, 0.6) 100%);
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+/* Hot spot — a bright golden bloom in the upper-left mimicking the texture's
+   natural yellow-green hot zone. Pulses slowly. */
+.amber-hotspot {
+  position: fixed;
+  top: -10%;
+  left: -5%;
+  width: 75%;
+  height: 75%;
+  z-index: 7;
+  background: radial-gradient(circle at 30% 35%,
+    hsla(48, 100%, 65%, 0.28) 0%,
+    hsla(42, 100%, 55%, 0.18) 30%,
+    transparent 65%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: hotSpotPulse 7s ease-in-out infinite;
+}
+
+/* Second hot spot — a softer golden glow from the lower right to balance.
+   Keeps the whole canvas feeling lit rather than just spotlit. */
+.amber-glow-secondary {
+  position: fixed;
+  bottom: -15%;
+  right: -10%;
+  width: 70%;
+  height: 70%;
+  z-index: 7;
+  background: radial-gradient(circle at 70% 65%,
+    hsla(38, 100%, 55%, 0.18) 0%,
+    hsla(32, 95%, 45%, 0.10) 35%,
+    transparent 65%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Vignette — much softer now. Edges are tinted warm-dark instead of black. */
+.amber-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  background: radial-gradient(ellipse at center,
+    transparent 50%,
+    hsla(24, 80%, 12%, 0.25) 85%,
+    hsla(20, 85%, 8%, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* Subtle film grain across everything */
+.amber-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.4 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================================
+   LAYER 2 — floating UI elements
+   ============================================================ */
+.custody-verdict {
+  position: fixed;
+  top: 6vh;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  z-index: 20;
+  text-align: center;
+  pointer-events: none;
+  width: min(880px, calc(100vw - 32px));
+  animation: verdictStamp 1.4s cubic-bezier(0.16, 1, 0.3, 1) both, verdictBreathe 5s ease-in-out 1.4s infinite;
+}
+
+.verdict-mark {
+  display: inline-block;
+  font-family: 'Roboto Slab', serif;
+  font-weight: 900;
+  font-size: clamp(38px, 7.5vw, 84px);
+  letter-spacing: clamp(6px, 1.2vw, 14px);
+  color: hsl(45, 100%, 80%);
+  line-height: 1;
+  padding: 14px 36px;
+  border: 3px solid hsl(45, 100%, 75%);
+  background: hsla(24, 85%, 6%, 0.55);
+  text-shadow: 0 0 30px hsla(42, 100%, 50%, 0.45), 0 0 60px hsla(38, 95%, 45%, 0.25), 0 2px 4px hsla(20, 90%, 4%, 0.6);
+  text-transform: uppercase;
+}
+
+.verdict-mark .slash {
+  color: hsl(40, 90%, 60%);
+  margin: 0 14px;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.verdict-sub {
+  margin-top: 22px;
+  display: inline-block;
+  font-family: 'Roboto Slab', serif;
+  font-weight: 700;
+  font-size: clamp(11px, 1.2vw, 16px);
+  letter-spacing: clamp(3px, 0.5vw, 6px);
+  color: hsl(48, 100%, 88%);
+  background: hsla(20, 90%, 6%, 0.72);
+  padding: 10px 22px;
+  border: 1px solid hsla(45, 90%, 65%, 0.45);
+  text-shadow: 0 1px 2px hsla(20, 90%, 4%, 0.9);
+}
+
+.verdict-sub .dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: hsl(48, 100%, 80%);
+  border-radius: 50%;
+  margin-right: 14px;
+  vertical-align: middle;
+  box-shadow: 0 0 10px hsl(48, 100%, 65%);
+}
+
+/* ============================================================
+   DSR INSERT — the foreign body
+   Treated as a hand-placed paper card with light bleeding around it.
+   ============================================================ */
+.dsr-insert-glow {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(580px, calc(100vw - 32px));
+  z-index: 19;
+  pointer-events: none;
+  filter: blur(40px);
+}
+.dsr-insert-glow::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 520px;
+  background: radial-gradient(ellipse at 50% 50%,
+    hsla(48, 100%, 75%, 0.55) 0%,
+    hsla(40, 100%, 60%, 0.4) 30%,
+    hsla(32, 95%, 45%, 0.15) 60%,
+    transparent 80%);
+}
+
+.dsr-insert-wrap {
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.4deg);
+  z-index: 20;
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  animation: insertBreathing 6s ease-in-out infinite;
+}
+
+.dsr-insert {
+  background: #faf6ee;
+  color: #0a0a0a;
+  padding: 26px 28px 24px;
+  position: relative;
+  font-family: 'Share Tech Mono', monospace;
+  box-shadow:
+    0 0 0 1px hsla(28, 60%, 20%, 0.4),
+    0 4px 0 hsla(28, 80%, 10%, 0.15),
+    0 30px 80px hsla(0, 0%, 0%, 0.7),
+    0 50px 120px hsla(38, 90%, 50%, 0.18);
+}
+
+/* Paper grain — extremely subtle SVG noise overlay so the card doesn't
+   read as flat digital white. */
+.dsr-insert::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='1' seed='3'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.06  0 0 0 0 0.02  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.7;
+  animation: paperGrainShift 8s steps(2) infinite;
+}
+
+/* Subtle aging tint at the edges of the card */
+.dsr-insert::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 50%,
+    hsla(32, 50%, 60%, 0.08) 80%,
+    hsla(28, 65%, 30%, 0.18) 100%);
+  pointer-events: none;
+}
+
+.dsr-insert-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tape marks at top corners — extra "placed by hand" detail */
+.tape {
+  position: absolute;
+  width: 70px;
+  height: 22px;
+  background: hsla(48, 65%, 65%, 0.55);
+  border: 1px solid hsla(45, 50%, 50%, 0.3);
+  box-shadow: 0 2px 6px hsla(0, 0%, 0%, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
+.tape.tl { top: -10px; left: 18px; transform: rotate(-8deg); }
+.tape.tr { top: -10px; right: 18px; transform: rotate(7deg); }
+
+.dsr-insert-label {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: #555;
+  margin-bottom: 14px;
+}
+
+.dsr-insert-sealrow {
+  text-align: center;
+  margin: 6px 0 18px;
+  position: relative;
+}
+
+.dsr-insert-sealrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 280px;
+  height: 280px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle,
+    hsla(40, 100%, 65%, 0.32) 0%,
+    hsla(36, 95%, 55%, 0.18) 25%,
+    transparent 55%);
+  pointer-events: none;
+}
+
+.dsr-insert-seal {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: sealGlow 5s ease-in-out infinite;
+}
+
+.dsr-insert-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+}
+
+.dsr-insert-title {
+  font-size: 28px;
+  letter-spacing: 9px;
+  color: #0a0a0a;
+  font-weight: 400;
+}
+
+.dsr-insert-exp {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #555;
+}
+
+.dsr-btn {
+  background: #0a0a0a;
+  color: #fff;
+  border: none;
+  padding: 18px 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    inset 0 1px 0 hsla(0, 0%, 100%, 0.1),
+    0 2px 8px hsla(0, 0%, 0%, 0.3);
+}
+.dsr-btn:hover { background: #1f1f1f; }
+
+.dsr-verdict-stamp {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #888;
+  margin-top: 14px;
+  text-align: center;
+  font-style: italic;
+}
+
+.cst-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: 12px 22px;
+  background: linear-gradient(to top,
+    hsla(24, 85%, 8%, 0.85) 0%,
+    hsla(28, 80%, 12%, 0.4) 70%,
+    transparent 100%);
+  text-align: center;
+  font-family: 'Roboto Slab', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: hsl(42, 80%, 78%);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .custody-verdict {
+    top: 3.5vh;
+    width: calc(100vw - 20px);
+  }
+  .verdict-mark {
+    padding: 10px 18px;
+    border-width: 2px;
+  }
+  .verdict-sub {
+    margin-top: 10px;
+  }
+  .dsr-insert-glow { bottom: 24px; }
+  .dsr-insert-wrap {
+    bottom: 36px;
+    width: calc(100vw - 24px);
+  }
+  .dsr-insert {
+    padding: 20px 18px 18px;
+  }
+  .dsr-insert-seal {
+    width: 150px;
+    height: 150px;
+  }
+  .dsr-insert-sealrow::before {
+    width: 210px;
+    height: 210px;
+  }
+  .dsr-insert-title {
+    font-size: 22px;
+    letter-spacing: 6px;
+  }
+  .tape { width: 56px; height: 18px; }
+  .cst-footer { font-size: 8px; padding: 10px 14px; letter-spacing: 2px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LAYER 0: frozen DCC -->
+<iframe class="frozen-portal" id="frozenPortal" src="about:blank" tabindex="-1" aria-hidden="true"></iframe>
+<div class="no-portal" id="noPortal"></div>
+
+<!-- LAYER 1: organic amber treatment -->
+<div class="amber-texture"></div>
+<div class="amber-warm"></div>
+<div class="amber-hotspot"></div>
+<div class="amber-glow-secondary"></div>
+<div class="amber-vignette"></div>
+<div class="amber-grain"></div>
+
+<!-- LAYER 2: floating UI -->
+<div class="custody-verdict">
+  <div class="verdict-mark">CUSTODIA <span class="slash">/</span> EXTENDIDA</div>
+  <div class="verdict-sub"><span class="dot"></span>EXPEDIENTE CERRADO &nbsp;&middot;&nbsp; SUJETO CONTENIDO</div>
+</div>
+
+<!-- Glow that bleeds out from behind the insert -->
+<div class="dsr-insert-glow"></div>
+
+<div class="dsr-insert-wrap">
+  <div class="dsr-insert">
+    <div class="tape tl"></div>
+    <div class="tape tr"></div>
+    <div class="dsr-insert-content">
+      <div class="dsr-insert-label">INSERTO / D.S.R</div>
+      <div class="dsr-insert-sealrow">
+        <img src="logos/DSR-logo.png" alt="" class="dsr-insert-seal">
+      </div>
+      <div class="dsr-insert-head">
+        <div class="dsr-insert-title">COMPLY</div>
+        <div class="dsr-insert-exp" id="dsrExp">EXP. 0513-AS</div>
+      </div>
+      <a href="https://github.com/Halysaur/CEO/releases/download/wc-004-comply/DSR-INT_WC-004_COMPLY.zip" target="_blank" rel="noopener" class="dsr-btn">DESCARGAR &darr; DOWNLOAD</a>
+      <div class="dsr-verdict-stamp">VEREDICTO REGISTRADO / VERDICT LOGGED</div>
+    </div>
+  </div>
+</div>
+
+<div class="cst-footer" id="cstFooter">
+  SUJETO WC-PENDIENTE / EXPEDIENTE 0513-AS / CUMPLIÓ
+</div>
+
+<script>
+function getDccData() {
+  var keys = ['dcc_v7', 'dcc_v6', 'dcc_v5'];
+  for (var i = 0; i < keys.length; i++) {
+    var raw = localStorage.getItem(keys[i]);
+    if (raw) {
+      try { return JSON.parse(raw); } catch(e) {}
+    }
+  }
+  return null;
+}
+
+window.addEventListener('load', function() {
+  var data = getDccData();
+  var wc = 'WC-' + Math.floor(1000 + Math.random() * 9000);
+
+  if (data && data.case) wc = data.case;
+
+  document.getElementById('cstFooter').textContent =
+    'SUJETO ' + wc + ' / EXPEDIENTE 0513-AS / CUMPLIÓ';
+
+  var iframe = document.getElementById('frozenPortal');
+  var fallback = document.getElementById('noPortal');
+
+  if (data) {
+    iframe.src = 'dcc.html?locked=1';
+  } else {
+    iframe.classList.add('hidden');
+    fallback.classList.add('show');
+  }
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'dsr_comply_landed', { 'sujeto': wc });
+  }
+
+  history.pushState(null, '', location.href);
+  window.addEventListener('popstate', function() {
+    history.pushState(null, '', location.href);
+  });
+});
+
+window.addEventListener('keydown', function(e) {
+  var blocked = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End', ' '];
+  if (blocked.indexOf(e.key) !== -1) e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
