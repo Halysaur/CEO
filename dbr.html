@@ -2187,6 +2187,15 @@ function triggerSolve() {
   if (solved) return;
   solved = true;
 
+  // Record the solve so the D.S.R hub registers the analysis as complete.
+  // The hub reads these exact flag names; without this write the puzzle
+  // plays its cinematic but leaves no trace and the hub shows the subject
+  // as never analyzed.
+  try {
+    localStorage.setItem('dbr_warmth_unlocked', 'true');
+    localStorage.setItem('dbr_solved', 'true');
+  } catch (e) {}
+
   // activate overlay
   solveOverlay.classList.add('active');
 
