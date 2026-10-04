@@ -7283,8 +7283,8 @@ Usa la información del sujeto con sutileza. No la repitas mecánicamente. Déja
     : hist.slice(-12);
 
   // Model used by the D.C.C bot. If Anthropic retires it, change only this line.
-  // Cheaper alternative: 'claude-haiku-4-5-20251001'
-  const DCC_MODEL = 'claude-sonnet-5-5';
+  // Smarter (but thinks first, slower and pricier): 'claude-sonnet-5-5'
+  const DCC_MODEL = 'claude-haiku-4-5-20251001';
 
   try {
     const res = await fetch('https://custodiansofentropicorder.netlify.app/.netlify/functions/chat', {
@@ -7307,7 +7307,12 @@ Usa la información del sujeto con sutileza. No la repitas mecánicamente. Déja
       busy = false;
       return;
     }
-    let reply = (data.content && data.content[0] && data.content[0].text) || '...';
+    // Newer models can return a thinking block before the text block,
+    // so collect every text block instead of assuming it's the first one.
+    let reply = (Array.isArray(data.content)
+      ? data.content.filter(b => b.type === 'text' && b.text).map(b => b.text).join('\n\n')
+      : '') || '...';
+    if (reply === '...') console.warn('[DCC] No text in response. stop_reason:', data.stop_reason);
     // Strip any internal/meta notes the model leaks. The fiction breaks
     // the moment the user sees the wizard's hands move. We strip on
     // display AND before saving to history, so leaked notes don't
