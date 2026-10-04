@@ -6596,6 +6596,47 @@ function activateTheme(insId) {
 let selectedInsignia = null;
 
 window.onload = () => {
+  // ---- LOCKED MODE (loaded from custody.html iframe) -------------
+  // When dcc.html is embedded in custody.html with ?locked=1, freeze
+  // the portal: render the user's session as static, no input, no scroll,
+  // no song-bar. The amber wash and DSR insert live in the parent shell.
+  var isLockedMode = (function() {
+    try {
+      var p = new URLSearchParams(location.search);
+      return p.get('locked') === '1';
+    } catch(e) { return false; }
+  })();
+
+  if (isLockedMode) {
+    const sLocked = localStorage.getItem('dcc_v7') || localStorage.getItem('dcc_v6') || localStorage.getItem('dcc_v5');
+    if (!sLocked) {
+      // No DCC session exists. Render empty body so the custody.html shell
+      // can detect this iframe state and hide it in favor of its fallback.
+      document.body.innerHTML = '';
+      document.body.style.background = '#080600';
+      return;
+    }
+    ud = JSON.parse(sLocked);
+    hist = ud.hist || [];
+    cnt = ud.cnt || 0;
+    if (!ud.insignia) {
+      ud.insignia = 'ins-contained';
+      ud.insigniaChanged = false;
+    }
+    ud.archived = true;
+    showPortal(true);
+    applyLockedDisplay();
+    return;
+  }
+  // ---- END LOCKED MODE -------------------------------------------
+
+  // Clean up the legacy backdoor flag. The old dsr.html had a hidden
+  // second-chance path that set dsr_comply_final and routed users into
+  // the Golden Wave inside DCC. That mechanic was cut. If the flag is
+  // still in someone's localStorage from a prior session, it would
+  // strand them on the Golden Wave forever. Wipe it on every load.
+  try { localStorage.removeItem('dsr_comply_final'); } catch(e) {}
+
   // Check for DSR endings
   const dsrComplyFinal = localStorage.getItem('dsr_comply_final');
   const dsrComply = localStorage.getItem('dsr_comply');
@@ -7027,6 +7068,62 @@ function applyArchivedState() {
   if (ci) ci.disabled = true;
 }
 
+function applyLockedDisplay() {
+  // Called only when dcc.html is loaded with ?locked=1 inside custody.html.
+  // Freezes the portal completely. No interaction, no scroll, no song-bar.
+  applyArchivedState();
+
+  // Hide elements that don't belong in the frozen custody view.
+  var hideIds = ['dccBackNav', 'dccDevReset', 'goldenWave'];
+  hideIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  // Hide song-bar (CAGE button) — COMPLY is the song now, served by custody.html.
+  var songBar = document.querySelector('.song-bar');
+  if (songBar) songBar.style.display = 'none';
+
+  // Hide input area entirely — the subject is past speaking.
+  var inputArea = document.querySelector('.input-area');
+  if (inputArea) inputArea.style.display = 'none';
+
+  // Disable any remaining interactive controls.
+  var insBtn = document.getElementById('insChangeBtn');
+  if (insBtn) insBtn.disabled = true;
+  var noteIn = document.getElementById('noteIn');
+  if (noteIn) noteIn.disabled = true;
+
+  // Kill every form of scrolling inside the iframe.
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+  var lp = document.querySelector('.lp');
+  if (lp) lp.style.overflow = 'hidden';
+  var msgsEl = document.getElementById('msgs');
+  if (msgsEl) {
+    // First auto-scroll once to the bottom so the user sees their last exchange,
+    // then lock overflow so they can't scroll anywhere.
+    setTimeout(function() {
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      msgsEl.style.overflow = 'hidden';
+    }, 250);
+  }
+
+  // Block keyboard scrolling.
+  window.addEventListener('keydown', function(e) {
+    var blocked = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','PageUp','PageDown','Home','End',' '];
+    if (blocked.indexOf(e.key) !== -1) e.preventDefault();
+  }, { passive: false });
+
+  // Block wheel + touch scrolling.
+  window.addEventListener('wheel', function(e) { e.preventDefault(); }, { passive: false });
+  window.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+
+  // Belt-and-suspenders: kill pointer events on the iframe body so any stray
+  // click that bypasses the parent's pointer-events:none can't trigger anything.
+  document.body.style.pointerEvents = 'none';
+}
+
 function addMsg(role, text) {
   const msgs = document.getElementById('msgs');
   if (!msgs) return;
@@ -7185,18 +7282,31 @@ Usa la información del sujeto con sutileza. No la repitas mecánicamente. Déja
     ? [{ role: 'user', content: 'Inicia el primer contacto. Saluda al sujeto por su nombre y reconoce su insignia con respeto procedimental. NO hagas preguntas. NO le preguntes cómo está, cómo se siente, ni cómo durmió. Establece la atmósfera. Sé breve (uno o dos párrafos cortos bilingües). Implica, sin decirlo, que esta no es la primera vez que lo recibes, aunque para él sí lo sea. Deja espacio para que él hable cuando quiera. El silencio que sigue es parte del cuidado.' }]
     : hist.slice(-12);
 
+  // Model used by the D.C.C bot. If Anthropic retires it, change only this line.
+  // Cheaper alternative: 'claude-haiku-4-5-20251001'
+  const DCC_MODEL = 'claude-sonnet-5-5';
+
   try {
     const res = await fetch('https://custodiansofentropicorder.netlify.app/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: DCC_MODEL,
         max_tokens: 600,
         system: systemPrompt,
         messages: messages
       })
     });
     const data = await res.json();
+    // If the API returns an error (retired model, no credits, bad key...),
+    // log the real reason in the console and stay in fiction on screen.
+    if (data.type === 'error' || data.error) {
+      console.error('[DCC] API error:', data.error ? data.error.type : '', data.error ? data.error.message : data);
+      if (typing) typing.style.display = 'none';
+      addMsg('dcc', 'Canal de custodia interrumpido. Intente más tarde.\n\nCustody channel interrupted. Try again later.');
+      busy = false;
+      return;
+    }
     let reply = (data.content && data.content[0] && data.content[0].text) || '...';
     // Strip any internal/meta notes the model leaks. The fiction breaks
     // the moment the user sees the wizard's hands move. We strip on
